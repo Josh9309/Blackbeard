@@ -39,15 +39,18 @@ public class ParrotCopter : MonoBehaviour
 	
 	void Update() //Update is called once per frame
     {
-
-	}
-
-    private void FixedUpdate() //Physics updates
-    {
         ParrotControl();
     }
 
-    private void ParrotControl()
+    private void FixedUpdate() //Physics updates
+    {
+        ParrotRigidbodyControl();
+    }
+
+    /// <summary>
+    /// This method controls parrot movement through the rigidbody, and should be called in FixedUpdate
+    /// </summary>
+    private void ParrotRigidbodyControl()
     {
         //Make the parrot fly forward and backwards
         if (Input.GetAxis("Vertical") > deadZone)
@@ -62,20 +65,6 @@ public class ParrotCopter : MonoBehaviour
         else
         {
             rBody.velocity = Vector3.zero;
-        }
-
-        //Make the parrot bank left and right
-        if (Input.GetAxis("Horizontal") > deadZone)
-        {
-            transform.Rotate(0, turnSpeed, 0);
-        }
-        else if (Input.GetAxis("Horizontal") < -deadZone)
-        {
-            transform.Rotate(0, -turnSpeed, 0);
-        }
-        else
-        {
-            transform.Rotate(0, 0, 0);
         }
 
         //Make the parrot fly upwards
@@ -103,6 +92,26 @@ public class ParrotCopter : MonoBehaviour
                 flapCycleTime = 0f;
             }
         }
+    }
+
+    /// <summary>
+    /// This method controls parrot movement without the rigidbody, an should be called in Update
+    /// </summary>
+    private void ParrotControl()
+    {
+        //Make the parrot bank left and right
+        if (Input.GetAxis("Horizontal") > deadZone)
+        {
+            transform.Rotate(0, turnSpeed, 0);
+        }
+        else if (Input.GetAxis("Horizontal") < -deadZone)
+        {
+            transform.Rotate(0, -turnSpeed, 0);
+        }
+        else
+        {
+            transform.Rotate(new Vector3(0, 0, 0));
+        }
 
         //BOOST
         if (Input.GetButton("BoostFly"))
@@ -113,7 +122,5 @@ public class ParrotCopter : MonoBehaviour
         {
             maxSpeed = savedMaxSpeed;
         }
-
-        Debug.Log(rBody.velocity.y);
     }
 }
