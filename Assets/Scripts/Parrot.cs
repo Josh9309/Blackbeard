@@ -64,24 +64,28 @@ public class Parrot : MonoBehaviour {
         //zero parrot rotation
         parrotRotation = Vector3.zero;
 
-        
+        //parrot move forwards
+        if (Input.GetButton("BoostFly") && Input.GetAxis("BoostFly") > 0)
+        {
+            rBody.velocity += transform.forward * (2 * speed);
+        }
+        else if(Input.GetButton("BoostFly") && Input.GetAxis("BoostFly") < 0)
+        {
+            rBody.velocity = Vector3.zero;
+        }
+        else
+        {
+            rBody.velocity += transform.forward * speed;
+        }
         
         //Parrot fly up
         if(Mathf.Abs(flyUpInput) > inputDelay)
         {
             rBody.velocity += new Vector3(0, speed, 0);
-            parrotRotation += new Vector3(-15, 0, 0);
-            rotateParrot = true;
         }
         else if (Mathf.Abs(flyDownInput) > inputDelay) //parrot fly down
         {
             rBody.velocity += new Vector3(0, -speed, 0);
-            parrotRotation += new Vector3(15, 0, 0);
-        }
-        else
-        {
-            rotateParrot = true;
-            parrotRotation = Vector3.zero;
         }
 
         if (Mathf.Abs(horizontalInput) > inputDelay)
@@ -101,13 +105,8 @@ public class Parrot : MonoBehaviour {
             }
         }
 
-        if(Mathf.Abs(verticalInput) > inputDelay)
+        if(!(Input.GetButton("BoostFly") && Input.GetAxis("BoostFly") < 0))
         {
-            if(verticalInput > 0)
-            {
-                //moves parrot constantly forward
-                rBody.velocity += transform.forward * speed;
-            }
             if (Mathf.Abs(horizontalInput) > inputDelay)
             {
                 //if input is greater than 0;
@@ -119,6 +118,17 @@ public class Parrot : MonoBehaviour {
                 {
                     parrotRotation.z = 45;
                 }
+            }
+
+            if (Mathf.Abs(flyUpInput) > inputDelay)
+            {
+                parrotRotation += new Vector3(-15, 0, 0);
+                rotateParrot = true;
+            }
+            else if (Mathf.Abs(flyDownInput) > inputDelay) //parrot fly down
+            {
+                parrotRotation += new Vector3(15, 0, 0);
+                rotateParrot = true;
             }
         }
 
