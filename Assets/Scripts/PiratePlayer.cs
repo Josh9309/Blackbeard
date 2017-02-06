@@ -29,7 +29,10 @@ public class PiratePlayer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (active)
+        {
+            PirateMove();
+        }
 	}
 
     #region Methods
@@ -38,6 +41,18 @@ public class PiratePlayer : MonoBehaviour {
         //Get inputs for Pirate movement
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+
+        if(Mathf.Abs(verticalInput) > inputDelay)
+        {
+            if(verticalInput > 0)
+            {
+               
+            }
+            else
+            {
+               
+            }
+        }
     }
     #endregion
 }

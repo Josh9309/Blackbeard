@@ -7,10 +7,13 @@ public class Parrot : MonoBehaviour {
     private int health = 10;
     [SerializeField] private float speed = 2.0f;
     [SerializeField] private float turnSpeed = 2.0f;
+    [SerializeField] private float minHeight = 0;
+    [SerializeField] private float maxHeight = 15;
     private float currentHeight;
     
     private Rigidbody rBody;
     private bool rotateParrot = false;
+    [SerializeField] private bool kevdog = false; //switches parrot to kevin's copter control
     Vector3 parrotRotation = new Vector3(); //parrot euler angle rotation
     //input stuff
     private float inputDelay = 0.3f;
@@ -29,22 +32,15 @@ public class Parrot : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        ParrotMove();
-
-        //parrot Rotation
-        //if (rotateParrot) //if parrot needs to be rotated
-        //{
-        //    if(Vector3.Distance(transform.localRotation.eulerAngles, parrotRotation) > 0.01f)
-        //    {
-        //        transform.eulerAngles = Vector3.Lerp(transform.localRotation.eulerAngles, parrotRotation, Time.deltaTime);
-        //    }
-        //    else
-        //    {
-        //        transform.eulerAngles = parrotRotation;
-        //        rotateParrot = false;
-        //    }
-        //}
+	void FixedUpdate () {
+        if (!kevdog)
+        {
+            ParrotMove();
+        }
+        else
+        {
+            ParrotCopterControl();
+        }
 	}
 
     #region Methods
@@ -79,11 +75,22 @@ public class Parrot : MonoBehaviour {
         }
         
         //Parrot fly up
-        if(Mathf.Abs(flyUpInput) > inputDelay)
+        if(Mathf.Abs(verticalInput) > inputDelay)
+        {
+            if(verticalInput > 0 && transform.position.y < maxHeight)
+            {
+                rBody.velocity += new Vector3(0, speed, 0);
+            }
+            else if(transform.position.y > minHeight)
+            {
+                rBody.velocity += new Vector3(0, -speed, 0);
+            }
+        }
+        else if(Mathf.Abs(flyUpInput) > inputDelay && transform.position.y < maxHeight)
         {
             rBody.velocity += new Vector3(0, speed, 0);
         }
-        else if (Mathf.Abs(flyDownInput) > inputDelay) //parrot fly down
+        else if (Mathf.Abs(flyDownInput) > inputDelay && transform.position.y > minHeight) //parrot fly down
         {
             rBody.velocity += new Vector3(0, -speed, 0);
         }
@@ -120,7 +127,20 @@ public class Parrot : MonoBehaviour {
                 }
             }
 
-            if (Mathf.Abs(flyUpInput) > inputDelay)
+            if(Mathf.Abs(verticalInput) > inputDelay)
+            {
+                if(verticalInput > 0)
+                {
+                    parrotRotation += new Vector3(-15, 0, 0);
+                    rotateParrot = true;
+                }
+                else if (verticalInput < 0)
+                {
+                    parrotRotation += new Vector3(15, 0, 0);
+                    rotateParrot = true;
+                }
+            }
+            else if (Mathf.Abs(flyUpInput) > inputDelay)
             {
                 parrotRotation += new Vector3(-15, 0, 0);
                 rotateParrot = true;
@@ -138,6 +158,56 @@ public class Parrot : MonoBehaviour {
 
 
         transform.localEulerAngles = parrotRotation;
+    }
+
+    private void ParrotCopterControl()
+    {
+        rBody.velocity = Vector3.zero;
+
+        //parrot move forwards
+        if (Input.GetAxis("BoostFly") > 0)
+        {
+            rBody.velocity += transform.forward * (2 * speed);
+        }
+        //Make the parrot fly forward and backwards
+        else if (Input.GetAxis("Vertical") > inputDelay)
+        {
+            rBody.velocity += transform.forward * speed;
+        }
+        else if (Input.GetAxis("Vertical") < -inputDelay)
+        {
+            rBody.velocity = -transform.forward;
+        }
+        else
+        {
+            rBody.velocity = Vector3.zero;
+        }
+
+        //Make the parrot fly upwards
+        if (Input.GetAxis("FlyUp") > inputDelay && transform.position.y < maxHeight)
+        {
+            rBody.velocity += transform.up * speed;
+        }
+
+        //Make the parrot fly downwards
+        if (Input.GetAxis("FlyDown") > inputDelay && transform.position.y > minHeight)
+        {
+            rBody.velocity -= transform.up * speed;
+        }
+
+        //Make the parrot bank left and right
+        if (Input.GetAxis("Horizontal") > inputDelay)
+        {
+            transform.Rotate(0, turnSpeed, 0);
+        }
+        else if (Input.GetAxis("Horizontal") < -inputDelay)
+        {
+            transform.Rotate(0, -turnSpeed, 0);
+        }
+        else
+        {
+            transform.Rotate(new Vector3(0, 0, 0));
+        }
     }
     #endregion
 }
