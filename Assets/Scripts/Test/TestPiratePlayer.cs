@@ -5,8 +5,6 @@ using UnityEngine;
 public class TestPiratePlayer : MonoBehaviour
 {
     #region Attributes
-    [SerializeField] private bool active = false;
-
     //Pirate stats
     private int health = 25;
     private int attackPower;
@@ -39,14 +37,12 @@ public class TestPiratePlayer : MonoBehaviour
 
     void Update() //Update is called once per frame
     {
-        if (active)
-            PirateTurn();
+        PirateTurn();
     }
 
     void FixedUpdate() //Physics updates
     {
-        if (active)
-            PirateMove();
+        PirateMove();
     }
 
     /// <summary>
