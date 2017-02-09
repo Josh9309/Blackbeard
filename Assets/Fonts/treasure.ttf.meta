@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 50867c1d2a1b65b4abd0e1a84b9cd8a1
+timeCreated: 1486496091
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Treasure
+  fontNames:
+  - Treasure
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
