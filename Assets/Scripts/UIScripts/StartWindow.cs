@@ -52,28 +52,28 @@ public class StartWindow : BaseWindow
     protected void NewGame()
     {
         
-        MenuManager.Instance.GoToScreen("Game");
+        //MenuManager.Instance.GoToScreen("Game");
         Debug.Log("New Game Pressed");
     }   
 
     //method for options button
     protected void Options()
     {
-        MenuManager.Instance.GoToScreen("Options");
+        //MenuManager.Instance.GoToScreen("Options");
         Debug.Log("Option Pressed");
     }
 
     //method for credits menu
     protected void Credits()
     {
-        MenuManager.Instance.GoToScreen("Credits");
+       // MenuManager.Instance.GoToScreen("Credits");
         Debug.Log("Credits Pressed");
     }
 
     //method for exit menu
     protected void Exit()
     {
-        MenuManager.Instance.GoToScreen("Exit");
+        //MenuManager.Instance.GoToScreen("Exit");
         Debug.Log("Exit Pressed");
     }
     #endregion

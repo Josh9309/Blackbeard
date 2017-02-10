@@ -23,7 +23,7 @@ public class GameOverWindow : BaseWindow
     protected void MainMenu()
     {
         //manager.Open(0);
-        MenuManager.Instance.GoToScreen("Start");
+        //MenuManager.Instance.GoToScreen("Start");
         Debug.Log("Main Menu Pressed");
     }
     #endregion
