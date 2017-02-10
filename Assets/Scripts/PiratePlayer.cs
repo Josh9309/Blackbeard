@@ -8,7 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class PiratePlayer : MonoBehaviour {
     #region Attributes
-    public bool active = false;
+    //public bool active = false;
 
     //pirate Stats
     protected int health = 25;
@@ -38,6 +38,17 @@ public class PiratePlayer : MonoBehaviour {
     #endregion
 
     #region Properties
+    public Rigidbody RBody
+    {
+        get
+        {
+            return rBody;
+        }
+        set
+        {
+            rBody = value;
+        }
+    }
     #endregion
 
     // Use this for initialization
@@ -57,21 +68,21 @@ public class PiratePlayer : MonoBehaviour {
 	// Update is called once per frame
     void Update()
     {
-        if (active)
-        {
+        //if (active)
+        //{
             if (!jump)
             {
                 jump = Input.GetButtonDown("Jump");
             }
-        }
+        //}
     }
 
 	void FixedUpdate () {
-        if (active)
-        {
+        //if (active)
+        //{
             GetMovementInput();
             PirateMove();
-        }
+        //}
 	}
 
     #region Methods

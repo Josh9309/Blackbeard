@@ -11,7 +11,8 @@ public class Parrot : MonoBehaviour {
     [SerializeField] private float maxHeight = 15;
     private float currentHeight;
     private bool active; //If the parrot is active
-    TestPiratePlayer tPP; //The pirate
+    //TestPiratePlayer tPP; //The pirate
+    PiratePlayer tPP; //The pirate
     private bool canChangeCharacter; //If the parrot can land or take off again
 
     private Rigidbody rBody;
@@ -69,11 +70,12 @@ public class Parrot : MonoBehaviour {
 
     private void OnTriggerStay(Collider coll)
     {
-        if (coll.tag == "Pirate" && Input.GetButton("Jump") && active && canChangeCharacter) //Landing on pirate
+        if (coll.tag == "Pirate" && Input.GetButton("Interact") && active && canChangeCharacter) //Landing on pirate
         {
             cam.Target = coll.gameObject.transform; //Set the target of the camera
 
-            tPP = coll.GetComponent<TestPiratePlayer>(); //Get the script from the pirate
+            //tPP = coll.GetComponent<TestPiratePlayer>(); //Get the script from the pirate
+            tPP = coll.GetComponent<PiratePlayer>(); //Get the script from the pirate
             tPP.enabled = true; //Enable the pirate
 
             active = false; //Disable the parrot
@@ -275,7 +277,7 @@ public class Parrot : MonoBehaviour {
     /// </summary>
     private void Takeoff()
     {
-        if (Input.GetButton("Jump") && !active && canChangeCharacter) //Taking off from pirate
+        if (Input.GetButton("Interact") && !active && canChangeCharacter) //Taking off from pirate
         {
             cam.Target = gameObject.transform; //Set the target of the camera
 
