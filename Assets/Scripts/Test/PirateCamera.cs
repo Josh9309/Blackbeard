@@ -6,13 +6,13 @@ public class PirateCamera : MonoBehaviour
 {
     #region Attributes
     //Camera
-    [SerializeField] private Transform target;
+    private Transform target;
     [SerializeField] private float smoothFollow = .15f;
     //[SerializeField] private Vector3 distanceFromTarget = new Vector3(0, 0, 0);
     //[SerializeField] private float tilt = 10; //Angle of the camera looking at the target
     private float rotationSpeed = 0;
     private Vector3 goalPosition; //The position the camera would like to move to
-    TestPiratePlayer targetScript; //To get the rotation of the target
+    //TestPiratePlayer targetScript; //To get the rotation of the target
 
     //Input attributes
     private float deadZone = 0.1f;
@@ -32,8 +32,9 @@ public class PirateCamera : MonoBehaviour
     void Start() //Use this for initialization
     {
         goalPosition = Vector3.zero;
+        target = FindObjectOfType<Parrot>().gameObject.transform; //Target the parrot from the start
         //transform.Rotate(tilt, transform.rotation.y, transform.rotation.z);
-        targetScript = target.GetComponent<TestPiratePlayer>(); //Get the target script from the target
+        //targetScript = target.GetComponent<TestPiratePlayer>(); //Get the target script from the target
     }
 
     void LateUpdate() //LateUpdate occurs after all other updates
@@ -52,6 +53,7 @@ public class PirateCamera : MonoBehaviour
         }
     }
 
+    #region Methods
     ///// <summary>
     ///// Calculate the point behind the target from which to follow them
     ///// </summary>
@@ -91,4 +93,5 @@ public class PirateCamera : MonoBehaviour
         //    transform.Rotate(1 * Mathf.Sign(camY), 0, 0);
         //}
     }
+    #endregion
 }

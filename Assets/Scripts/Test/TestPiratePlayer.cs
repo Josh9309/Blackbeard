@@ -27,6 +27,18 @@ public class TestPiratePlayer : MonoBehaviour
             return targetRotation;
         }
     }
+
+    public Rigidbody RBody
+    {
+        get
+        {
+            return rBody;
+        }
+        set
+        {
+            rBody = value;
+        }
+    }
     #endregion
 
     void Start() //Use this for initialization
@@ -58,6 +70,7 @@ public class TestPiratePlayer : MonoBehaviour
             rBody.velocity = Vector3.zero;
     }
 
+    #region Methods
     /// <summary>
     /// Turn the pirate
     /// </summary>
@@ -71,4 +84,5 @@ public class TestPiratePlayer : MonoBehaviour
             transform.rotation = targetRotation; //Rotate the object
         }
     }
+    #endregion
 }

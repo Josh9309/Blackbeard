@@ -10,11 +10,15 @@ public class Parrot : MonoBehaviour {
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
     private float currentHeight;
-    
+    private bool active; //If the parrot is active
+    TestPiratePlayer tPP; //The pirate
+    private bool canChangeCharacter; //If the parrot can land or take off again
+
     private Rigidbody rBody;
     private bool rotateParrot = false;
     [SerializeField] private bool copter = false; //switches parrot to kevin's copter control
     Vector3 parrotRotation = new Vector3(); //parrot euler angle rotation
+
     //input stuff
     private float inputDelay = 0.3f;
     private float horizontalInput = 0;
@@ -28,33 +32,53 @@ public class Parrot : MonoBehaviour {
     #region Properties
     #endregion
 
+    #region Magic Methods
     // Use this for initialization
     void Start () {
         rBody = GetComponent<Rigidbody>();
         cam = FindObjectOfType<PirateCamera>();
+        active = true; //The parrot is active
+        canChangeCharacter = true; //The parrot can be a parrotsite
 	}
-	
-	// Update is called once per frame
-	void FixedUpdate () {
-        if (!copter)
+    
+    private void Update() //Update is called once per frame
+    {
+        Takeoff(); //Let the parrot take off again
+    }
+
+    void FixedUpdate() //Physics updates
+    {
+        if (active && !copter)
         {
             ParrotMove();
         }
-        else
+        else if (active && copter)
         {
             ParrotCopterControl();
+        }
+        else if (!active) //Stop the parrot if it is not active
+        {
+            //Make sure the parrot stays with the pirate
+            rBody.velocity = Vector3.zero;
+            transform.position = new Vector3(tPP.transform.position.x, transform.position.y, tPP.transform.position.z);
+            transform.rotation = tPP.transform.rotation;
+
+            //TODO: make parrot invisable. Best done when rough assets arrive
         }
 	}
 
     private void OnTriggerStay(Collider coll)
     {
-        if (coll.tag == "Pirate" && Input.GetButton("Fire1"))
+        if (coll.tag == "Pirate" && Input.GetButton("Jump") && active && canChangeCharacter) //Landing on pirate
         {
-            TestPiratePlayer tPP = coll.GetComponent<TestPiratePlayer>(); //Get the script from the pirate
-            tPP.enabled = true; //Enable the pirate
             cam.Target = coll.gameObject.transform; //Set the target of the camera
 
-            this.enabled = false; //Disable the parrot
+            tPP = coll.GetComponent<TestPiratePlayer>(); //Get the script from the pirate
+            tPP.enabled = true; //Enable the pirate
+
+            active = false; //Disable the parrot
+
+            StartCoroutine(ChangeTimer());
         }
 
         //if () //If the parrot has landed
@@ -68,6 +92,16 @@ public class Parrot : MonoBehaviour {
         //    
         //}
     }
+
+    internal IEnumerator ChangeTimer() //Coroutine to prevent immediate landing or takeoff from pirate
+    {
+        canChangeCharacter = false;
+
+        yield return new WaitForSeconds(2);
+
+        canChangeCharacter = true;
+    }
+    #endregion
 
     #region Methods
     private void ParrotMove()
@@ -233,6 +267,27 @@ public class Parrot : MonoBehaviour {
         else
         {
             transform.Rotate(new Vector3(0, 0, 0));
+        }
+    }
+
+    /// <summary>
+    /// This method is used to allow the parrot to take off again
+    /// </summary>
+    private void Takeoff()
+    {
+        if (Input.GetButton("Jump") && !active && canChangeCharacter) //Taking off from pirate
+        {
+            cam.Target = gameObject.transform; //Set the target of the camera
+
+            active = true; //Activate the parrot
+            
+            //TODO: update this with the AI
+            tPP.RBody.velocity = Vector3.zero;
+            tPP.transform.localEulerAngles = Vector3.zero;
+
+            tPP.enabled = false; //Disable the pirate
+
+            StartCoroutine(ChangeTimer());
         }
     }
     #endregion
