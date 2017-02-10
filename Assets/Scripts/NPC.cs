@@ -4,16 +4,24 @@ using UnityEngine;
 
 /// <summary>
 /// class to govern the behaviour of NPC's when they are not under the player's control
+/// this class is abstract and has two children, RedPirate and BluePirate
 /// </summary>
-public class NPC : MonoBehaviour {
+public abstract class NPC : MonoBehaviour {
+    // for use in identifying what team the pirate is on
+    protected string team;
+
+    // all components of the pirate
+    protected Rigidbody rb;
+
+    // accessors
 
 	// Use this for initialization
-	void Start () {
-
+	protected virtual void Start () {
+        rb = this.GetComponent<Rigidbody>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	protected virtual void Update () {
 		
 	}
 }
