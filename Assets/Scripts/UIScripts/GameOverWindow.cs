@@ -7,7 +7,7 @@ using UnityEngine;
 public class GameOverWindow : BaseWindow
 {
     #region Attributes
-    MenuManager manager;
+   // MenuManager manager;
     #endregion
 
     #region Properties
