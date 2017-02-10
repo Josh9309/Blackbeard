@@ -13,7 +13,7 @@ public class Parrot : MonoBehaviour {
     
     private Rigidbody rBody;
     private bool rotateParrot = false;
-    [SerializeField] private bool kevdog = false; //switches parrot to kevin's copter control
+    [SerializeField] private bool copter = false; //switches parrot to kevin's copter control
     Vector3 parrotRotation = new Vector3(); //parrot euler angle rotation
     //input stuff
     private float inputDelay = 0.3f;
@@ -21,6 +21,8 @@ public class Parrot : MonoBehaviour {
     private float verticalInput = 0;
     private float flyUpInput = 0;
     private float flyDownInput = 0;
+
+    private PirateCamera cam;
     #endregion
 
     #region Properties
@@ -29,11 +31,12 @@ public class Parrot : MonoBehaviour {
     // Use this for initialization
     void Start () {
         rBody = GetComponent<Rigidbody>();
+        cam = FindObjectOfType<PirateCamera>();
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (!kevdog)
+        if (!copter)
         {
             ParrotMove();
         }
@@ -42,6 +45,29 @@ public class Parrot : MonoBehaviour {
             ParrotCopterControl();
         }
 	}
+
+    private void OnTriggerStay(Collider coll)
+    {
+        if (coll.tag == "Pirate" && Input.GetButton("Fire1"))
+        {
+            TestPiratePlayer tPP = coll.GetComponent<TestPiratePlayer>(); //Get the script from the pirate
+            tPP.enabled = true; //Enable the pirate
+            cam.Target = coll.gameObject.transform; //Set the target of the camera
+
+            this.enabled = false; //Disable the parrot
+        }
+
+        //if () //If the parrot has landed
+
+        //if (coll.tag == "Pirate")
+        //{
+        //
+        //}
+        //else if(coll.tag == "Perch")
+        //{
+        //    
+        //}
+    }
 
     #region Methods
     private void ParrotMove()
@@ -152,7 +178,7 @@ public class Parrot : MonoBehaviour {
             }
         }
 
-        print(rBody.velocity);
+        //print(rBody.velocity);
 
         parrotRotation.y = transform.localEulerAngles.y;
 

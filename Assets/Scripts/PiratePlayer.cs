@@ -1,7 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
+[RequireComponent(typeof(Animator))]
 public class PiratePlayer : MonoBehaviour {
     #region Attributes
     public bool active = false;
@@ -11,11 +15,25 @@ public class PiratePlayer : MonoBehaviour {
     protected float speed = 5.0f;
     protected int attackPower;
 
+    //pirate movement attributes
+    private Vector3 movement;
+    private Vector3 groundPlaneNormal;
+    private float groundedDist = 0.2f;
+    [SerializeField] float idleTurnSpeed = 360;
+    [SerializeField] float movingTurnSpeed = 180;
+    [SerializeField] float jumpForce = 50;
+    private float turnAmount;
+    private float forwardAmount;
+    private bool grounded;
+    private bool jump;
+    
     //input attributes
     private float inputDelay = 0.3f;
     private float horizontalInput = 0;
     private float verticalInput = 0;
 
+    //game camera variables
+    private Transform gameCamera;
     private Rigidbody rBody;
     #endregion
 
@@ -25,34 +43,131 @@ public class PiratePlayer : MonoBehaviour {
     // Use this for initialization
     void Start () {
         rBody = GetComponent<Rigidbody>();
+        if(Camera.main != null) //if there is a main camera
+        {
+            //get the transform of the main camera
+            gameCamera = Camera.main.transform;
+        }
+        else
+        {
+            Debug.LogWarning("PiratePlayer needs a 3rd person camera to move relative to camera. Tag the camera \"MainCamera\"", gameObject);
+        }
 	}
 	
 	// Update is called once per frame
-	void Update () {
+    void Update()
+    {
         if (active)
         {
+            if (!jump)
+            {
+                jump = Input.GetButtonDown("Jump");
+            }
+        }
+    }
+
+	void FixedUpdate () {
+        if (active)
+        {
+            GetMovementInput();
             PirateMove();
         }
 	}
 
     #region Methods
-    private void PirateMove()
+    private void GetMovementInput()
     {
         //Get inputs for Pirate movement
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
+        
 
-        if(Mathf.Abs(verticalInput) > inputDelay)
+        //calculate player movement direction to pass to pirate move
+        if(gameCamera != null)
         {
-            if(verticalInput > 0)
-            {
-               
-            }
-            else
-            {
-               
-            }
+            //calculates the camera relative direction  for the pirate to move
+            gameCamera.forward = Vector3.Scale(gameCamera.forward, new Vector3(1, 0, 1)).normalized;
+            movement = verticalInput * gameCamera.forward + horizontalInput * gameCamera.right;
         }
+        else
+        {
+            //calculates the world relative direction for the pirate to move
+            movement = verticalInput * Vector3.forward + horizontalInput * Vector3.right;
+        }
+    }
+
+    private void PirateMove()
+    {
+        //convert the movement vector from world relative into a local relative 
+        //turn amount and forward amount require to move in desired direction
+        if(movement.magnitude > 1f) //movement magnitude is over 1 
+        {
+            //normalize the movement vector
+            movement.Normalize();
+        }
+        movement = transform.InverseTransformDirection(movement); //transforms the movement vector from world space to local space
+
+        //check if Pirate is grounded
+        CheckIfGrounded();
+        movement = Vector3.ProjectOnPlane(movement, groundPlaneNormal); //project the movement vector onto the ground plane
+        turnAmount = Mathf.Atan2(movement.x, movement.z);
+        forwardAmount = movement.z;
+
+        ApplyExtraTurnRotation();
+
+        
+        //determine which movement method to use depending on whether pirate is grounded or not
+        if (grounded)
+        {
+            //use grounded movement method
+            rBody.velocity = transform.forward * forwardAmount * speed;
+            Jump();
+        }
+        else
+        {
+            //use Air movement method
+        }
+
+        //send input and other animation state parameters to the animator
+    }
+    private void Jump()
+    {
+        if(grounded && jump)
+        {
+            rBody.velocity = new Vector3(rBody.velocity.x, jumpForce, rBody.velocity.z);
+            grounded = false;
+            jump = false;
+        }
+    }
+
+    private void ApplyExtraTurnRotation()
+    {
+        float turnSpeed = Mathf.Lerp(idleTurnSpeed, movingTurnSpeed, forwardAmount);
+        transform.Rotate(0, turnAmount * turnSpeed * Time.deltaTime, 0);
+    }
+
+    private void CheckIfGrounded()
+    {
+        RaycastHit rayHit;
+
+#if UNITY_EDITOR
+        //VISUALIZE GROUND CHECK WHEN IN UNITY EDITOR   
+        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * groundedDist),Color.magenta);
+#endif
+
+        //0.1f is used to offest the raycast from the inside of the pirate model
+        //The pirate transform should be at base of the pirate
+        if(Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist)) //if raycast hits something
+        {
+            groundPlaneNormal = rayHit.normal; //set the ground plan normal to the raycast hit normal
+            grounded = true; //set the pirate to grounded
+        }
+        else //raycast did not hit ground
+        {
+            grounded = false;
+            groundPlaneNormal = Vector3.up;
+        }
+
     }
     #endregion
 }
