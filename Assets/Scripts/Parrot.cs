@@ -125,11 +125,11 @@ public class Parrot : MonoBehaviour {
         //parrot move forwards
         if (Input.GetButton("BoostFly") && Input.GetAxis("BoostFly") > 0)
         {
-            rBody.velocity += transform.forward * (2 * speed);
+            rBody.velocity = transform.forward * (2 * speed);
         }
         else if(Input.GetButton("BoostFly") && Input.GetAxis("BoostFly") < 0)
         {
-            rBody.velocity = Vector3.zero;
+            rBody.velocity = transform.forward * (0.5f * speed);
         }
         else
         {
