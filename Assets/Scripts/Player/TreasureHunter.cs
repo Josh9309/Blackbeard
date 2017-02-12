@@ -23,4 +23,12 @@ public class TreasureHunter : BasePirate {
     {
         base.FixedUpdate();
     }
+
+    #region Methods
+    protected override void Dead()
+    {
+        Debug.Log("Pirate: " + name + "has Died");
+        Destroy(gameObject);
+    }
+    #endregion
 }

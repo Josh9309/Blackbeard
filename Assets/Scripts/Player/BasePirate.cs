@@ -12,6 +12,7 @@ public abstract class BasePirate: MonoBehaviour {
 
     //pirate Stats
     protected int health = 25;
+    protected int maxHealth;
     protected float speed = 5.0f;
 
     //pirate movement attributes
@@ -38,6 +39,11 @@ public abstract class BasePirate: MonoBehaviour {
     #endregion
 
     #region Properties
+    public int Health
+    {
+        get { return health; }
+    }
+
     public Rigidbody RBody
     {
         get
@@ -71,6 +77,8 @@ public abstract class BasePirate: MonoBehaviour {
         //{
         //    Debug.LogWarning("PiratePlayer needs a 3rd person camera to move relative to camera. Tag the camera \"MainCamera\"", gameObject);
         //}
+
+        maxHealth = health;
     }
 	
 	// Update is called once per frame
@@ -183,5 +191,35 @@ public abstract class BasePirate: MonoBehaviour {
         }
 
     }
+
+    /// <summary>
+    /// This method is for outside gameobjects to apply damage to the Pirate. It will go through apply the damage and check to see if the player is dead.
+    /// </summary>
+    public void ModifyHealth(int mod)
+    {
+        health += mod; ; //Add mod amount to health.
+        CheckHealth(); //check the status of health
+    }
+
+    /// <summary>
+    /// CheckHealth will check to see what the status is of the health. If health is bellow zero It will call the death Method and it will not let health go above max health.
+    /// </summary>
+    protected virtual void CheckHealth()
+    {
+        if (health > maxHealth) 
+        {
+            health = maxHealth; //resets the health to max health if health is over max health.
+        }
+        else if (health <= 0)
+        {
+            health = 0;
+            Dead(); //calls pirates dead method if health is 0 or bellow
+        }
+    }
+
+    /// <summary>
+    /// Dead will run all the neccessary code for when a pirate dies. Each pirate class must implement a Dead() Method.
+    /// </summary>
+    abstract protected void Dead();
     #endregion
 }
