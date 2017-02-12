@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Parrot : MonoBehaviour {
+public class Parrot : MonoBehaviour
+{
     #region Attributes
     private int health = 10;
     [SerializeField] private float speed = 2.0f;

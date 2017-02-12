@@ -55,16 +55,24 @@ public class PiratePlayer : MonoBehaviour {
     // Use this for initialization
     void Start () {
         rBody = GetComponent<Rigidbody>();
-        if(Camera.main != null) //if there is a main camera
+
+        //Get all cameras and assign the main camera
+        Camera[] camList = FindObjectsOfType<Camera>();
+        foreach (Camera c in camList)
         {
-            //get the transform of the main camera
-            gameCamera = Camera.main.transform;
+            if (c.name.Contains("Pirate"))
+                gameCamera = c.transform;
         }
-        else
-        {
-            Debug.LogWarning("PiratePlayer needs a 3rd person camera to move relative to camera. Tag the camera \"MainCamera\"", gameObject);
-        }
-	}
+        //if(Camera.main != null) //if there is a main camera
+        //{
+        //    //get the transform of the main camera
+        //    gameCamera = Camera.main.transform;
+        //}
+        //else
+        //{
+        //    Debug.LogWarning("PiratePlayer needs a 3rd person camera to move relative to camera. Tag the camera \"MainCamera\"", gameObject);
+        //}
+    }
 	
 	// Update is called once per frame
     void Update()
@@ -136,6 +144,7 @@ public class PiratePlayer : MonoBehaviour {
 
         //send input and other animation state parameters to the animator
     }
+
     private void Jump()
     {
         if(grounded && jump)
