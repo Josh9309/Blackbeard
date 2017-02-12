@@ -17,6 +17,7 @@ public class PiratePlayer : MonoBehaviour {
 
     //pirate movement attributes
     private Vector3 movement;
+    private Vector3 camForwards;
     private Vector3 groundPlaneNormal;
     private float groundedDist = 0.2f;
     [SerializeField] float idleTurnSpeed = 360;
@@ -68,21 +69,15 @@ public class PiratePlayer : MonoBehaviour {
 	// Update is called once per frame
     void Update()
     {
-        //if (active)
-        //{
-            if (!jump)
+            if (!jump && grounded)
             {
                 jump = Input.GetButtonDown("Jump");
             }
-        //}
     }
 
 	void FixedUpdate () {
-        //if (active)
-        //{
             GetMovementInput();
             PirateMove();
-        //}
 	}
 
     #region Methods
@@ -97,8 +92,8 @@ public class PiratePlayer : MonoBehaviour {
         if(gameCamera != null)
         {
             //calculates the camera relative direction  for the pirate to move
-            gameCamera.forward = Vector3.Scale(gameCamera.forward, new Vector3(1, 0, 1)).normalized;
-            movement = verticalInput * gameCamera.forward + horizontalInput * gameCamera.right;
+            camForwards = Vector3.Scale(gameCamera.forward, new Vector3(1, 0, 1)).normalized;
+            movement = verticalInput * camForwards + horizontalInput * gameCamera.right;
         }
         else
         {
