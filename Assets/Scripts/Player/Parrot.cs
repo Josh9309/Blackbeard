@@ -12,7 +12,7 @@ public class Parrot : MonoBehaviour
     [SerializeField] private float maxHeight = 15;
     private float currentHeight;
     private bool active; //If the parrot is active
-    PiratePlayer tPP; //The pirate
+    BasePirate tPP; //The pirate
     private bool canChangeCharacter; //If the parrot can land or take off again
 
     private Rigidbody rBody;
@@ -69,7 +69,7 @@ public class Parrot : MonoBehaviour
         {
             cam.Target = coll.gameObject.transform; //Set the target of the camera
 
-            tPP = coll.GetComponent<PiratePlayer>(); //Get the script from the pirate
+            tPP = coll.GetComponent<BasePirate>(); //Get the script from the pirate
             tPP.enabled = true; //Enable the pirate
 
             active = false; //Disable the parrot

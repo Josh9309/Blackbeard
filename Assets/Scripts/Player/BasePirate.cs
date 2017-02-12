@@ -6,30 +6,29 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Animator))]
-public class PiratePlayer : MonoBehaviour {
+public abstract class BasePirate: MonoBehaviour {
     #region Attributes
     //public bool active = false;
 
     //pirate Stats
     protected int health = 25;
     protected float speed = 5.0f;
-    protected int attackPower;
 
     //pirate movement attributes
     private Vector3 movement;
     private Vector3 camForwards;
     private Vector3 groundPlaneNormal;
     private float groundedDist = 0.2f;
-    [SerializeField] float idleTurnSpeed = 360;
-    [SerializeField] float movingTurnSpeed = 180;
-    [SerializeField] float jumpForce = 50;
+    [SerializeField] protected float idleTurnSpeed = 360;
+    [SerializeField] protected float movingTurnSpeed = 180;
+    [SerializeField] protected float jumpForce = 50;
     private float turnAmount;
     private float forwardAmount;
-    private bool grounded;
+    protected bool grounded;
     private bool jump;
     
     //input attributes
-    private float inputDelay = 0.3f;
+    [SerializeField] protected float inputDelay = 0.3f;
     private float horizontalInput = 0;
     private float verticalInput = 0;
 
@@ -53,7 +52,7 @@ public class PiratePlayer : MonoBehaviour {
     #endregion
 
     // Use this for initialization
-    void Start () {
+    protected virtual void Start () {
         rBody = GetComponent<Rigidbody>();
 
         //Get all cameras and assign the main camera
@@ -75,7 +74,7 @@ public class PiratePlayer : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
             if (!jump && grounded)
             {
@@ -83,7 +82,7 @@ public class PiratePlayer : MonoBehaviour {
             }
     }
 
-	void FixedUpdate () {
+	protected virtual void FixedUpdate () {
             GetMovementInput();
             PirateMove();
 	}
@@ -161,7 +160,7 @@ public class PiratePlayer : MonoBehaviour {
         transform.Rotate(0, turnAmount * turnSpeed * Time.deltaTime, 0);
     }
 
-    private void CheckIfGrounded()
+    protected void CheckIfGrounded()
     {
         RaycastHit rayHit;
 
