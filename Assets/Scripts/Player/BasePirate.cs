@@ -4,16 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(CapsuleCollider))]
+//[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Animator))]
 public abstract class BasePirate: MonoBehaviour {
     #region Attributes
     //public bool active = false;
 
     //pirate Stats
-    protected int health = 25;
+    [SerializeField] protected int health = 25;
     protected int maxHealth;
     protected float speed = 5.0f;
+
+    //pirate animation attributes
+    protected Animator pirateAnim;
 
     //pirate movement attributes
     private Vector3 movement;
@@ -60,6 +63,7 @@ public abstract class BasePirate: MonoBehaviour {
     // Use this for initialization
     protected virtual void Start () {
         rBody = GetComponent<Rigidbody>();
+        pirateAnim = GetComponent<Animator>();
 
         //Get all cameras and assign the main camera
         Camera[] camList = FindObjectsOfType<Camera>();
