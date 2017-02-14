@@ -4,7 +4,19 @@ using UnityEngine;
 
 public class ExitMenu : BaseWindow {
 
-	public void Exit()
+    #region Attributes
+
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region inBuiltMethods
+    #endregion
+
+    #region helperMethods
+    
+    public void Exit()
     {
         Debug.Log("Exit");
         Application.Quit();
@@ -15,4 +27,5 @@ public class ExitMenu : BaseWindow {
         Debug.Log("No pressed");
         //MenuManager.Instance.GoToScreen("Start");
     }
+    #endregion
 }

@@ -11,13 +11,17 @@ public class Parrot : MonoBehaviour
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
     private float currentHeight;
-    private bool active; //If the parrot is active
-    BasePirate tPP; //The pirate
-    private bool canChangeCharacter; //If the parrot can land or take off again
+    //If the parrot is active
+    private bool active;
+    //The pirate
+    BasePirate tPP;
+    //If the parrot can land or take off again
+    private bool canChangeCharacter; 
 
     private Rigidbody rBody;
     private bool rotateParrot = false;
-    Vector3 parrotRotation = new Vector3(); //parrot euler angle rotation
+    //parrot euler angle rotation
+    Vector3 parrotRotation = new Vector3(); 
 
     //input stuff
     private float inputDelay = 0.3f;
@@ -32,27 +36,34 @@ public class Parrot : MonoBehaviour
     #region Properties
     #endregion
 
-    #region Magic Methods
+    #region inBuiltMethods
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         rBody = GetComponent<Rigidbody>();
         cam = FindObjectOfType<PirateCamera>();
-        active = true; //The parrot is active
-        canChangeCharacter = true; //The parrot can be a parrotsite
+        //The parrot is active
+        active = true;
+        //The parrot can be a parrotsite
+        canChangeCharacter = true; 
 	}
-    
-    private void Update() //Update is called once per frame
+
+    //Update is called once per frame
+    private void Update() 
     {
-        Takeoff(); //Let the parrot take off again
+        //Let the parrot take off again
+        Takeoff(); 
     }
 
-    void FixedUpdate() //Physics updates
+    //Physics updates
+    void FixedUpdate() 
     {
         if (active)
         {
             ParrotMove();
         }
-        else if (!active) //Stop the parrot if it is not active
+        //Stop the parrot if it is not active
+        else if (!active) 
         {
             //Make sure the parrot stays with the pirate
             rBody.velocity = Vector3.zero;
@@ -65,31 +76,25 @@ public class Parrot : MonoBehaviour
 
     private void OnTriggerStay(Collider coll)
     {
-        if (coll.tag == "Pirate" && Input.GetButton("Interact") && active && canChangeCharacter) //Landing on pirate
+        //Landing on pirate
+        if (coll.tag == "Pirate" && Input.GetButton("Interact") && active && canChangeCharacter) 
         {
-            cam.Target = coll.gameObject.transform; //Set the target of the camera
-
-            tPP = coll.GetComponent<BasePirate>(); //Get the script from the pirate
-            tPP.enabled = true; //Enable the pirate
-
-            active = false; //Disable the parrot
+            //Set the target of the camera
+            cam.Target = coll.gameObject.transform;
+            //Get the script from the pirate
+            tPP = coll.GetComponent<BasePirate>();
+            //Enable the pirate
+            tPP.enabled = true;
+            //Disable the parrot
+            active = false; 
 
             StartCoroutine(ChangeTimer());
         }
 
-        //if () //If the parrot has landed
-
-        //if (coll.tag == "Pirate")
-        //{
-        //
-        //}
-        //else if(coll.tag == "Perch")
-        //{
-        //    
-        //}
     }
 
-    internal IEnumerator ChangeTimer() //Coroutine to prevent immediate landing or takeoff from pirate
+    //Coroutine to prevent immediate landing or takeoff from pirate
+    internal IEnumerator ChangeTimer() 
     {
         canChangeCharacter = false;
 
@@ -99,13 +104,12 @@ public class Parrot : MonoBehaviour
     }
     #endregion
 
-    #region Methods
+    #region HelperMethods
     /// <summary>
     /// The ParrotMove Method controls the parrot's flight and movement. It is what turns the bird, boosts, decellerates, what angles the parrot during flight.
     /// </summary>
     private void ParrotMove()
     {
-
         //Get inputs for Parrot movement
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
@@ -123,30 +127,42 @@ public class Parrot : MonoBehaviour
         parrotRotation = Vector3.zero;
 
         //parrot move forwards
-        if (boost && boostInput > 0) //if accelerate btn is pressed
+        //if accelerate btn is pressed
+        if (boost && boostInput > 0) 
         {
-            rBody.velocity = transform.forward * (2 * speed); //parrot speed is doubled
+            //parrot speed is doubled
+            rBody.velocity = transform.forward * (2 * speed); 
         }
-        else if(boost && boostInput < 0) //if Decelerate btn is pressed
+        //if Decelerate btn is pressed
+        else if (boost && boostInput < 0) 
         {
-            rBody.velocity = transform.forward * (0.5f * speed); //parrot speed is halved
+            //parrot speed is halved
+            rBody.velocity = transform.forward * (0.5f * speed); 
         }
-        else //if niether the acclerate btn or decelerate btn is pressed 
+        //if niether the acclerate btn or decelerate btn is pressed 
+        else
         {
-            rBody.velocity += transform.forward * speed; //parrot speed is normal
+            //parrot speed is normal
+            rBody.velocity += transform.forward * speed; 
         }
-        
+
         //Parrot fly up
-        if(Mathf.Abs(verticalInput) > inputDelay) //make sure input is greater than deadzone range
+        //make sure input is greater than deadzone range
+        if (Mathf.Abs(verticalInput) > inputDelay) 
         {
-            if(verticalInput > 0 && transform.position.y < maxHeight) //if vertical input is positive and less than max height
+            //if vertical input is positive and less than max height
+            if (verticalInput > 0 && transform.position.y < maxHeight) 
             {
-                rBody.velocity += new Vector3(0, speed, 0); //a upwards velocity is add to parrot's current speed
-                parrotRotation += new Vector3(-15, 0, 0); //rotates parrot up
+                //a upwards velocity is add to parrot's current speed
+                rBody.velocity += new Vector3(0, speed, 0);
+                //rotates parrot up
+                parrotRotation += new Vector3(-15, 0, 0); 
             }
-            else if(transform.position.y > minHeight) //if vertical input is pointing down and greater than min height
+            //if vertical input is pointing down and greater than min height
+            else if (transform.position.y > minHeight)
             {
-                rBody.velocity += new Vector3(0, -speed, 0); //a downwards velocity is added to parrot's current velocity
+                //a downwards velocity is added to parrot's current velocity
+                rBody.velocity += new Vector3(0, -speed, 0); 
                 parrotRotation += new Vector3(15, 0, 0);
             }
         }
@@ -156,7 +172,8 @@ public class Parrot : MonoBehaviour
             rBody.velocity += new Vector3(0, speed, 0);
             parrotRotation += new Vector3(-15, 0, 0);
         }
-        else if (Mathf.Abs(flyDownInput) > inputDelay && transform.position.y > minHeight) //parrot fly down
+        //parrot fly down
+        else if (Mathf.Abs(flyDownInput) > inputDelay && transform.position.y > minHeight) 
         {
             rBody.velocity += new Vector3(0, -speed, 0);
             parrotRotation += new Vector3(15, 0, 0);
@@ -165,22 +182,28 @@ public class Parrot : MonoBehaviour
         //controls parrot turning
         if (Mathf.Abs(horizontalInput) > inputDelay)
         {
-            if(horizontalInput > 0) //turns parrot left
+            //turns parrot left
+            if (horizontalInput > 0) 
             {
-                transform.Rotate(new Vector3(0, turnSpeed, 0)); //rotates the parrot left
-                parrotRotation.z = -45; //angles parrot left
+                //rotates the parrot left
+                transform.Rotate(new Vector3(0, turnSpeed, 0));
+                //angles parrot left
+                parrotRotation.z = -45; 
             }
-            else if(horizontalInput < 0) //turns parrot right
+            //turns parrot right
+            else if (horizontalInput < 0) 
             {
-                transform.Rotate(new Vector3(0, -turnSpeed, 0)); //rotates parrot right
-                parrotRotation.z = 45; //angles parrot right
+                //rotates parrot right
+                transform.Rotate(new Vector3(0, -turnSpeed, 0));
+                //angles parrot right
+                parrotRotation.z = 45; 
             }
         }
 
         parrotRotation.y = transform.localEulerAngles.y;
 
-
-        transform.localEulerAngles = parrotRotation; //update the parrot rotation
+        //update the parrot rotation
+        transform.localEulerAngles = parrotRotation; 
     }
 
     /// <summary>
@@ -188,17 +211,19 @@ public class Parrot : MonoBehaviour
     /// </summary>
     private void Takeoff()
     {
-        if (Input.GetButton("Interact") && !active && canChangeCharacter) //Taking off from pirate
+        //Taking off from pirate
+        if (Input.GetButton("Interact") && !active && canChangeCharacter) 
         {
-            cam.Target = gameObject.transform; //Set the target of the camera
-
-            active = true; //Activate the parrot
+            //Set the target of the camera
+            cam.Target = gameObject.transform;
+            //Activate the parrot
+            active = true; 
             
             //TODO: update this with the AI
             tPP.RBody.velocity = Vector3.zero;
             tPP.transform.localEulerAngles = Vector3.zero;
-
-            tPP.enabled = false; //Disable the pirate
+            //Disable the pirate
+            tPP.enabled = false; 
 
             StartCoroutine(ChangeTimer());
         }
