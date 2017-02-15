@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 50ca94009aca4754b8aa47c7997a3190
+timeCreated: 1486496073
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Booter - Five Five
+  fontNames:
+  - Booter - Five Five
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
