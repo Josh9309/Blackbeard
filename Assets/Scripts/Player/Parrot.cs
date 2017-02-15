@@ -36,7 +36,7 @@ public class Parrot : MonoBehaviour
     #region Properties
     #endregion
 
-    #region inBuiltMethods
+    #region InBuiltMethods
     // Use this for initialization
     void Start()
     {
@@ -90,7 +90,6 @@ public class Parrot : MonoBehaviour
 
             StartCoroutine(ChangeTimer());
         }
-
     }
 
     //Coroutine to prevent immediate landing or takeoff from pirate
