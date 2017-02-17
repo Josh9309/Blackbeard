@@ -26,6 +26,7 @@ public abstract class NPC : MonoBehaviour {
     // lsit of NPCs to determine enemies
     // NOTE: this is not effiecient and will be changed in the next release
     protected List<GameObject> enemies;
+    protected GameObject squad;
     #endregion
 
     #region Accessors
@@ -54,7 +55,7 @@ public abstract class NPC : MonoBehaviour {
         }
         else
         {
-            agent.destination = target.transform.position;
+            Seek();
         }
 	}
 
@@ -86,5 +87,13 @@ public abstract class NPC : MonoBehaviour {
         }
 
         return closest;
+    }
+
+    /// <summary>
+    /// Tells the agent to seek the current target
+    /// </summary>
+    protected void Seek()
+    {
+        agent.destination = target.transform.position;
     }
 }
