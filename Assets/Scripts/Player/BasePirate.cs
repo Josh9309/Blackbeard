@@ -7,6 +7,7 @@ using UnityEngine;
 //[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Animator))]
 public abstract class BasePirate: MonoBehaviour {
+    public enum PirateType {BUCCANEER, HUNTER};
     #region Attributes
     //public bool active = false;
 
@@ -14,7 +15,7 @@ public abstract class BasePirate: MonoBehaviour {
     [SerializeField] protected int health = 25;
     protected int maxHealth;
     protected float speed = 5.0f;
-
+    [SerializeField] protected PirateType pirate;
     //pirate animation attributes
     protected Animator pirateAnim;
 
@@ -58,6 +59,11 @@ public abstract class BasePirate: MonoBehaviour {
             rBody = value;
         }
     }
+
+    public PirateType Pirate
+    {
+        get { return pirate; }
+    }
     #endregion
 
     // Use this for initialization
@@ -82,7 +88,6 @@ public abstract class BasePirate: MonoBehaviour {
         //    Debug.LogWarning("PiratePlayer needs a 3rd person camera to move relative to camera. Tag the camera \"MainCamera\"", gameObject);
         //}
 
-        maxHealth = health;
     }
 	
 	// Update is called once per frame
@@ -210,11 +215,11 @@ public abstract class BasePirate: MonoBehaviour {
     /// </summary>
     protected virtual void CheckHealth()
     {
-        if (health > maxHealth) 
-        {
-            health = maxHealth; //resets the health to max health if health is over max health.
-        }
-        else if (health <= 0)
+        //if (health > maxHealth) 
+        //{
+        //    health = maxHealth; //resets the health to max health if health is over max health.
+        //}
+        if (health <= 0)
         {
             health = 0;
             Dead(); //calls pirates dead method if health is 0 or bellow
