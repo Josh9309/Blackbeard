@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,7 +18,12 @@ public abstract class NPC : MonoBehaviour {
     // Components
     protected Rigidbody rb;
     protected NavMeshAgent agent;
+    protected FSM fsm;
     // SM
+
+    // states
+    protected FSM.State patrol;
+    protected FSM.State combat;
 
     // identifications
     protected PirateType type;
@@ -45,9 +51,17 @@ public abstract class NPC : MonoBehaviour {
         // assign components
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
+        fsm = new FSM();
+
+        // assign states
+        patrol = Patrol;
+        combat = Combat;
 
         // assign team based on tag
         // will pull from SM
+
+        // everything starts in a patrol state
+        fsm.SetState(patrol);
 
         // for target initialization
         target = null;
@@ -55,7 +69,7 @@ public abstract class NPC : MonoBehaviour {
 	
 	// Update is called once per frame
 	protected virtual void Update () {
-
+        fsm.Update();
 	}
 
     protected virtual void FixedUpdate()
@@ -70,7 +84,7 @@ public abstract class NPC : MonoBehaviour {
     /// </summary>
     /// <param name="targetPos">position of desired target</param>
     /// <returns>distance to targetPos parameter</returns>
-    protected Vector3 calcDistance(Vector3 targetPos)
+    protected Vector3 CalcDistance(Vector3 targetPos)
     {
         return targetPos - transform.position;
     }
@@ -82,5 +96,13 @@ public abstract class NPC : MonoBehaviour {
     {
         agent.destination = target.transform.position;
     }
+    #endregion
+
+    #region State Methods
+
+    protected abstract void Combat();
+
+    protected abstract void Patrol();
+
     #endregion
 }

@@ -14,6 +14,8 @@ public class HunterNPC : NPC {
     protected override void Start () {
         base.Start();
 
+        target = GameObject.FindGameObjectWithTag("Treasure");
+
         type = PirateType.HUNTER;
 	}
 	
@@ -26,4 +28,20 @@ public class HunterNPC : NPC {
     {
         base.FixedUpdate();
     }
+
+    #region State Methods
+
+    protected override void Combat()
+    {
+        
+    }
+
+    /// <summary>
+    /// For the Treasure Hunter pirate this will seek the treasure
+    /// </summary>
+    protected override void Patrol()
+    {
+        Seek();
+    }
+    #endregion
 }

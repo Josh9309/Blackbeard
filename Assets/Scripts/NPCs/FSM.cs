@@ -9,19 +9,29 @@ using UnityEngine;
 public class FSM : MonoBehaviour
 {
     // declare a delegate to represent a state in the machine
-    private delegate void State();
+    public delegate void State();
     private State currentState;
 
-    // Use this for initialization
-    void Start()
+    // Update is called once per frame
+    public void Update()
     {
-
+        if (currentState != null)
+        {
+            currentState();
+        }
+        else
+        {
+            Debug.Log("No assigned state");
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// Changes the current state parameter to a new state that has been passed in
+    /// </summary>
+    /// <param name="newState">delegate to new state method</param>
+    public void SetState(State newState)
     {
-
+        currentState = newState;
     }
 }
 
