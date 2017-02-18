@@ -16,6 +16,7 @@ public abstract class BasePirate: MonoBehaviour {
     protected int maxHealth;
     protected float speed = 5.0f;
     [SerializeField] protected PirateType pirate;
+    private bool pirateActive; //The pirate will only recieve input if it is active
     //pirate animation attributes
     protected Animator pirateAnim;
 
@@ -64,12 +65,26 @@ public abstract class BasePirate: MonoBehaviour {
     {
         get { return pirate; }
     }
+
+    public bool PirateActive
+    {
+        get
+        {
+            return pirateActive;
+        }
+        set
+        {
+            pirateActive = value;
+        }
+    }
     #endregion
 
     // Use this for initialization
-    protected virtual void Start () {
+    protected virtual void Start()
+    {
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
+        pirateActive = false;
 
         //Get all cameras and assign the main camera
         Camera[] camList = FindObjectsOfType<Camera>();
@@ -93,15 +108,19 @@ public abstract class BasePirate: MonoBehaviour {
 	// Update is called once per frame
     protected virtual void Update()
     {
-            if (!jump && grounded)
+            if (!jump && grounded && pirateActive)
             {
                 jump = Input.GetButtonDown("Jump");
             }
     }
 
-	protected virtual void FixedUpdate () {
+	protected virtual void FixedUpdate()
+    {
+        if (pirateActive)
+        {
             GetMovementInput();
             PirateMove();
+        }
 	}
 
     #region Methods

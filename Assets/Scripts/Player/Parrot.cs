@@ -84,7 +84,7 @@ public class Parrot : MonoBehaviour
             //Get the script from the pirate
             tPP = coll.GetComponent<BasePirate>();
             //Enable the pirate
-            tPP.enabled = true;
+            tPP.PirateActive = true;
             //Disable the parrot
             active = false; 
 
@@ -222,7 +222,7 @@ public class Parrot : MonoBehaviour
             tPP.RBody.velocity = Vector3.zero;
             tPP.transform.localEulerAngles = Vector3.zero;
             //Disable the pirate
-            tPP.enabled = false; 
+            tPP.PirateActive = false; 
 
             StartCoroutine(ChangeTimer());
         }

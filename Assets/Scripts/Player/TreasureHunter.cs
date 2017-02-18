@@ -27,7 +27,7 @@ public class TreasureHunter : BasePirate
 
     private void OnTriggerStay(Collider coll)
     {
-        if (coll.tag == "Treasure") //If this pirate is within range of the treasure
+        if (coll.tag == "Treasure"  && Input.GetButton("Attack")) //If this pirate is within range of the treasure and tries to pick it up
             Pickup(); //Check for pickup
     }
 
@@ -43,10 +43,7 @@ public class TreasureHunter : BasePirate
     /// </summary>
     private void Pickup()
     {
-        if (Input.GetButton("Attack")) //If X is pressed
-        {
-            pirateAnim.Play("PickupTreasure");
-        }
+        pirateAnim.Play("PickupTreasure");
     }
     #endregion
 }
