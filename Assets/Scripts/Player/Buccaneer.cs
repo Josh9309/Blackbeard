@@ -10,8 +10,10 @@ public class Buccaneer : BasePirate {
     [SerializeField] private int attackDam;
 
     //melee system attributes
-    private float canSQTime2 = 0.5f; //can switch queue time for 2nd attack
+    private float canSQTime2 = 0.20f; //can switch queue time for 2nd attack
     private float canSQTime3 = 0.75f;
+    private bool canQueue2 = false;
+    private bool canQueue3 = false;
     private bool canSwitch2 = false;
     private bool canSwitch3 = false;
 
@@ -59,11 +61,23 @@ public class Buccaneer : BasePirate {
     #region Methods
     private void Attack()
     {
-        if (Input.GetButtonDown("Attack") )
+        if (Input.GetButtonDown("Attack") && !attacking )
         {
             pirateAnim.Play("SwordAttack1");
+            Debug.Log("Attack 1");
+            attacking = true;
+            StartCoroutine(CheckAttackInput(2));
+        }
+        else if(Input.GetButtonDown("Attack") && canQueue2)
+        {
+            pirateAnim.SetBool("canAttack2", true);
+            attacking = true;
+            Debug.Log("Attack 2");
+        }
+        else if(Input.GetButtonDown("Attack") && canQueue3)
+        {
+            Debug.Log("Attack 3");
             //attacking = true;
-           // StartCoroutine(CheckAttackInput(2));
         }
     }
 
@@ -73,20 +87,13 @@ public class Buccaneer : BasePirate {
         {
             case 2:
                 yield return new WaitForSeconds(canSQTime2);
-                while (true)
-                {
-                    if (attack1End)
-                    {
-                        break;
-                    }
+                Debug.Log("Attack2 can queue");
+                canQueue2 = true;
+                break;
 
-                    if (Input.GetButtonDown("Attack"))
-                    {
-                        break;
-                        //pirateAnim.Play("SwordAttack2");
-                    }
-                }
-
+            case 3:
+                yield return new WaitForSeconds(canSQTime3);
+                canQueue3 = true;
                 break;
         }
     }
@@ -111,14 +118,14 @@ public class Buccaneer : BasePirate {
             return;
         }
 
-        //if (attackNum != 2)
-        //{
-        //    switchEvent.intParameter = attackNum;
-        //    switchEvent.time = canSwitchTime;
-        //    switchEvent.functionName = "SetAttackCanSwitch";
+        if (attackNum != 2)
+        {
+            switchEvent.intParameter = attackNum;
+            switchEvent.time = canSwitchTime;
+            switchEvent.functionName = "SetAttackCanSwitch";
 
-        //    attackClip.AddEvent(switchEvent);
-        //}
+            attackClip.AddEvent(switchEvent);
+        }
 
         endEvent.intParameter = attackNum;
         endEvent.time = attackClip.length;
@@ -147,14 +154,17 @@ public class Buccaneer : BasePirate {
         {
             case 1:
                 canSwitch2 = false;
-       
+                canQueue2 = false;
                 break;
 
             case 2:
                 canSwitch3 = false;
+                canQueue3 = false;
                 pirateAnim.SetBool("canAttack2", false);
                 break;
         }
+
+        attacking = false;
     }
     protected override void Dead()
     {
