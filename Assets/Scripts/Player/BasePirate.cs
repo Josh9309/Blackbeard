@@ -9,6 +9,8 @@ using UnityEngine;
 public abstract class BasePirate: MonoBehaviour
 {
     #region Attributes
+    public enum PirateType { BUCCANEER, HUNTER };
+
     //pirate Stats
     [SerializeField] protected int health = 25;
     protected int maxHealth;
@@ -86,7 +88,7 @@ public abstract class BasePirate: MonoBehaviour
     }
     #endregion
 
-    #region inBuiltMethods
+    #region InBuiltMethods
     // Use this for initialization
     protected virtual void Start()
     {
@@ -101,21 +103,26 @@ public abstract class BasePirate: MonoBehaviour
                 gameCamera = c.transform;
         }
         maxHealth = health;
+
+        pirateActive = false;
     }
 	
 	// Update is called once per frame
     protected virtual void Update()
     {
-            if (!isJumping && grounded && pirateActive)
-            {
-                isJumping = Input.GetButtonDown("Jump");
-            }
+        if (!isJumping && grounded && pirateActive)
+        {
+            isJumping = Input.GetButtonDown("Jump");
+        }
     }
 
 	protected virtual void FixedUpdate ()
     {
+        if (pirateActive)
+        {
             GetMovementInput();
             PirateMove();
+        }
 	}
     #endregion
 

@@ -22,7 +22,7 @@ public class Buccaneer : BasePirate {
     //sword attributes
     Sword buccaneerSword;
     //private bool attack1End;
-    //private bool attacking = false;
+    private bool attacking = false; //TODO: remove this after updating
     //private bool attacking2 = false;
     #endregion
 
