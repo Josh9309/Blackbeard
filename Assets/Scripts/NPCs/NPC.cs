@@ -44,6 +44,8 @@ public abstract class NPC : MonoBehaviour {
     #region Accessors
     // use team accessor to return a string representing NPC's team
     public Team getTeam { get { return team; } }
+
+    // getters and setters to modify states through the SquadManager
     #endregion
 
     // Use this for initialization

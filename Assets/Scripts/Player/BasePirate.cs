@@ -4,19 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-//[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Animator))]
-public abstract class BasePirate: MonoBehaviour {
-    public enum PirateType {BUCCANEER, HUNTER};
-    #region Attributes
-    //public bool active = false;
 
+public abstract class BasePirate: MonoBehaviour
+{
+    #region Attributes
     //pirate Stats
     [SerializeField] protected int health = 25;
     protected int maxHealth;
     protected float speed = 5.0f;
     [SerializeField] protected PirateType pirate;
     protected bool pirateActive; //The pirate will only recieve input if it is active
+
     //pirate animation attributes
     protected Animator pirateAnim;
 
@@ -87,12 +86,12 @@ public abstract class BasePirate: MonoBehaviour {
     }
     #endregion
 
+    #region inBuiltMethods
     // Use this for initialization
     protected virtual void Start()
     {
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
-        pirateActive = false;
 
         //Get all cameras and assign the main camera
         Camera[] camList = FindObjectsOfType<Camera>();
@@ -101,16 +100,7 @@ public abstract class BasePirate: MonoBehaviour {
             if (c.name.Contains("Pirate"))
                 gameCamera = c.transform;
         }
-        //if(Camera.main != null) //if there is a main camera
-        //{
-        //    //get the transform of the main camera
-        //    gameCamera = Camera.main.transform;
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("PiratePlayer needs a 3rd person camera to move relative to camera. Tag the camera \"MainCamera\"", gameObject);
-        //}
-
+        maxHealth = health;
     }
 	
 	// Update is called once per frame
@@ -122,14 +112,12 @@ public abstract class BasePirate: MonoBehaviour {
             }
     }
 
-	protected virtual void FixedUpdate()
+	protected virtual void FixedUpdate ()
     {
-        if (pirateActive)
-        {
             GetMovementInput();
             PirateMove();
-        }
 	}
+    #endregion
 
     #region Methods
     private void GetMovementInput()
@@ -138,7 +126,6 @@ public abstract class BasePirate: MonoBehaviour {
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
         
-
         //calculate player movement direction to pass to pirate move
         if(gameCamera != null)
         {
@@ -171,8 +158,7 @@ public abstract class BasePirate: MonoBehaviour {
         forwardAmount = movement.z;
 
         ApplyExtraTurnRotation();
-
-        
+ 
         //determine which movement method to use depending on whether pirate is grounded or not
         if (grounded)
         {
@@ -212,7 +198,6 @@ public abstract class BasePirate: MonoBehaviour {
         //VISUALIZE GROUND CHECK WHEN IN UNITY EDITOR   
         Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * groundedDist),Color.magenta);
 #endif
-
         //0.1f is used to offest the raycast from the inside of the pirate model
         //The pirate transform should be at base of the pirate
         if(Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist)) //if raycast hits something
@@ -225,7 +210,6 @@ public abstract class BasePirate: MonoBehaviour {
             grounded = false;
             groundPlaneNormal = Vector3.up;
         }
-
     }
 
     /// <summary>
@@ -242,11 +226,11 @@ public abstract class BasePirate: MonoBehaviour {
     /// </summary>
     protected virtual void CheckHealth()
     {
-        //if (health > maxHealth) 
-        //{
-        //    health = maxHealth; //resets the health to max health if health is over max health.
-        //}
-        if (health <= 0)
+        if (health > maxHealth) 
+        {
+            health = maxHealth; //resets the health to max health if health is over max health.
+        }
+        else if (health <= 0)
         {
             health = 0;
             Dead(); //calls pirates dead method if health is 0 or bellow
