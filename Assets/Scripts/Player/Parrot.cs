@@ -15,6 +15,8 @@ public class Parrot : MonoBehaviour
     private bool active;
     //The pirate
     BasePirate tPP;
+    Buccaneer buccScript; //Buccaneer script
+    TreasureHunter treasureHScript; //Treasure hunter script
     //If the parrot can land or take off again
     private bool canChangeCharacter; 
 
@@ -52,7 +54,7 @@ public class Parrot : MonoBehaviour
     private void Update() 
     {
         //Let the parrot take off again
-        Takeoff(); 
+        Takeoff();
     }
 
     //Physics updates
@@ -81,8 +83,15 @@ public class Parrot : MonoBehaviour
         {
             //Set the target of the camera
             cam.Target = coll.gameObject.transform;
-            //Get the script from the pirate
+
+            //Get scripts from the pirate
             tPP = coll.GetComponent<BasePirate>();
+
+            if (coll.GetComponent<Buccaneer>() != null)
+                buccScript = coll.GetComponent<Buccaneer>();
+            else if (coll.GetComponent<TreasureHunter>() != null)
+                treasureHScript = coll.GetComponent<TreasureHunter>();
+
             //Enable the pirate
             tPP.PirateActive = true;
             //Disable the parrot
@@ -210,8 +219,18 @@ public class Parrot : MonoBehaviour
     /// </summary>
     private void Takeoff()
     {
+        bool doingRelevantAction = false;
+
+        //If either pirate type is perfoming an action
+        if (buccScript != null && buccScript.Attacking)
+            doingRelevantAction = true;
+        else if (treasureHScript != null && treasureHScript.PickingUp)
+            doingRelevantAction = true;
+
         //Taking off from pirate
-        if (Input.GetButton("Interact") && !active && canChangeCharacter) 
+        //Timer for switching must be completed
+        //Pirate must not be jumping, picking up treasure, or attacking
+        if (Input.GetButton("Interact") && !active && canChangeCharacter && tPP.Grounded && !doingRelevantAction) 
         {
             //Set the target of the camera
             cam.Target = gameObject.transform;
@@ -221,8 +240,11 @@ public class Parrot : MonoBehaviour
             //TODO: update this with the AI
             tPP.RBody.velocity = Vector3.zero;
             tPP.transform.localEulerAngles = Vector3.zero;
-            //Disable the pirate
-            tPP.PirateActive = false; 
+
+            //Disable the pirate scripts
+            tPP.PirateActive = false;
+            buccScript = null;
+            treasureHScript = null;
 
             StartCoroutine(ChangeTimer());
         }

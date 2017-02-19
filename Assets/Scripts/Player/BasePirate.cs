@@ -16,7 +16,7 @@ public abstract class BasePirate: MonoBehaviour {
     protected int maxHealth;
     protected float speed = 5.0f;
     [SerializeField] protected PirateType pirate;
-    private bool pirateActive; //The pirate will only recieve input if it is active
+    protected bool pirateActive; //The pirate will only recieve input if it is active
     //pirate animation attributes
     protected Animator pirateAnim;
 
@@ -31,7 +31,7 @@ public abstract class BasePirate: MonoBehaviour {
     private float turnAmount;
     private float forwardAmount;
     protected bool grounded;
-    private bool jump;
+    private bool isJumping;
     
     //input attributes
     [SerializeField] protected float inputDelay = 0.3f;
@@ -77,6 +77,14 @@ public abstract class BasePirate: MonoBehaviour {
             pirateActive = value;
         }
     }
+
+    public bool Grounded
+    {
+        get
+        {
+            return grounded;
+        }
+    }
     #endregion
 
     // Use this for initialization
@@ -108,9 +116,9 @@ public abstract class BasePirate: MonoBehaviour {
 	// Update is called once per frame
     protected virtual void Update()
     {
-            if (!jump && grounded && pirateActive)
+            if (!isJumping && grounded && pirateActive)
             {
-                jump = Input.GetButtonDown("Jump");
+                isJumping = Input.GetButtonDown("Jump");
             }
     }
 
@@ -182,11 +190,11 @@ public abstract class BasePirate: MonoBehaviour {
 
     private void Jump()
     {
-        if(grounded && jump)
+        if(grounded && isJumping)
         {
             rBody.velocity = new Vector3(rBody.velocity.x, jumpForce, rBody.velocity.z);
             grounded = false;
-            jump = false;
+            isJumping = false;
         }
     }
 

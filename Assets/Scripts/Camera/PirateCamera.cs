@@ -29,7 +29,7 @@ public class PirateCamera : MonoBehaviour
     }
     #endregion
 
-    #region Magic Methods
+    #region InBuildMethods
     void Start() //Use this for initialization
     {
         //goalPosition = Vector3.zero;
@@ -64,12 +64,12 @@ public class PirateCamera : MonoBehaviour
         }
 
         float camXInput = Input.GetAxis("Cam_Horizontal");
-        //float camYInput = Input.GetAxis("Cam_Vertical");
+        float camYInput = Input.GetAxis("Cam_Vertical");
 
         transform.position = target.transform.position; //Adjust the camera
 
-        if (Mathf.Abs(camXInput) > deadZone)
-            ManualCamera(camXInput);
+        if (Mathf.Abs(camXInput) > deadZone || Mathf.Abs(camYInput) > deadZone)
+            ManualCamera(camXInput, camYInput);
         //else
         //{
         //    //FollowTarget();
@@ -101,18 +101,19 @@ public class PirateCamera : MonoBehaviour
     /// <summary>
     /// Let the player move the camera with the right stick
     /// </summary>
-    void ManualCamera(float camX)
+    void ManualCamera(float camX, float camY)
     {
         //transform.position = target.transform.position; //Center the position of the camera
 
-        //if (Mathf.Abs(camX) > deadZone)
+        if (Mathf.Abs(camX) > deadZone)
         //{
             //float eulerYAngle = Mathf.SmoothDampAngle(transform.eulerAngles.x, target.eulerAngles.x, ref rotationSpeed, smoothFollow); //Smooth lerping for the camera
             transform.Rotate(0, 100 * Mathf.Sign(camX) * Time.deltaTime, 0); //Pass in the smooth rotation component to the camera's rotation
             //transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
             //transform.Rotate(0, 1 * Mathf.Sign(camX), 0);
         //}
-        //else if (Mathf.Abs(camY) > deadZone)
+        if (Mathf.Abs(camY) > deadZone)
+            transform.Rotate(100 * Mathf.Sign(camY) * Time.deltaTime, 0, 0); //Pass in the smooth rotation component to the camera's rotation
         //{
         //    transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 0, 0);
         //    transform.Rotate(1 * Mathf.Sign(camY), 0, 0);

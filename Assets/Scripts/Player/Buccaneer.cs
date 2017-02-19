@@ -28,6 +28,14 @@ public class Buccaneer : BasePirate {
     {
         get { return attackDam; }
     }
+
+    public bool Attacking
+    {
+        get
+        {
+            return attacking;
+        }
+    }
     #endregion
 
     // Use this for initialization
@@ -50,7 +58,8 @@ public class Buccaneer : BasePirate {
     protected override void Update () {
         base.Update();
 
-        Attack();
+        if (pirateActive) //Does not inherit, still must be active
+            Attack();
 	}
 
     protected override void FixedUpdate()

@@ -5,9 +5,17 @@ using UnityEngine;
 public class TreasureHunter : BasePirate
 {
     #region Attributes
+    private bool pickingUp; //If the treasure pirate is currently picking anything up
     #endregion
     
     #region Properties
+    public bool PickingUp
+    {
+        get
+        {
+            return pickingUp;
+        }
+    }
     #endregion
     
     protected override void Start() //Use this for initialization
@@ -27,7 +35,7 @@ public class TreasureHunter : BasePirate
 
     private void OnTriggerStay(Collider coll)
     {
-        if (coll.tag == "Treasure"  && Input.GetButton("Attack")) //If this pirate is within range of the treasure and tries to pick it up
+        if (coll.tag == "Treasure"  && Input.GetButton("Attack") && pirateActive) //If this pirate is within range of the treasure and tries to pick it up
             Pickup(); //Check for pickup
     }
 
