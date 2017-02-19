@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,28 +10,42 @@ using UnityEngine.AI;
 /// this class is abstract and has two children, RedNPC and BlueNPC
 /// </summary>
 public abstract class NPC : MonoBehaviour {
- 
+
+    public enum PirateType { BUCCANEER, HUNTER };
+    public enum Team { RED, BLUE};
+
     #region Attributes
     // Components
     protected Rigidbody rb;
     protected NavMeshAgent agent;
+    protected FSM fsm;
+    // SM
 
+    // states
+    protected FSM.State patrol;
+    protected FSM.State combat;
+
+    // identifications
+    protected PirateType type;
     // this variable will represent what team the NPC is on, two options are Red or Blue
     // this cooresponds to the string tag of the agent, to check if an agent is on a team
     // check if their tag equals their team attribute
-    protected string team;
+    protected Team team;
 
     // for seeking using NavMeshAgent
     protected GameObject target;
+    protected GameObject squad;
 
-    // lsit of NPCs to determine enemies
-    // NOTE: this is not effiecient and will be changed in the next release
-    protected List<GameObject> enemies;
+    // gameplay
+    [SerializeField]
+    protected int health;
     #endregion
 
     #region Accessors
     // use team accessor to return a string representing NPC's team
-    public string Team { get { return team; } }
+    public Team getTeam { get { return team; } }
+
+    // getters and setters to modify states through the SquadManager
     #endregion
 
     // Use this for initialization
@@ -38,9 +53,17 @@ public abstract class NPC : MonoBehaviour {
         // assign components
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
+        fsm = new FSM();
+
+        // assign states
+        patrol = Patrol;
+        combat = Combat;
 
         // assign team based on tag
-        team = gameObject.tag;
+        // will pull from SM
+
+        // everything starts in a patrol state
+        fsm.SetState(patrol);
 
         // for target initialization
         target = null;
@@ -48,43 +71,40 @@ public abstract class NPC : MonoBehaviour {
 	
 	// Update is called once per frame
 	protected virtual void Update () {
-		if (target == null)
-        {
-            target = findNearestEnemy();
-        }
-        else
-        {
-            agent.destination = target.transform.position;
-        }
+        fsm.Update();
 	}
 
+    protected virtual void FixedUpdate()
+    {
+
+    }
+
+    #region Helper Methods
     /// <summary>
     /// Helper method for calculating the distance from the NPC's current position
     /// to a given target
     /// </summary>
     /// <param name="targetPos">position of desired target</param>
     /// <returns>distance to targetPos parameter</returns>
-    protected Vector3 calcDistance(Vector3 targetPos)
+    protected Vector3 CalcDistance(Vector3 targetPos)
     {
         return targetPos - transform.position;
     }
 
     /// <summary>
-    /// Helper method for finding the closest enemy based on the enemies list
+    /// Tells the agent to seek the current target
     /// </summary>
-    /// <returns>closest enemy to this NPC</returns>
-    protected GameObject findNearestEnemy()
+    protected void Seek()
     {
-        GameObject closest = enemies[0];
-
-        for (int i = 0; i < enemies.Count; i++)
-        {
-            if (calcDistance(enemies[i].transform.position).magnitude < calcDistance(closest.transform.position).magnitude)
-            {
-                closest = enemies[i];
-            }
-        }
-
-        return closest;
+        agent.destination = target.transform.position;
     }
+    #endregion
+
+    #region State Methods
+
+    protected abstract void Combat();
+
+    protected abstract void Patrol();
+
+    #endregion
 }

@@ -36,7 +36,7 @@ public class Parrot : MonoBehaviour
     #region Properties
     #endregion
 
-    #region inBuiltMethods
+    #region InBuiltMethods
     // Use this for initialization
     void Start()
     {
@@ -84,13 +84,12 @@ public class Parrot : MonoBehaviour
             //Get the script from the pirate
             tPP = coll.GetComponent<BasePirate>();
             //Enable the pirate
-            tPP.enabled = true;
+            tPP.PirateActive = true;
             //Disable the parrot
             active = false; 
 
             StartCoroutine(ChangeTimer());
         }
-
     }
 
     //Coroutine to prevent immediate landing or takeoff from pirate
@@ -223,7 +222,7 @@ public class Parrot : MonoBehaviour
             tPP.RBody.velocity = Vector3.zero;
             tPP.transform.localEulerAngles = Vector3.zero;
             //Disable the pirate
-            tPP.enabled = false; 
+            tPP.PirateActive = false; 
 
             StartCoroutine(ChangeTimer());
         }

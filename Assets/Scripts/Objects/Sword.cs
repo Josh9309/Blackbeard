@@ -5,6 +5,7 @@ using UnityEngine;
 public class Sword : MonoBehaviour {
     #region Attributes
     private bool hit;
+    private float knockback = 300000;
     private Buccaneer pirate;
     #endregion
 
@@ -36,6 +37,7 @@ public class Sword : MonoBehaviour {
         {
             enemy.ModifyHealth(-pirate.AttackDam);
             Debug.Log(pirate.name + " hit " + enemy.name);
+            enemy.GetComponent<Rigidbody>().AddForce(pirate.transform.forward * knockback);
         }
     }
 }
