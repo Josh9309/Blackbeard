@@ -70,7 +70,7 @@ public class PirateCamera : MonoBehaviour
 
         if (Mathf.Abs(camXInput) > deadZone || Mathf.Abs(camYInput) > deadZone)
             ManualCamera(camXInput, camYInput);
-        //else
+        //else if (target.rBody.velocity > 3)
         //{
         //    //FollowTarget();
         //    LookAtTarget();
@@ -89,35 +89,37 @@ public class PirateCamera : MonoBehaviour
     //    transform.position = goalPosition; //Set the position of the camera
     //}
 
-    ///// <summary>
-    ///// Look at the target
-    ///// </summary>
-    //void LookAtTarget()
-    //{
-    //    float eulerYAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target.eulerAngles.y, ref rotationSpeed, smoothFollow); //Smooth lerping for the camera
-    //    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, eulerYAngle, 0); //Pass in the smooth rotation component to the camera's rotation
-    //}
+    /// <summary>
+    /// Look at the target
+    /// </summary>
+    void LookAtTarget()
+    {
+        float eulerYAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target.eulerAngles.y, ref rotationSpeed, smoothFollow); //Smooth lerping for the camera
+        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, eulerYAngle, 0); //Pass in the smooth rotation component to the camera's rotation
+    }
 
     /// <summary>
     /// Let the player move the camera with the right stick
     /// </summary>
     void ManualCamera(float camX, float camY)
     {
-        //transform.position = target.transform.position; //Center the position of the camera
+        float xRotation = 0, yRotation = 0;
 
+        //Horizontal camera rotation
         if (Mathf.Abs(camX) > deadZone)
-        //{
-            //float eulerYAngle = Mathf.SmoothDampAngle(transform.eulerAngles.x, target.eulerAngles.x, ref rotationSpeed, smoothFollow); //Smooth lerping for the camera
-            transform.Rotate(0, 100 * Mathf.Sign(camX) * Time.deltaTime, 0); //Pass in the smooth rotation component to the camera's rotation
-            //transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
-            //transform.Rotate(0, 1 * Mathf.Sign(camX), 0);
-        //}
+            yRotation = 100 * -Mathf.Sign(camX) * Time.deltaTime;
+
+        //Verical camera movement
         if (Mathf.Abs(camY) > deadZone)
-            transform.Rotate(100 * Mathf.Sign(camY) * Time.deltaTime, 0, 0); //Pass in the smooth rotation component to the camera's rotation
-        //{
-        //    transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 0, 0);
-        //    transform.Rotate(1 * Mathf.Sign(camY), 0, 0);
-        //}
+            xRotation = 100 * Mathf.Sign(camY) * Time.deltaTime;
+
+        transform.Rotate(xRotation, yRotation, 0);
+
+        //Clamp vertical space and set z rotation to 0
+        if (transform.eulerAngles.x < 180)
+            transform.rotation = Quaternion.Euler(Mathf.Clamp(transform.eulerAngles.x, 0, 20), transform.eulerAngles.y, 0);
+        else
+            transform.rotation = Quaternion.Euler(Mathf.Clamp(transform.eulerAngles.x, 340, 360), transform.eulerAngles.y, 0);
     }
     #endregion
 }
