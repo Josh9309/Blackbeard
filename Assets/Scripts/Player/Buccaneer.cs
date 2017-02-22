@@ -22,7 +22,6 @@ public class Buccaneer : BasePirate {
     //sword attributes
     Sword buccaneerSword;
     //private bool attack1End;
-    private bool attacking = false; //TODO: remove this after updating
     //private bool attacking2 = false;
     #endregion
 
@@ -32,11 +31,11 @@ public class Buccaneer : BasePirate {
         get { return attackDam; }
     }
 
-    public bool Attacking
+    public AttackState AttState
     {
         get
         {
-            return attacking;
+            return attState;
         }
     }
     #endregion

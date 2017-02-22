@@ -54,7 +54,8 @@ public class Parrot : MonoBehaviour
     private void Update() 
     {
         //Let the parrot take off again
-        Takeoff();
+        if (!active)
+            Takeoff();
     }
 
     //Physics updates
@@ -87,9 +88,9 @@ public class Parrot : MonoBehaviour
             //Get scripts from the pirate
             tPP = coll.GetComponent<BasePirate>();
 
-            if (coll.GetComponent<Buccaneer>() != null)
+            if (tPP is Buccaneer)
                 buccScript = coll.GetComponent<Buccaneer>();
-            else if (coll.GetComponent<TreasureHunter>() != null)
+            else if (tPP is TreasureHunter)
                 treasureHScript = coll.GetComponent<TreasureHunter>();
 
             //Enable the pirate
@@ -222,7 +223,7 @@ public class Parrot : MonoBehaviour
         bool doingRelevantAction = false;
 
         //If either pirate type is perfoming an action
-        if (buccScript != null && buccScript.Attacking)
+        if (buccScript != null && buccScript.AttState != Buccaneer.AttackState.Idle)
             doingRelevantAction = true;
         else if (treasureHScript != null && treasureHScript.PickingUp)
             doingRelevantAction = true;
@@ -245,6 +246,7 @@ public class Parrot : MonoBehaviour
             tPP.PirateActive = false;
             buccScript = null;
             treasureHScript = null;
+            tPP = null;
 
             StartCoroutine(ChangeTimer());
         }
