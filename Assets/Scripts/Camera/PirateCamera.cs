@@ -9,11 +9,16 @@ public class PirateCamera : MonoBehaviour
     private Transform target;
     private Camera parrotCam, pirateCam;
     [SerializeField] private float smoothFollow = .15f;
-    //[SerializeField] private Vector3 distanceFromTarget = new Vector3(0, 0, 0);
-    //[SerializeField] private float tilt = 10; //Angle of the camera looking at the target
-    private float rotationSpeed = 0;
-    //private Vector3 goalPosition; //The position the camera would like to move to
-    //TestPiratePlayer targetScript; //To get the rotation of the target
+    private float rotationSpeed = 100;
+    private bool reset;
+
+    //Parrot
+    int parrotMinAngle = 320;
+    int parrotMaxAngle = 20;
+
+    //Pirate
+    int pirateMinAngle = 330;
+    int pirateMaxAngle = 10;
 
     //Input attributes
     private float deadZone = 0.1f;
@@ -32,8 +37,8 @@ public class PirateCamera : MonoBehaviour
     #region InBuildMethods
     void Start() //Use this for initialization
     {
-        //goalPosition = Vector3.zero;
         target = FindObjectOfType<Parrot>().gameObject.transform; //Target the parrot from the start
+        reset = false; //Camera is not resetting
 
         //Get and assign all cameras
         Camera []camList = GetComponentsInChildren<Camera>();     
@@ -44,9 +49,6 @@ public class PirateCamera : MonoBehaviour
             else if (c.name.Contains("Pirate"))
                 pirateCam = c;
         }
-
-        //transform.Rotate(tilt, transform.rotation.y, transform.rotation.z);
-        //targetScript = target.GetComponent<TestPiratePlayer>(); //Get the target script from the target
     }
 
     void LateUpdate() //LateUpdate occurs after all other updates
@@ -68,34 +70,31 @@ public class PirateCamera : MonoBehaviour
 
         transform.position = target.transform.position; //Adjust the camera
 
+        //Right stick camera movement and reset
         if (Mathf.Abs(camXInput) > deadZone || Mathf.Abs(camYInput) > deadZone)
             ManualCamera(camXInput, camYInput);
-        //else if (target.rBody.velocity > 3)
-        //{
-        //    //FollowTarget();
-        //    LookAtTarget();
-        //}
+        else if (Input.GetButton("R3"))
+            reset = true;
+
+        ResetCamera(reset);
     }
     #endregion
 
     #region Methods
-    ///// <summary>
-    ///// Calculate the point behind the target from which to follow them
-    ///// </summary>
-    //void FollowTarget()
-    //{
-    //    goalPosition = targetScript.TargetRotation * Vector3.zero; //Rotate the goal position
-    //    goalPosition += target.position; //Make the rotated goal position relative to the target
-    //    transform.position = goalPosition; //Set the position of the camera
-    //}
-
     /// <summary>
-    /// Look at the target
+    /// Look at the starget
     /// </summary>
-    void LookAtTarget()
+    void ResetCamera(bool buttonPressed)
     {
-        float eulerYAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target.eulerAngles.y, ref rotationSpeed, smoothFollow); //Smooth lerping for the camera
-        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, eulerYAngle, 0); //Pass in the smooth rotation component to the camera's rotation
+        //If the camera has to be reset and isn't yet in the correct position
+        if (buttonPressed && (Mathf.Abs(transform.eulerAngles.y) - Mathf.Abs(target.eulerAngles.y) >= 1 || transform.eulerAngles.x != target.eulerAngles.x))
+        {
+            float eulerYAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target.eulerAngles.y, ref rotationSpeed, smoothFollow); //Smooth lerping for the camera
+
+            transform.rotation = Quaternion.Euler(target.eulerAngles.x, eulerYAngle, 0); //Pass in the smooth rotation component to the camera's rotation
+        }
+        else
+            reset = false;
     }
 
     /// <summary>
@@ -115,11 +114,22 @@ public class PirateCamera : MonoBehaviour
 
         transform.Rotate(xRotation, yRotation, 0);
 
-        //Clamp vertical space and set z rotation to 0
-        if (transform.eulerAngles.x < 180)
-            transform.rotation = Quaternion.Euler(Mathf.Clamp(transform.eulerAngles.x, 0, 20), transform.eulerAngles.y, 0);
-        else
-            transform.rotation = Quaternion.Euler(Mathf.Clamp(transform.eulerAngles.x, 340, 360), transform.eulerAngles.y, 0);
+        if (parrotCam.enabled)
+        {
+            //Clamp vertical space and set z rotation to 0
+            if (transform.eulerAngles.x < 180)
+                transform.rotation = Quaternion.Euler(Mathf.Clamp(transform.eulerAngles.x, 0, parrotMaxAngle), transform.eulerAngles.y, 0);
+            else
+                transform.rotation = Quaternion.Euler(Mathf.Clamp(transform.eulerAngles.x, parrotMinAngle, 360), transform.eulerAngles.y, 0);
+        }
+        else if (pirateCam.enabled)
+        {
+            //Clamp vertical space and set z rotation to 0
+            if (transform.eulerAngles.x < 180)
+                transform.rotation = Quaternion.Euler(Mathf.Clamp(transform.eulerAngles.x, 0, pirateMaxAngle), transform.eulerAngles.y, 0);
+            else
+                transform.rotation = Quaternion.Euler(Mathf.Clamp(transform.eulerAngles.x, pirateMinAngle, 360), transform.eulerAngles.y, 0);
+        }
     }
     #endregion
 }

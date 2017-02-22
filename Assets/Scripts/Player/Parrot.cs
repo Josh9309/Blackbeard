@@ -11,19 +11,15 @@ public class Parrot : MonoBehaviour
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
     private float currentHeight;
-    //If the parrot is active
-    private bool active;
-    //The pirate
-    BasePirate tPP;
+    private bool active; //If the parrot is active
+    BasePirate basePirateScript; //The pirate
     Buccaneer buccScript; //Buccaneer script
     TreasureHunter treasureHScript; //Treasure hunter script
-    //If the parrot can land or take off again
-    private bool canChangeCharacter; 
+    private bool canChangeCharacter; //If the parrot can land or take off again
 
     private Rigidbody rBody;
     private bool rotateParrot = false;
-    //parrot euler angle rotation
-    Vector3 parrotRotation = new Vector3(); 
+    Vector3 parrotRotation = new Vector3(); //parrot euler angle rotation
 
     //input stuff
     private float inputDelay = 0.3f;
@@ -65,13 +61,12 @@ public class Parrot : MonoBehaviour
         {
             ParrotMove();
         }
-        //Stop the parrot if it is not active
-        else if (!active) 
+        else if (!active) //Stop the parrot if it is not active
         {
             //Make sure the parrot stays with the pirate
             rBody.velocity = Vector3.zero;
-            transform.position = new Vector3(tPP.transform.position.x, transform.position.y, tPP.transform.position.z);
-            transform.rotation = tPP.transform.rotation;
+            transform.position = new Vector3(basePirateScript.transform.position.x, transform.position.y, basePirateScript.transform.position.z);
+            transform.rotation = basePirateScript.transform.rotation;
 
             //TODO: make parrot invisable. Best done when rough assets arrive
         }
@@ -86,15 +81,15 @@ public class Parrot : MonoBehaviour
             cam.Target = coll.gameObject.transform;
 
             //Get scripts from the pirate
-            tPP = coll.GetComponent<BasePirate>();
+            basePirateScript = coll.GetComponent<BasePirate>();
 
-            if (tPP is Buccaneer)
+            if (basePirateScript is Buccaneer)
                 buccScript = coll.GetComponent<Buccaneer>();
-            else if (tPP is TreasureHunter)
+            else if (basePirateScript is TreasureHunter)
                 treasureHScript = coll.GetComponent<TreasureHunter>();
 
             //Enable the pirate
-            tPP.PirateActive = true;
+            basePirateScript.PirateActive = true;
             //Disable the parrot
             active = false; 
 
@@ -231,7 +226,7 @@ public class Parrot : MonoBehaviour
         //Taking off from pirate
         //Timer for switching must be completed
         //Pirate must not be jumping, picking up treasure, or attacking
-        if (Input.GetButton("Interact") && !active && canChangeCharacter && tPP.Grounded && !doingRelevantAction) 
+        if (Input.GetButton("Interact") && !active && canChangeCharacter && basePirateScript.Grounded && !doingRelevantAction) 
         {
             //Set the target of the camera
             cam.Target = gameObject.transform;
@@ -239,14 +234,14 @@ public class Parrot : MonoBehaviour
             active = true; 
             
             //TODO: update this with the AI
-            tPP.RBody.velocity = Vector3.zero;
-            tPP.transform.localEulerAngles = Vector3.zero;
+            basePirateScript.RBody.velocity = Vector3.zero;
+            basePirateScript.transform.localEulerAngles = Vector3.zero;
 
             //Disable the pirate scripts
-            tPP.PirateActive = false;
+            basePirateScript.PirateActive = false;
             buccScript = null;
             treasureHScript = null;
-            tPP = null;
+            basePirateScript = null;
 
             StartCoroutine(ChangeTimer());
         }
