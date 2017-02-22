@@ -117,7 +117,6 @@ public class Buccaneer : BasePirate {
     private void SetupAttackAnimationEvent(int attackNum, float canSwitchTime, string animationName)
     {
         AnimationClip attackClip = null;
-        AnimationEvent switchEvent = new AnimationEvent();
         AnimationEvent endEvent = new AnimationEvent();
 
         for(int i =0; i < pirateAnim.runtimeAnimatorController.animationClips.Length; i++)
@@ -134,35 +133,13 @@ public class Buccaneer : BasePirate {
             return;
         }
 
-        //if (attackNum != 3)
-        //{
-        //    switchEvent.intParameter = attackNum;
-        //    switchEvent.time = canSwitchTime;
-        //    switchEvent.functionName = "SetAttackCanSwitch";
-
-        //    attackClip.AddEvent(switchEvent);
-        //}
-
         endEvent.intParameter = attackNum;
+        Debug.Log(attackNum);
         endEvent.time = attackClip.length;
         endEvent.functionName = "ResetAttackClip";
 
         attackClip.AddEvent(endEvent);
     }
-
-    //private void SetAttackCanSwitch(int attackNum)
-    //{
-    //    switch (attackNum)
-    //    {
-    //        case 1:
-    //            canSwitch2 = true;
-    //            break;
-
-    //        case 2:
-    //            canSwitch3 = true;
-    //            break;
-    //    }
-    //} 
 
     private void ResetAttackClip(int attackNum)
     {
@@ -173,6 +150,7 @@ public class Buccaneer : BasePirate {
                 {
                     attState = AttackState.Idle;
                 }
+                canQueue2 = false;
                 break;
 
             case 2:
@@ -181,11 +159,13 @@ public class Buccaneer : BasePirate {
                     attState = AttackState.Idle;
                 }
                 canQueue2 = false;
+                canQueue3 = false;
                 break;
 
             case 3:
                 attState = AttackState.Idle;
                 canQueue3 = false;
+                Debug.Log("attatack 3jkdaf");
                 break;
         }
     }
