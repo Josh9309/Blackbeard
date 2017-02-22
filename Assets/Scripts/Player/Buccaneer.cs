@@ -12,17 +12,13 @@ public class Buccaneer : BasePirate {
 
     //melee system attributes
     private float canSQTime2 = 0.20f; //can switch queue time for 2nd attack
-    private float canSQTime3 = 0.50f;
-    private bool canQueue2 = false;
-    private bool canQueue3 = false;
-    //private bool canSwitch2 = false;
-    //private bool canSwitch3 = false;
-    private AttackState attState = AttackState.Idle;
+    private float canSQTime3 = 0.50f; //can switch queue time for 3rd attack
+    private bool canQueue2 = false; //can attack 2 Queue
+    private bool canQueue3 = false; //can attack 3 Queue
+    private AttackState attState = AttackState.Idle; //attack State for buccaneer. set to idle to begin
 
     //sword attributes
     Sword buccaneerSword;
-    //private bool attack1End;
-    //private bool attacking2 = false;
     #endregion
 
     #region Properties
@@ -52,9 +48,10 @@ public class Buccaneer : BasePirate {
         buccaneerSword = transform.FindChild("Sword").GetComponent<Sword>();
         buccaneerSword.Pirate = this; //give sword a reference to this pirate.
 
-        SetupAttackAnimationEvent(1, 0.75f, "Sword1");
-        SetupAttackAnimationEvent(2, 0.86f, "Sword2");
-        SetupAttackAnimationEvent(3, 0f, "Sword3");
+        //sets up the animation events for the attack animations
+        SetupAttackAnimationEvent(1, "Sword1");
+        SetupAttackAnimationEvent(2, "Sword2");
+        SetupAttackAnimationEvent(3, "Sword3");
     }
 
     // Update is called once per frame
@@ -62,7 +59,9 @@ public class Buccaneer : BasePirate {
         base.Update();
 
         if (pirateActive) //Does not inherit, still must be active
+        {
             Attack();
+        }
 	}
 
     protected override void FixedUpdate()
@@ -71,6 +70,9 @@ public class Buccaneer : BasePirate {
     }
 
     #region Methods
+    /// <summary>
+    /// This method takes in attack input and will setup the next attack based on what attack state the pirate is in.
+    /// </summary>
     private void Attack()
     {
         if (Input.GetButtonDown("Attack") && canQueue3 && attState == AttackState.Attack2)
@@ -82,20 +84,26 @@ public class Buccaneer : BasePirate {
         else if(Input.GetButtonDown("Attack") && canQueue2 && attState == AttackState.Attack1)
         {
             pirateAnim.SetBool("canAttack2", true);
-            StartCoroutine(CheckAttackInput(3));
+            StartCoroutine(CheckCanSwitch(3));
             Debug.Log("Attack 2");
             attState = AttackState.Attack2;
         }
         else if (Input.GetButtonDown("Attack") && attState == AttackState.Idle)
         {
             pirateAnim.Play("SwordAttack1");
-            StartCoroutine(CheckAttackInput(2));
+            StartCoroutine(CheckCanSwitch(2));
             Debug.Log("Attack 1");
             attState = AttackState.Attack1;
         }
     }
 
-    private IEnumerator CheckAttackInput(int attackNum)
+    /// <summary>
+    /// The CheckCanSwitch methods is coroutine method that will wait for a certain amount based on the attack number and then once that time
+    /// was finish it will set the corresponding canQueue to true.
+    /// </summary>
+    /// <param name="attackNum"></param>
+    /// <returns></returns>
+    private IEnumerator CheckCanSwitch(int attackNum)
     {
         switch (attackNum)
         {
@@ -113,58 +121,70 @@ public class Buccaneer : BasePirate {
         }
     }
 
-    private void SetupAttackAnimationEvent(int attackNum, float canSwitchTime, string animationName)
+    /// <summary>
+    /// Responsible for setting up the animation events for the attack animation.
+    /// </summary>
+    /// <param name="attackNum"></param>
+    /// <param name="animationName"></param>
+    private void SetupAttackAnimationEvent(int attackNum, string animationName)
     {
-        AnimationClip attackClip = null;
-        AnimationEvent endEvent = new AnimationEvent();
+        AnimationClip attackClip = null; //stores the current attack animation to setup
+        AnimationEvent endEvent = new AnimationEvent(); //holds the animation event that will run at the end of current attack animation
 
+        //loops through the buccaneers animator's animation clips and finds the correct animation based off of animation name
         for(int i =0; i < pirateAnim.runtimeAnimatorController.animationClips.Length; i++)
         {
             if(pirateAnim.runtimeAnimatorController.animationClips[i].name == animationName)
             {
-                attackClip = pirateAnim.runtimeAnimatorController.animationClips[i];
+                attackClip = pirateAnim.runtimeAnimatorController.animationClips[i]; //assigns correct animation clip to attack clip
             }
         }
 
+        //ERROR CASE - If no animation clip was found, will throw an error
         if(attackClip == null)
         {
             Debug.LogError("Could not find Attack animation clip " + animationName + " for event setup");
             return;
         }
 
-        endEvent.intParameter = attackNum;
-        Debug.Log(attackNum);
-        endEvent.time = attackClip.length;
-        endEvent.functionName = "ResetAttackClip";
+        endEvent.intParameter = attackNum; //pass in parameters for attack ending animation event method.
+        endEvent.time = attackClip.length; //sets the end Event to trigger at end of attack animation time length
+        endEvent.functionName = "ResetAttackClip"; //set the end Event to run ResetAttackClip when triggered.
 
-        attackClip.AddEvent(endEvent);
+        attackClip.AddEvent(endEvent); //adds end event to the animation clip
     }
 
+    /// <summary>
+    /// Reset attack clip will reset melee system states based of which animation is ending
+    /// </summary>
+    /// <param name="attackNum"></param>
     private void ResetAttackClip(int attackNum)
     {
+        //used to deterine which attack is ending and needs to be reset
         switch (attackNum)
         {
-            case 1:
-                if(attState == AttackState.Attack1)
+            case 1: //Attack 1 Reset
+                if(attState == AttackState.Attack1) //if buccaneer is still in attack state 1
                 {
-                    attState = AttackState.Idle;
+                    attState = AttackState.Idle; //reset attack state to idle
                 }
-                canQueue2 = false;
+                canQueue2 = false; //sets can queue for attack 2 to false
                 break;
 
-            case 2:
-               if(attState == AttackState.Attack2)
+            case 2: //Attack 2 Reset
+                if(attState == AttackState.Attack2) //if buccaneer is still in attack state 2
                 {
-                    attState = AttackState.Idle;
+                    attState = AttackState.Idle; //reset attack state 2 to idle
                 }
+
+                //set both can queues for attack 2 and 3 to false
                 canQueue2 = false;
                 canQueue3 = false;
                 break;
 
-            case 3:
-                attState = AttackState.Idle;
-                canQueue3 = false;
-                Debug.Log("attatack 3jkdaf");
+            case 3: //Attack 3 Reset
+                attState = AttackState.Idle; //set attack state to idle
+                canQueue3 = false; //set can queue for attack 3 to false;
                 break;
         }
     }
