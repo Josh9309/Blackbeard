@@ -19,11 +19,13 @@ public abstract class NPC : MonoBehaviour {
     protected Rigidbody rb;
     protected NavMeshAgent agent;
     protected FSM fsm;
-    // SM
+    protected GameObject squad;
+    protected Animator anim;
 
     // states
     protected FSM.State patrol;
     protected FSM.State combat;
+    protected FSM.State returnTreasure;
 
     // identifications
     protected PirateType type;
@@ -34,7 +36,6 @@ public abstract class NPC : MonoBehaviour {
 
     // for seeking using NavMeshAgent
     protected GameObject target;
-    protected GameObject squad;
 
     // gameplay
     [SerializeField]
@@ -46,6 +47,7 @@ public abstract class NPC : MonoBehaviour {
     public Team getTeam { get { return team; } }
 
     // getters and setters to modify states through the SquadManager
+    public GameObject Squad { set { squad = value; } get { return squad; } }
     #endregion
 
     // Use this for initialization
@@ -53,7 +55,12 @@ public abstract class NPC : MonoBehaviour {
         // assign components
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-        fsm = new FSM();
+        this.GetOrAddComponent<FSM>();
+        fsm = GetComponent<FSM>();
+        anim = GetComponent<Animator>();
+
+        // for now, disable animator if this script runs, it breaks movement
+        anim.enabled = false;
 
         // assign states
         patrol = Patrol;
@@ -105,6 +112,8 @@ public abstract class NPC : MonoBehaviour {
     protected abstract void Combat();
 
     protected abstract void Patrol();
+
+    protected abstract void ReturnTreasure();
 
     #endregion
 }

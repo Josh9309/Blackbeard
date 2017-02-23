@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,9 @@ using UnityEngine;
 public class HunterNPC : NPC {
 
     #region Attributes
+    // destination for taking the treasure to
+    [SerializeField]
+    GameObject treasureDestination;
     #endregion
 
     // Use this for initialization
@@ -37,11 +41,27 @@ public class HunterNPC : NPC {
     }
 
     /// <summary>
-    /// For the Treasure Hunter pirate this will seek the treasure
+    /// For the Treasure Hunter pirate this will seek the treasure, if he reaches
+    /// the treasure, this will initiate the return treasure state
     /// </summary>
     protected override void Patrol()
     {
         Seek();
+    }
+
+    /// <summary>
+    /// This method will be called when the treasure is within the squad's radius, triggering
+    /// this agent to continue to seek the treasure and play its pickup animation
+    /// NOTE: for now, the animation will not play
+    /// </summary>
+    private void PickupTreasure()
+    {
+        Seek();
+    }
+
+    protected override void ReturnTreasure()
+    {
+        
     }
     #endregion
 }
