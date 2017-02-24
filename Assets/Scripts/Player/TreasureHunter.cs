@@ -5,8 +5,9 @@ using UnityEngine;
 public class TreasureHunter : BasePirate
 {
     #region Attributes
-    private bool pickingUp; //If the treasure pirate is currently picking anything up
+    private bool canPickup, pickingUp; //If the treasure pirate is currently picking anything up
     private GameObject treasure;
+    private bool hasTreasure;
     #endregion
     
     #region Properties
@@ -31,12 +32,19 @@ public class TreasureHunter : BasePirate
             if (go.tag == "Treasure")
                 treasure = go;
         }
+
+        canPickup = false;
+        pickingUp = false;
+        hasTreasure = false;
 	}
 
     protected override void Update() //Update is called once per frame
     {
         base.Update();
-	}
+
+        if (pirateActive)
+            Pickup(canPickup);
+    }
 
     protected override void FixedUpdate() //Physics updates
     {
@@ -45,8 +53,14 @@ public class TreasureHunter : BasePirate
 
     private void OnTriggerStay(Collider coll)
     {
-        if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure and tries to pick it up
-            Pickup(); //Check for pickup
+        if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure
+            canPickup = true;
+    }
+
+    private void OnTriggerExit(Collider coll)
+    {
+        if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure
+            canPickup = false;
     }
     #endregion
 
@@ -60,18 +74,47 @@ public class TreasureHunter : BasePirate
     /// <summary>
     /// Let the treasure pirate pick up treasure
     /// </summary>
-    private void Pickup()
+    private void Pickup(bool yesWeCan)
     {
-        if (Input.GetButton("Attack"))
+        //Start pickup
+        if (Input.GetButton("Attack") && !pickingUp)
         {
-            pirateAnim.Play("PickupTreasure1");
-            pirateAnim.SetTime(0); //Reset the animation timer
+            pirateAnim.Play("Pickup1");
+            pickingUp = true;
         }
 
-        if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("PickupTreasure2")) //If the animation for picking up an object is halfway played
+        //Picking up treasure
+        if (!hasTreasure && yesWeCan)
         {
-            treasure.transform.position = gameObject.transform.position;
+            if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Pickup2")) //If the animation for picking up an object is halfway played
+            {
+                treasure.transform.parent = gameObject.transform;
+                treasure.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 3, gameObject.transform.position.z + 2);
+            }
         }
+        else if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && pickingUp) //If the object is being picked up
+        {
+            pickingUp = false;
+        }
+
+        //Putting down treasure
+        if (hasTreasure && !yesWeCan)
+        {
+            if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Pickup2")) //If the animation for picking up an object is halfway played
+            {
+                treasure.transform.parent = null;
+            }
+        }
+        else if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && pickingUp) //If the object is being picked up
+        {
+            pickingUp = false;
+        }
+
+        //Set whether the treasure is picked up or not
+        if (!pickingUp && treasure.transform.parent != null)
+            hasTreasure = true;
+        else if (!pickingUp && treasure.transform.parent == null)
+            hasTreasure = false;
     }
     #endregion
 }
