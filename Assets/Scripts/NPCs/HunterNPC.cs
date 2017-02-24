@@ -61,7 +61,8 @@ public class HunterNPC : NPC {
 
     protected override void ReturnTreasure()
     {
-        
+        //target = treasureDestination;
+        Seek();
     }
     #endregion
 }

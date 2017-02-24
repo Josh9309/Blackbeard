@@ -46,8 +46,16 @@ public abstract class NPC : MonoBehaviour {
     // use team accessor to return a string representing NPC's team
     public Team getTeam { get { return team; } }
 
+    // state accessors for allowing the SquadManager to manage NPC states
+    public FSM.State NPCPatrol { get { return patrol; } }
+    public FSM.State NPCCombat { get { return combat; } }
+    public FSM.State NPCReturnTreasure { get { return returnTreasure; } }
+
     // getters and setters to modify states through the SquadManager
     public GameObject Squad { set { squad = value; } get { return squad; } }
+
+    // for allowing SquadManager to set targets
+    public GameObject Target { set { target = value; } get { return target; } }
     #endregion
 
     // Use this for initialization
@@ -55,7 +63,6 @@ public abstract class NPC : MonoBehaviour {
         // assign components
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-        this.GetOrAddComponent<FSM>();
         fsm = GetComponent<FSM>();
         anim = GetComponent<Animator>();
 
@@ -70,7 +77,7 @@ public abstract class NPC : MonoBehaviour {
         // will pull from SM
 
         // everything starts in a patrol state
-        fsm.SetState(patrol);
+        //fsm.SetState(patrol);
 
         // for target initialization
         target = null;
@@ -78,7 +85,7 @@ public abstract class NPC : MonoBehaviour {
 	
 	// Update is called once per frame
 	protected virtual void Update () {
-        fsm.Update();
+        fsm.UpdateState();
 	}
 
     protected virtual void FixedUpdate()

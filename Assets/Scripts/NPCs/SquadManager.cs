@@ -11,6 +11,16 @@ using UnityEngine;
 public class SquadManager : MonoBehaviour {
 
     #region Attributes
+    // int values for parsing through statess
+    private const int PATROL_ID = 0;
+    private const int COMBAT_ID = 1;
+    private const int PICKUP_TREASURE_ID = 2;
+    private const int RETURN_TREASURE_ID = 3;
+
+    // the way that unity intanstiates objects is stupid so this variable is necessary
+    // for making sure an initial state is assigned to the squad
+    bool firstRun = true;
+
     // the treasure
     [SerializeField]
     private GameObject treasure;
@@ -25,12 +35,15 @@ public class SquadManager : MonoBehaviour {
     private List<GameObject> pirates;
     [SerializeField]
     private int maxPirates;
+    private GameObject treasureHunter;
 
     // components and prefabs
     [SerializeField]
     private GameObject treasureNPC;
     [SerializeField]
     private GameObject meleeNPC;
+    [SerializeField]
+    private GameObject treasureDestination;
     private FSM fsm;
 
     // radii for spawning, engagement, etc..
@@ -46,7 +59,7 @@ public class SquadManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         // initialize variables
-        fsm = this.GetOrAddComponent<FSM>();
+        fsm = GetComponent<FSM>();
         pirates = new List<GameObject>();
 
         // initialize states
@@ -55,25 +68,30 @@ public class SquadManager : MonoBehaviour {
         pickupTreasure = PickupTreasure;
         returnTreasure = ReturnTreasure;
 
-        // test treasure pirate spawns
-        // NOTE: in future versions each squad should have one treasure pirate,
-        // this is simply for testing purposes
+        // spawn a single treasure Hunter
+        treasureHunter = Instantiate(treasureNPC, transform.position, Quaternion.identity);
+        pirates.Add(treasureHunter);
+
+        // spawn melee pirates
         for (int i = 0; i < maxPirates; i++)
         {
             //Vector3 pos = (transform.position + Quaternion.AngleAxis(spawnAngle, transform.up) * transform.forward) * 10;
 
             Vector3 pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius), transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius));
 
-            pirates.Add(GameObject.Instantiate(treasureNPC, pos, Quaternion.identity));
+            pirates.Add(GameObject.Instantiate(meleeNPC, pos, Quaternion.identity));
 
-        }       
-	}
+        }
+
+        // set initial state
+        fsm.SetState(patrol);
+    }
 	
 	// Update is called once per frame
 	void Update () {
         CalcCentroid();
 
-        //fsm.Update();
+        fsm.UpdateState();
 	}
 
     #region Helper Methods
@@ -104,6 +122,36 @@ public class SquadManager : MonoBehaviour {
 
         transform.position = new Vector3(totalX / pirates.Count, totalY, totalZ / pirates.Count);   
     }
+
+    /// <summary>
+    /// For use by SquadManager only, this will set the state of the entire squad
+    /// </summary>
+    /// <param name="stateID">constant int identifier of the state</param>
+    /// <param name="squad">list of squad members</param>
+    public void SetSquadState(int stateID)
+    {
+        for (int i = 0; i < pirates.Count; i++)
+        {
+            FSM pirateFsm = pirates[i].GetComponent<FSM>();
+            NPC npc = pirates[i].GetComponent<NPC>();
+
+            switch(stateID)
+            {
+                case PATROL_ID:
+                    pirateFsm.SetState(npc.NPCPatrol);
+                    break;
+                case COMBAT_ID:
+                    pirateFsm.SetState(npc.NPCCombat);
+                    break;
+                case RETURN_TREASURE_ID:
+                    pirateFsm.SetState(npc.NPCReturnTreasure);
+                    break;
+                default:
+                    Debug.Log("State ID invalid");
+                    break;
+            }
+        }
+    }
     #endregion
 
     // All transitions are handled by the state PRIOR to the transistion
@@ -120,9 +168,23 @@ public class SquadManager : MonoBehaviour {
     /// </summary>
     private void Patrol()
     {
+        if (firstRun == true)
+        {
+            SetSquadState(PATROL_ID);
+            firstRun = false;
+        }
 
+        if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 5)
+        {
+            fsm.SetState(returnTreasure);
+            treasureHunter.GetComponent<HunterNPC>().Target = treasureDestination;
+            SetSquadState(RETURN_TREASURE_ID);
+        }
     }
 
+    /// <summary>
+    /// Useless for now
+    /// </summary>
     private void PickupTreasure()
     {
 
@@ -130,7 +192,10 @@ public class SquadManager : MonoBehaviour {
 
     private void ReturnTreasure()
     {
-
+        if (CalcDistance(treasureHunter.transform.position, treasureDestination.transform.position).magnitude < 1)
+        {
+            Debug.Log("GAME WON");
+        }
     }
     #endregion
 }

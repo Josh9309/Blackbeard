@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// This class is my generic FSM implementation, this is done so that
-/// we can reduce repetition
+/// This class is my generic FSM implementation, this is done so that we can reduce repetition
 /// </summary>
 public class FSM : MonoBehaviour
 {
+
+    #region Attributes
     // declare a delegate to represent a state in the machine
     public delegate void State();
     private State currentState;
+    #endregion
 
-    // Update is called once per frame
-    public void Update()
+    /// <summary>
+    /// This method is NOT called every frame in this class, rather it is called in the 
+    /// update method of an NPC or squadManager class
+    /// </summary>
+    public void UpdateState()
     {
         if (currentState != null)
         {
@@ -32,20 +37,6 @@ public class FSM : MonoBehaviour
     public void SetState(State newState)
     {
         currentState = newState;
-    }
-
-    /// <summary>
-    /// For use by SquadManager only, this will set the state of the entire squad
-    /// </summary>
-    /// <param name="newState">delegate to new state method</param>
-    /// <param name="squad">list of squad members</param>
-    public void SetSquadState(State newState, List<GameObject> squad)
-    {
-        for (int i = 0; i < squad.Count; i++)
-        {
-            FSM pirateFsm = squad[i].GetComponent<FSM>();
-            pirateFsm.SetState(newState);
-        }
     }
 }
 
