@@ -37,6 +37,7 @@ public class HunterNPC : NPC {
 	// Update is called once per frame
 	protected override void Update () {
         base.Update();
+
 	}
 
     protected override void FixedUpdate()
@@ -58,6 +59,8 @@ public class HunterNPC : NPC {
     protected override void Patrol()
     {
         Seek();
+
+        agent.speed = 5f;
     }
 
     /// <summary>
@@ -87,6 +90,8 @@ public class HunterNPC : NPC {
     {
         //target = treasureDestination;
         Seek();
+
+        agent.speed = 3f;
     }
     #endregion
 }
