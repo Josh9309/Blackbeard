@@ -78,14 +78,14 @@ public class TreasureHunter : BasePirate
     private void Pickup(bool yesWeCan)
     {
         //Start pickup
-        if (Input.GetButton("Attack") && !pickingUp)
+        if (Input.GetButton("Attack") && !pickingUp && yesWeCan)
         {
             pirateAnim.Play("Pickup1");
             pickingUp = true;
         }
 
         //Picking up treasure
-        if (!hasTreasure)
+        if (!hasTreasure && yesWeCan)
         {
             if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Pickup2")) //If the animation for picking up an object is halfway played
             {
@@ -109,6 +109,7 @@ public class TreasureHunter : BasePirate
         if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && pickingUp) //If the object is being picked up
         {
             pickingUp = false;
+            canPickup = false;
         }
 
         //Set whether the treasure is picked up or not
