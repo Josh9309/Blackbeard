@@ -71,7 +71,7 @@ public abstract class NPC : MonoBehaviour {
         anim = GetComponent<Animator>();
 
         // for now, disable animator if this script runs, it breaks movement
-        anim.enabled = false;
+        //anim.enabled = false;
 
         // assign states
         patrol = Patrol;
