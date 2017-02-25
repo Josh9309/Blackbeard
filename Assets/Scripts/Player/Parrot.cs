@@ -16,6 +16,7 @@ public class Parrot : MonoBehaviour
     Buccaneer buccScript; //Buccaneer script
     TreasureHunter treasureHScript; //Treasure hunter script
     private bool canChangeCharacter; //If the parrot can land or take off again
+    private NPC npcScript;
 
     private Rigidbody rBody;
     private bool rotateParrot = false;
@@ -82,6 +83,8 @@ public class Parrot : MonoBehaviour
 
             //Get scripts from the pirate
             basePirateScript = coll.GetComponent<BasePirate>();
+            npcScript = coll.GetComponent<NPC>();
+            npcScript.Active = false;
 
             if (basePirateScript is Buccaneer)
                 buccScript = coll.GetComponent<Buccaneer>();
@@ -242,6 +245,9 @@ public class Parrot : MonoBehaviour
             buccScript = null;
             treasureHScript = null;
             basePirateScript = null;
+
+            npcScript.Active = true;
+            npcScript = null;
 
             StartCoroutine(ChangeTimer());
         }

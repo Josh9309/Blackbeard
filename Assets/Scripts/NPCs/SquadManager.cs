@@ -174,7 +174,7 @@ public class SquadManager : MonoBehaviour {
             firstRun = false;
         }
 
-        if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 5)
+        if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 15)
         {
             fsm.SetState(returnTreasure);
             treasureHunter.GetComponent<HunterNPC>().Target = treasureDestination;
@@ -192,7 +192,7 @@ public class SquadManager : MonoBehaviour {
 
     private void ReturnTreasure()
     {
-        if (CalcDistance(treasureHunter.transform.position, treasureDestination.transform.position).magnitude < 1)
+        if (CalcDistance(treasureHunter.transform.position, treasureDestination.transform.position).magnitude <= 10)
         {
             Debug.Log("GAME WON");
         }

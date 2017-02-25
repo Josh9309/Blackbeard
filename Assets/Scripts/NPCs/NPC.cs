@@ -26,6 +26,7 @@ public abstract class NPC : MonoBehaviour {
     protected FSM.State patrol;
     protected FSM.State combat;
     protected FSM.State returnTreasure;
+    protected bool active = true;
 
     // identifications
     protected PirateType type;
@@ -51,6 +52,9 @@ public abstract class NPC : MonoBehaviour {
     public FSM.State NPCCombat { get { return combat; } }
     public FSM.State NPCReturnTreasure { get { return returnTreasure; } }
 
+    // for player to change the state
+    public bool Active { set { active = value; } get { return active; } }
+
     // getters and setters to modify states through the SquadManager
     public GameObject Squad { set { squad = value; } get { return squad; } }
 
@@ -72,6 +76,7 @@ public abstract class NPC : MonoBehaviour {
         // assign states
         patrol = Patrol;
         combat = Combat;
+        returnTreasure = ReturnTreasure;
 
         // assign team based on tag
         // will pull from SM
@@ -85,7 +90,14 @@ public abstract class NPC : MonoBehaviour {
 	
 	// Update is called once per frame
 	protected virtual void Update () {
-        fsm.UpdateState();
+        if (active)
+        {
+            fsm.UpdateState();
+        }
+        else
+        {
+            agent.enabled = false;
+        }
 	}
 
     protected virtual void FixedUpdate()
