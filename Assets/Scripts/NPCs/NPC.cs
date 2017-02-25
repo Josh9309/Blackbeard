@@ -92,11 +92,14 @@ public abstract class NPC : MonoBehaviour {
 	protected virtual void Update () {
         if (active)
         {
+            if (!agent.enabled)
+                agent.enabled = true;
             fsm.UpdateState();
         }
         else
         {
-            agent.enabled = false;
+            if (agent.enabled)
+                agent.enabled = false;
         }
 	}
 

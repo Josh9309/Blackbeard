@@ -106,7 +106,7 @@ public class PirateCamera : MonoBehaviour
 
         //Horizontal camera rotation
         if (Mathf.Abs(camX) > deadZone)
-            yRotation = 100 * -Mathf.Sign(camX) * Time.deltaTime;
+            yRotation = 100 * Mathf.Sign(camX) * Time.deltaTime;
 
         //Verical camera movement
         if (Mathf.Abs(camY) > deadZone)
