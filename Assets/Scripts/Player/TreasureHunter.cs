@@ -27,18 +27,10 @@ public class TreasureHunter : BasePirate
     {
         base.Start();
 
-        //Get the treasure gameobject
-        GameObject[] allGO = FindObjectsOfType<GameObject>();
-        foreach (GameObject go in allGO)
-        {
-            if (go.tag == "Treasure")
-            {
-                treasure = go;
-                treasureRB = treasure.GetComponent<Rigidbody>();
-            }
-            else if (go.name == "TreasureSlot")
-                treasureSlot = go.transform;
-        }
+        treasure = GameObject.FindGameObjectWithTag("Treasure");
+        treasureRB = treasure.GetComponent<Rigidbody>();
+
+        treasureSlot = GameObject.FindGameObjectWithTag("Slot").transform;
 
         canPickup = false;
         pickingUp = false;
