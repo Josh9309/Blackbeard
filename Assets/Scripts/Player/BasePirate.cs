@@ -4,16 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-//[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(Animator))]
-public abstract class BasePirate: MonoBehaviour {
+
+public abstract class BasePirate: MonoBehaviour
+{
     #region Attributes
-    //public bool active = false;
+    public enum PirateType { BUCCANEER, HUNTER };
 
     //pirate Stats
     [SerializeField] protected int health = 25;
     protected int maxHealth;
     protected float speed = 5.0f;
+    [SerializeField] protected PirateType pirate;
+    protected bool pirateActive; //The pirate will only recieve input if it is active
 
     //pirate animation attributes
     protected Animator pirateAnim;
@@ -29,7 +32,7 @@ public abstract class BasePirate: MonoBehaviour {
     private float turnAmount;
     private float forwardAmount;
     protected bool grounded;
-    private bool jump;
+    private bool isJumping;
     
     //input attributes
     [SerializeField] protected float inputDelay = 0.3f;
@@ -58,10 +61,37 @@ public abstract class BasePirate: MonoBehaviour {
             rBody = value;
         }
     }
+
+    public PirateType Pirate
+    {
+        get { return pirate; }
+    }
+
+    public bool PirateActive
+    {
+        get
+        {
+            return pirateActive;
+        }
+        set
+        {
+            pirateActive = value;
+        }
+    }
+
+    public bool Grounded
+    {
+        get
+        {
+            return grounded;
+        }
+    }
     #endregion
 
+    #region InBuiltMethods
     // Use this for initialization
-    protected virtual void Start () {
+    protected virtual void Start()
+    {
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
 
@@ -72,32 +102,29 @@ public abstract class BasePirate: MonoBehaviour {
             if (c.name.Contains("Pirate"))
                 gameCamera = c.transform;
         }
-        //if(Camera.main != null) //if there is a main camera
-        //{
-        //    //get the transform of the main camera
-        //    gameCamera = Camera.main.transform;
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("PiratePlayer needs a 3rd person camera to move relative to camera. Tag the camera \"MainCamera\"", gameObject);
-        //}
-
         maxHealth = health;
+
+        pirateActive = false;
     }
 	
 	// Update is called once per frame
     protected virtual void Update()
     {
-            if (!jump && grounded)
-            {
-                jump = Input.GetButtonDown("Jump");
-            }
+        if (!isJumping && grounded && pirateActive)
+        {
+            isJumping = Input.GetButtonDown("Jump");
+        }
     }
 
-	protected virtual void FixedUpdate () {
+	protected virtual void FixedUpdate ()
+    {
+        if (pirateActive)
+        {
             GetMovementInput();
             PirateMove();
+        }
 	}
+    #endregion
 
     #region Methods
     private void GetMovementInput()
@@ -105,7 +132,15 @@ public abstract class BasePirate: MonoBehaviour {
         //Get inputs for Pirate movement
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
-        
+
+        if (Mathf.Abs(verticalInput) > inputDelay || Math.Abs(horizontalInput) > inputDelay)
+        {
+            pirateAnim.SetBool("IsMoving", true);
+        }
+        else
+        {
+            pirateAnim.SetBool("IsMoving", false);
+        }
 
         //calculate player movement direction to pass to pirate move
         if(gameCamera != null)
@@ -139,8 +174,7 @@ public abstract class BasePirate: MonoBehaviour {
         forwardAmount = movement.z;
 
         ApplyExtraTurnRotation();
-
-        
+ 
         //determine which movement method to use depending on whether pirate is grounded or not
         if (grounded)
         {
@@ -158,11 +192,13 @@ public abstract class BasePirate: MonoBehaviour {
 
     private void Jump()
     {
-        if(grounded && jump)
+        if(grounded && isJumping)
         {
+            pirateAnim.Play("Jump");
             rBody.velocity = new Vector3(rBody.velocity.x, jumpForce, rBody.velocity.z);
             grounded = false;
-            jump = false;
+            pirateAnim.SetBool("Grounded", false);
+            isJumping = false;
         }
     }
 
@@ -180,20 +216,20 @@ public abstract class BasePirate: MonoBehaviour {
         //VISUALIZE GROUND CHECK WHEN IN UNITY EDITOR   
         Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * groundedDist),Color.magenta);
 #endif
-
         //0.1f is used to offest the raycast from the inside of the pirate model
         //The pirate transform should be at base of the pirate
         if(Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist)) //if raycast hits something
         {
             groundPlaneNormal = rayHit.normal; //set the ground plan normal to the raycast hit normal
             grounded = true; //set the pirate to grounded
+            pirateAnim.SetBool("Grounded", true);
         }
         else //raycast did not hit ground
         {
             grounded = false;
+            pirateAnim.SetBool("Grounded", false);
             groundPlaneNormal = Vector3.up;
         }
-
     }
 
     /// <summary>
