@@ -90,8 +90,11 @@ public class TreasureHunter : BasePirate
             if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Pickup2")) //If the animation for picking up an object is halfway played
             {
                 treasureRB.useGravity = false;
+
+                //Set the treasure for when it is picked up
                 treasure.transform.parent = treasureSlot;
                 treasure.transform.localPosition = Vector3.zero;
+                treasure.transform.rotation = treasureSlot.transform.rotation;
             }
         }
 
@@ -109,14 +112,19 @@ public class TreasureHunter : BasePirate
         if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && pickingUp) //If the object is being picked up
         {
             pickingUp = false;
-            canPickup = false;
         }
 
         //Set whether the treasure is picked up or not
         if (!pickingUp && treasure.transform.parent != null)
+        {
             hasTreasure = true;
+            speed = 3;
+        }
         else if (!pickingUp && treasure.transform.parent == null)
+        {
             hasTreasure = false;
+            speed = 5;
+        }
     }
     #endregion
 }
