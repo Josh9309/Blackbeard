@@ -22,7 +22,7 @@ public class SquadManager : MonoBehaviour {
     bool firstRun = true;
 
     // the treasure
-    [SerializeField]
+    //[SerializeField]
     private GameObject treasure;
 
     // states
@@ -42,7 +42,7 @@ public class SquadManager : MonoBehaviour {
     private GameObject treasureNPC;
     [SerializeField]
     private GameObject meleeNPC;
-    [SerializeField]
+    //[SerializeField]
     private GameObject treasureDestination;
     private FSM fsm;
 
@@ -61,6 +61,8 @@ public class SquadManager : MonoBehaviour {
         // initialize variables
         fsm = GetComponent<FSM>();
         pirates = new List<GameObject>();
+        treasure = GameObject.FindGameObjectWithTag("Treasure");
+        treasureDestination = GameObject.FindGameObjectWithTag("TreasureDestination");
 
         // initialize states
         patrol = Patrol;
@@ -174,8 +176,9 @@ public class SquadManager : MonoBehaviour {
             firstRun = false;
         }
 
-        if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 15)
+        if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 5)
         {
+            
             fsm.SetState(returnTreasure);
             treasureHunter.GetComponent<HunterNPC>().Target = treasureDestination;
             SetSquadState(RETURN_TREASURE_ID);
@@ -192,7 +195,7 @@ public class SquadManager : MonoBehaviour {
 
     private void ReturnTreasure()
     {
-        if (CalcDistance(treasureHunter.transform.position, treasureDestination.transform.position).magnitude <= 10)
+        if (CalcDistance(treasureHunter.transform.position, treasureDestination.transform.position).magnitude <= 5)
         {
             Debug.Log("GAME WON");
         }
