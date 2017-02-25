@@ -145,6 +145,9 @@ public class SquadManager : MonoBehaviour {
                 case COMBAT_ID:
                     pirateFsm.SetState(npc.NPCCombat);
                     break;
+                case PICKUP_TREASURE_ID:
+                    pirateFsm.SetState(npc.NPCPickupTreasure);
+                    break;
                 case RETURN_TREASURE_ID:
                     pirateFsm.SetState(npc.NPCReturnTreasure);
                     break;
@@ -177,11 +180,9 @@ public class SquadManager : MonoBehaviour {
         }
 
         if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 5)
-        {
-            
-            fsm.SetState(returnTreasure);
-            treasureHunter.GetComponent<HunterNPC>().Target = treasureDestination;
-            SetSquadState(RETURN_TREASURE_ID);
+        {            
+            fsm.SetState(pickupTreasure);
+            SetSquadState(PICKUP_TREASURE_ID);
         }
     }
 
@@ -190,7 +191,12 @@ public class SquadManager : MonoBehaviour {
     /// </summary>
     private void PickupTreasure()
     {
-
+        if (treasureHunter.GetComponent<HunterNPC>().HasTreasure)
+        {
+            fsm.SetState(returnTreasure);
+            treasureHunter.GetComponent<HunterNPC>().Target = treasureDestination;
+            SetSquadState(RETURN_TREASURE_ID);
+        }
     }
 
     private void ReturnTreasure()

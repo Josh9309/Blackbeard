@@ -25,6 +25,7 @@ public abstract class NPC : MonoBehaviour {
     // states
     protected FSM.State patrol;
     protected FSM.State combat;
+    protected FSM.State pickupTreasure;
     protected FSM.State returnTreasure;
     protected bool active = true;
 
@@ -51,6 +52,7 @@ public abstract class NPC : MonoBehaviour {
     public FSM.State NPCPatrol { get { return patrol; } }
     public FSM.State NPCCombat { get { return combat; } }
     public FSM.State NPCReturnTreasure { get { return returnTreasure; } }
+    public FSM.State NPCPickupTreasure { get { return pickupTreasure; } }
 
     // for player to change the state
     public bool Active { set { active = value; } get { return active; } }
@@ -77,6 +79,7 @@ public abstract class NPC : MonoBehaviour {
         patrol = Patrol;
         combat = Combat;
         returnTreasure = ReturnTreasure;
+        pickupTreasure = PickupTreasure;
 
         // assign team based on tag
         // will pull from SM
@@ -136,6 +139,8 @@ public abstract class NPC : MonoBehaviour {
     protected abstract void Patrol();
 
     protected abstract void ReturnTreasure();
+
+    protected abstract void PickupTreasure();
 
     #endregion
 }

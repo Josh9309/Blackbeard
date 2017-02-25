@@ -12,13 +12,24 @@ public class HunterNPC : NPC {
     // destination for taking the treasure to
     [SerializeField]
     GameObject treasureDestination;
+
+    // for picking up treasure
+    private Transform treasureSlot;
+    private Rigidbody treasureRB;
+
+    // for checking in SquadManager if the treasure has been picked up
+    bool hasTreasure = false;
     #endregion
+
+    public bool HasTreasure { get { return hasTreasure; } }
 
     // Use this for initialization
     protected override void Start () {
         base.Start();
 
         target = GameObject.FindGameObjectWithTag("Treasure");
+        treasureSlot = GameObject.FindGameObjectWithTag("Slot").transform;
+        treasureRB = target.GetComponent<Rigidbody>();
 
         type = PirateType.HUNTER;
 	}
@@ -52,11 +63,24 @@ public class HunterNPC : NPC {
     /// <summary>
     /// This method will be called when the treasure is within the squad's radius, triggering
     /// this agent to continue to seek the treasure and play its pickup animation
-    /// NOTE: for now, the animation will not play
     /// </summary>
-    private void PickupTreasure()
+    protected override void PickupTreasure()
     {
-        Seek();
+        anim.Play("Pickup1");
+        anim.SetTime(0);
+        if (!hasTreasure)
+        {
+            treasureRB.useGravity = false;
+            treasureRB.transform.rotation = treasureSlot.transform.rotation;
+            treasureRB.constraints = RigidbodyConstraints.FreezeAll;
+            target.transform.parent = treasureSlot;
+            target.transform.localPosition = Vector3.zero;
+        }
+
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+        {
+            hasTreasure = true;
+        }
     }
 
     protected override void ReturnTreasure()

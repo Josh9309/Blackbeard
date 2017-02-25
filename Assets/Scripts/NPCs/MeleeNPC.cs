@@ -67,5 +67,10 @@ public class MeleeNPC : NPC {
     {
         
     }
+
+    protected override void PickupTreasure()
+    {
+       
+    }
     #endregion
 }
