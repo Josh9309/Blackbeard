@@ -132,7 +132,16 @@ public abstract class BasePirate: MonoBehaviour
         //Get inputs for Pirate movement
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
-        
+
+        if (Mathf.Abs(verticalInput) > inputDelay || Math.Abs(horizontalInput) > inputDelay)
+        {
+            pirateAnim.SetBool("IsMoving", true);
+        }
+        else
+        {
+            pirateAnim.SetBool("IsMoving", false);
+        }
+
         //calculate player movement direction to pass to pirate move
         if(gameCamera != null)
         {
@@ -185,8 +194,10 @@ public abstract class BasePirate: MonoBehaviour
     {
         if(grounded && isJumping)
         {
+            pirateAnim.Play("Jump");
             rBody.velocity = new Vector3(rBody.velocity.x, jumpForce, rBody.velocity.z);
             grounded = false;
+            pirateAnim.SetBool("Grounded", false);
             isJumping = false;
         }
     }
@@ -211,10 +222,12 @@ public abstract class BasePirate: MonoBehaviour
         {
             groundPlaneNormal = rayHit.normal; //set the ground plan normal to the raycast hit normal
             grounded = true; //set the pirate to grounded
+            pirateAnim.SetBool("Grounded", true);
         }
         else //raycast did not hit ground
         {
             grounded = false;
+            pirateAnim.SetBool("Grounded", false);
             groundPlaneNormal = Vector3.up;
         }
     }
