@@ -10,6 +10,8 @@ public class TreasureHunter : BasePirate
     private GameObject treasure;
     private Transform treasureSlot;
     private Rigidbody treasureRB;
+    private RaycastHit hit;
+    private int visionAngle;
     #endregion
 
     #region Properties
@@ -35,15 +37,17 @@ public class TreasureHunter : BasePirate
         canPickup = false;
         pickingUp = false;
         hasTreasure = false;
+
+        visionAngle = 35;
 	}
 
     protected override void Update() //Update is called once per frame
     {
-        if (!pickingUp)
+        if (!pickingUp && !hasTreasure)
             base.Update();
 
         if (pirateActive)
-            Pickup(canPickup);
+            Pickup();
     }
 
     protected override void FixedUpdate() //Physics updates
@@ -52,17 +56,17 @@ public class TreasureHunter : BasePirate
             base.FixedUpdate();
     }
 
-    private void OnTriggerStay(Collider coll)
-    {
-        if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure
-            canPickup = true;
-    }
-
-    private void OnTriggerExit(Collider coll)
-    {
-        if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure
-            canPickup = false;
-    }
+    //private void OnTriggerStay(Collider coll)
+    //{
+    //    if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure
+    //        canPickup = true;
+    //}
+    //
+    //private void OnTriggerExit(Collider coll)
+    //{
+    //    if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure
+    //        canPickup = false;
+    //}
     #endregion
 
     #region Methods
@@ -75,17 +79,37 @@ public class TreasureHunter : BasePirate
     /// <summary>
     /// Let the treasure pirate pick up treasure
     /// </summary>
-    private void Pickup(bool yesWeCan)
+    private void Pickup()
     {
+        if (Input.GetButton("Attack") && !pickingUp)
+        {
+            Vector3 direction = treasure.transform.position - transform.position;
+            float angle = Vector3.Angle(transform.forward, direction);
+
+            //Raycast to pick up the treasure
+            Physics.Raycast(transform.position, direction, out hit);
+
+            Debug.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(visionAngle, transform.up) * transform.forward * 20);
+            Debug.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(-visionAngle, transform.up) * transform.forward * 20);
+
+            if (visionAngle > angle && direction.magnitude < 5 && hit.transform.tag == "Treasure")
+                canPickup = true;
+        }
+
         //Start pickup
-        if (Input.GetButton("Attack") && !pickingUp && yesWeCan)
+        if (!pickingUp && canPickup)
+        {
+            pirateAnim.Play("Pickup1");
+            pickingUp = true;
+        }
+        else if (!pickingUp && hasTreasure && Input.GetButton("Attack"))
         {
             pirateAnim.Play("Pickup1");
             pickingUp = true;
         }
 
         //Picking up treasure
-        if (!hasTreasure && yesWeCan)
+        if (!hasTreasure && canPickup)
         {
             if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Pickup2")) //If the animation for picking up an object is halfway played
             {
@@ -112,6 +136,7 @@ public class TreasureHunter : BasePirate
         if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && pickingUp) //If the object is being picked up
         {
             pickingUp = false;
+            canPickup = false;
         }
 
         //Set whether the treasure is picked up or not
