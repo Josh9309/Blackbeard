@@ -6,10 +6,12 @@ public class TreasureHunter : BasePirate
 {
     #region Attributes
     private bool canPickup, pickingUp; //If the treasure pirate is currently picking anything up
-    private GameObject treasure;
     private bool hasTreasure;
+    private GameObject treasure;
+    private Transform treasureSlot;
+    private Rigidbody treasureRB;
     #endregion
-    
+
     #region Properties
     public bool PickingUp
     {
@@ -30,7 +32,12 @@ public class TreasureHunter : BasePirate
         foreach (GameObject go in allGO)
         {
             if (go.tag == "Treasure")
+            {
                 treasure = go;
+                treasureRB = treasure.GetComponent<Rigidbody>();
+            }
+            else if (go.name == "TreasureSlot")
+                treasureSlot = go.transform;
         }
 
         canPickup = false;
@@ -40,7 +47,8 @@ public class TreasureHunter : BasePirate
 
     protected override void Update() //Update is called once per frame
     {
-        base.Update();
+        if (!pickingUp)
+            base.Update();
 
         if (pirateActive)
             Pickup(canPickup);
@@ -48,7 +56,8 @@ public class TreasureHunter : BasePirate
 
     protected override void FixedUpdate() //Physics updates
     {
-        base.FixedUpdate();
+        if (!pickingUp)
+            base.FixedUpdate();
     }
 
     private void OnTriggerStay(Collider coll)
@@ -84,28 +93,28 @@ public class TreasureHunter : BasePirate
         }
 
         //Picking up treasure
-        if (!hasTreasure && yesWeCan)
+        if (!hasTreasure)
         {
             if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Pickup2")) //If the animation for picking up an object is halfway played
             {
-                treasure.transform.parent = gameObject.transform;
-                treasure.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 3, gameObject.transform.position.z + 2);
+                treasureRB.useGravity = false;
+                treasure.transform.parent = treasureSlot;
+                treasure.transform.localPosition = Vector3.zero;
             }
-        }
-        else if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && pickingUp) //If the object is being picked up
-        {
-            pickingUp = false;
         }
 
         //Putting down treasure
-        if (hasTreasure && !yesWeCan)
+        if (hasTreasure)
         {
             if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Pickup2")) //If the animation for picking up an object is halfway played
             {
+                treasureRB.useGravity = true;
                 treasure.transform.parent = null;
             }
         }
-        else if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && pickingUp) //If the object is being picked up
+
+        //Stop picking things up and putting them down
+        if (pirateAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && pickingUp) //If the object is being picked up
         {
             pickingUp = false;
         }
