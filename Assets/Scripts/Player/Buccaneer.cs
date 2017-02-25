@@ -180,11 +180,16 @@ public class Buccaneer : BasePirate {
                 //set both can queues for attack 2 and 3 to false
                 canQueue2 = false;
                 canQueue3 = false;
+
+                pirateAnim.SetBool("canAttack2", false);
                 break;
 
             case 3: //Attack 3 Reset
                 attState = AttackState.Idle; //set attack state to idle
                 canQueue3 = false; //set can queue for attack 3 to false;
+
+                pirateAnim.SetBool("canAttack2", false);
+                pirateAnim.SetBool("canAttack3", false);
                 break;
         }
     }
