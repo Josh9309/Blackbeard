@@ -2,42 +2,68 @@
 using System.Collections;
 using System.Collections.Generic;
 
-/// <summary>
-/// Should load all sound files from resources and store them in a dictionary on awake.
-/// A play sound method should be defined for looping and one shot sounds.
-/// Any calls to sound manager should be made in code.
-/// Any ui sounds will be handled seperately through canvas.
-/// </summary>
 public class SoundManager : Singleton<SoundManager>
 {
-	#region Fields
-	private AudioSource sfxSource;
+    //FIELDS
+	private AudioSource sfxSource; //what'll play effects
+	private Dictionary<string, AudioClip> sfxLibrary = new Dictionary<string, AudioClip>(); //sound effect library
 
-	private AudioClip musicClip;
-	private Dictionary<string, AudioClip> effects = new Dictionary<string, AudioClip>();
-	#endregion
+    private AudioSource musicSource; //source for looping background music
+    private Dictionary<string, AudioClip> musicLibrary = new Dictionary<string, AudioClip>(); //music library
 
-	protected SoundManager() {}
+    protected SoundManager() {}
 
 	void Awake()
 	{
+        //dont touch me when we load a new scene
 		DontDestroyOnLoad(this);
 	}
 
 	void Start()
 	{
-		//Just add the audio source
+		//add audio sources to sound manager obj
 		sfxSource = gameObject.AddComponent<AudioSource>();
+        musicSource = gameObject.AddComponent<AudioSource>();
 
-		//init clips
-		effects.Add("coin", Resources.Load("Sfx/coin") as AudioClip);
-		effects.Add("point", Resources.Load("Sfx/point") as AudioClip);
-		effects.Add("jump", Resources.Load("Sfx/jump") as AudioClip);
-		effects.Add("die", Resources.Load("Sfx/die") as AudioClip);
+        //add sounds to the lib
+        //musicLibrary.Add("backgroundMusic", Resources.Load("Sfx/backgroundMusic") as AudioClip);
+
+        //loop background music
+        musicSource.loop = true; //turn on looping
+        musicSource.clip = musicLibrary["backgroundMusic"]; //set default song
+        musicSource.Play(); //play music
 	}
 
+    /// <summary>
+    /// chnage the background music
+    /// </summary>
+    /// <param name="name">key of the song to play</param>
+    public void ChangeSong(string name)
+    {
+        musicSource.Stop(); //stop current song
+
+        musicSource.clip = musicLibrary[name]; //set song
+        musicSource.Play(); //play song
+    }
+
+    /// <summary>
+    /// Plays sound
+    /// </summary>
+    /// <param name="name">key for sound to be played</param>
 	public void PlaySfx(string name)
-	{
-		sfxSource.PlayOneShot(effects[name]);
+    { 
+        //play sound from lib once
+		sfxSource.PlayOneShot(sfxLibrary[name]);
 	}
+
+    /// <summary>
+    /// Plays sound from a specific position in world space by creating its own source
+    /// </summary>
+    /// <param name="name">key for sound to be played</param>
+    /// <param name="position">world cordinates to be played from</param>
+    public void PlaySfxAt(string name, Vector3 position)
+    {
+        //doesnt use source bc it creates its own for this
+        AudioSource.PlayClipAtPoint(sfxLibrary[name], position);
+    }
 }
