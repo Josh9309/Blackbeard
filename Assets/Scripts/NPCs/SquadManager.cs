@@ -73,6 +73,7 @@ public class SquadManager : MonoBehaviour {
         // spawn a single treasure Hunter
         treasureHunter = Instantiate(treasureNPC, transform.position, Quaternion.identity);
         pirates.Add(treasureHunter);
+        treasureHunter.GetComponent<NPC>().Squad = this.gameObject;
 
         // spawn melee pirates
         for (int i = 0; i < maxPirates; i++)
@@ -82,6 +83,7 @@ public class SquadManager : MonoBehaviour {
             Vector3 pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius), transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius));
 
             pirates.Add(GameObject.Instantiate(meleeNPC, pos, Quaternion.identity));
+            pirates[i].GetComponent<NPC>().Squad = this.gameObject;
 
         }
 
@@ -179,7 +181,7 @@ public class SquadManager : MonoBehaviour {
             firstRun = false;
         }
 
-        if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 5)
+        if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 5 && treasure.GetComponentInParent<NPC>() == null)
         {            
             fsm.SetState(pickupTreasure);
             SetSquadState(PICKUP_TREASURE_ID);
