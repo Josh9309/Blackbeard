@@ -11,10 +11,17 @@ public class MeleeNPC : NPC {
     #region Attributes
     // lsit of NPCs to determine enemies, this will be assigned through SquadManager
     protected List<GameObject> enemies;
+    private GameObject leader;
 
     // gameplay
     [SerializeField]
     private int attackDam;
+    [SerializeField]
+    private float followDist;
+    #endregion
+
+    #region Accessors
+    public GameObject Leader { set { leader = value; } }
     #endregion
 
     // Use this for initialization
@@ -53,6 +60,11 @@ public class MeleeNPC : NPC {
         return closest;
     }
 
+    private void FollowLeader()
+    {
+        Seek(leader.transform.position - leader.transform.forward * (-1 * followDist));
+    }
+
     #region State Methods
     protected override void Combat()
     {
@@ -60,17 +72,17 @@ public class MeleeNPC : NPC {
     }
     protected override void Patrol()
     {
-        
+        FollowLeader();
     }
 
     protected override void ReturnTreasure()
     {
-        
+        FollowLeader();
     }
 
     protected override void PickupTreasure()
     {
-       
+        FollowLeader();
     }
     #endregion
 }

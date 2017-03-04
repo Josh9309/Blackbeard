@@ -21,8 +21,11 @@ public class SquadManager : MonoBehaviour {
     // for making sure an initial state is assigned to the squad
     bool firstRun = true;
 
+    // indentifiers
+    [SerializeField]
+    private GameManager.Team team;
+
     // the treasure
-    //[SerializeField]
     private GameObject treasure;
 
     // states
@@ -54,6 +57,14 @@ public class SquadManager : MonoBehaviour {
     [SerializeField]
     private float initialSpawnRadius;
 
+    // flocking
+    Vector3 direction;
+
+    #endregion
+
+    #region Accessors
+    // use team accessor to return a string representing NPC's team
+    public GameManager.Team getTeam { get { return team; } }
     #endregion
 
     // Use this for initialization
@@ -63,6 +74,7 @@ public class SquadManager : MonoBehaviour {
         pirates = new List<GameObject>();
         treasure = GameObject.FindGameObjectWithTag("Treasure");
         treasureDestination = GameObject.FindGameObjectWithTag("TreasureDestination");
+        direction = new Vector3(0, 0, 0);
 
         // initialize states
         patrol = Patrol;
@@ -74,9 +86,10 @@ public class SquadManager : MonoBehaviour {
         treasureHunter = Instantiate(treasureNPC, transform.position, Quaternion.identity);
         pirates.Add(treasureHunter);
         treasureHunter.GetComponent<NPC>().Squad = this.gameObject;
+        treasureHunter.GetComponent<NPC>().getTeam = team;
 
         // spawn melee pirates
-        for (int i = 0; i < maxPirates; i++)
+        for (int i = 1; i <= maxPirates; i++)
         {
             //Vector3 pos = (transform.position + Quaternion.AngleAxis(spawnAngle, transform.up) * transform.forward) * 10;
 
@@ -84,6 +97,8 @@ public class SquadManager : MonoBehaviour {
 
             pirates.Add(GameObject.Instantiate(meleeNPC, pos, Quaternion.identity));
             pirates[i].GetComponent<NPC>().Squad = this.gameObject;
+            pirates[i].GetComponent<NPC>().getTeam = team;
+            pirates[i].GetComponent<MeleeNPC>().Leader= treasureHunter;
 
         }
 
@@ -94,6 +109,7 @@ public class SquadManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         CalcCentroid();
+        CalcDirection();
 
         fsm.UpdateState();
 	}
@@ -125,6 +141,22 @@ public class SquadManager : MonoBehaviour {
         }
 
         transform.position = new Vector3(totalX / pirates.Count, totalY, totalZ / pirates.Count);   
+    }
+
+    private void CalcDirection()
+    {
+        Vector3 totalForward = new Vector3(0, 0, 0);
+
+        for (int i = 0; i < pirates.Count; i++)
+        {
+            totalForward = pirates[i].transform.forward + totalForward;
+        }
+
+        direction = totalForward / pirates.Count;
+        direction.Normalize();
+
+        // set the game manager's position to that of the centroid
+        this.transform.forward = direction;
     }
 
     /// <summary>
