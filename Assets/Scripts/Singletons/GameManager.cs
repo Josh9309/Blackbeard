@@ -15,6 +15,20 @@ public class GameManager : Singleton<GameManager>
     // put enums in here so all NPC's and squads have access to them
     public enum Team { RED, BLUE };
 
+    // temporary value, will delete when gameManager is overhauled
+    [SerializeField]
+    private int numSquadsPerTeam;
+
+    // list of all red and blue squads
+    [SerializeField]
+    private List<GameObject> blueSquads;
+    [SerializeField]
+    private List<GameObject> redSquads;
+
+    // temporary storage for squad lists
+    //private GameObject[] blueSquadsArray;
+    //private GameObject[] redSquadsArray;
+
     #endregion
 
     #region Properties
@@ -25,6 +39,15 @@ public class GameManager : Singleton<GameManager>
 
 	void Awake()
 	{
+        // assign arrays
+        //blueSquadsArray = GameObject.FindGameObjectsWithTag("BlueSquad");
+        //redSquadsArray = GameObject.FindGameObjectsWithTag("RedSquad");
+        Debug.Log("Game Manager is alive");
+
+        //redSquads = new List<GameObject>();
+        //blueSquads = new List<GameObject>();
+
+        StartRound();
 	}
 
 	public void StartGame()
@@ -35,11 +58,17 @@ public class GameManager : Singleton<GameManager>
 
 	/// <summary>
 	/// Will be called in other places later on
+    /// assign enemies to squads
 	/// </summary>
 	public void StartRound()
 	{
         //set score to zero
-		
+        
+        for (int i = 0; i < numSquadsPerTeam; i++)
+        {
+            redSquads[i].GetComponent<SquadManager>().EnemySquadObjects = blueSquads;
+            blueSquads[i].GetComponent<SquadManager>().EnemySquadObjects = redSquads;          
+        }
 
 	}
 

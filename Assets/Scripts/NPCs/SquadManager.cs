@@ -28,6 +28,10 @@ public class SquadManager : MonoBehaviour {
     // the treasure
     private GameObject treasure;
 
+    // enemy squads
+    private List<GameObject> enemySquadObjects;
+    private GameObject enemyTarget;
+
     // states
     FSM.State patrol;
     FSM.State combat;
@@ -55,6 +59,9 @@ public class SquadManager : MonoBehaviour {
     [SerializeField]
     private float engagementRadius;
     [SerializeField]
+    private float engagementZoneRadius;
+    private Vector3 engagementZoneCentroid;
+    [SerializeField]
     private float initialSpawnRadius;
 
     // flocking
@@ -65,6 +72,9 @@ public class SquadManager : MonoBehaviour {
     #region Accessors
     // use team accessor to return a string representing NPC's team
     public GameManager.Team getTeam { get { return team; } }
+
+    // allow for game manager to assign it a list of enemies
+    public List<GameObject> EnemySquadObjects { get { return enemySquadObjects; } set { enemySquadObjects = value; } }
     #endregion
 
     // Use this for initialization
@@ -140,11 +150,12 @@ public class SquadManager : MonoBehaviour {
             totalZ += pirates[i].transform.position.z;
         }
 
-        Debug.Log(totalX + " " + totalZ);
-
         transform.position = new Vector3(totalX / pirates.Count, totalY, totalZ / pirates.Count);   
     }
 
+    /// <summary>
+    /// This will be used to orient the squadManager in the same direction that the squad is facing
+    /// </summary>
     private void CalcDirection()
     {
         Vector3 totalForward = new Vector3(0, 0, 0);
@@ -159,6 +170,35 @@ public class SquadManager : MonoBehaviour {
 
         // set the game manager's position to that of the centroid
         this.transform.forward = direction;
+    }
+
+    /// <summary>
+    /// This method will be responsible for checking to see if any enemy squads can be engaged,
+    /// if so, switch behavior to combat behavior
+    /// </summary>
+    private bool DetectEnemy()
+    {
+        for (int i = 0; i < enemySquadObjects.Count; i++)
+        {
+            if (CalcDistance(this.transform.position, enemySquadObjects[i].transform.position).magnitude <= engagementRadius)
+            {
+                enemyTarget = enemySquadObjects[i];
+                GenerateEngagementZone();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// This will be responsible for generating a zone of engagement that agents are allowed
+    /// to fight in
+    /// </summary>
+    private void GenerateEngagementZone()
+    {
+        Debug.Log("Engage");
+        engagementZoneCentroid = CalcDistance(this.transform.position, enemyTarget.transform.position) / 2;
+        //Gizmos.DrawWireSphere(engagementZoneCentroid, engagementZoneRadius);
     }
 
     /// <summary>
@@ -216,9 +256,15 @@ public class SquadManager : MonoBehaviour {
         }
 
         if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 5 && treasure.GetComponentInParent<NPC>() == null)
-        {            
+        {
             fsm.SetState(pickupTreasure);
             SetSquadState(PICKUP_TREASURE_ID);
+        }
+
+        if (DetectEnemy())
+        {
+            fsm.SetState(combat);
+            SetSquadState(COMBAT_ID);
         }
     }
 
