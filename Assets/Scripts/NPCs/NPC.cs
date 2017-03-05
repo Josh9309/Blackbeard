@@ -50,6 +50,8 @@ public abstract class NPC : MonoBehaviour {
     public FSM.State NPCReturnTreasure { get { return returnTreasure; } }
     public FSM.State NPCPickupTreasure { get { return pickupTreasure; } }
 
+    public int Health { get { return health; } }
+
     // for player to change the state
     public bool Active { set { active = value; } get { return active; } }
 

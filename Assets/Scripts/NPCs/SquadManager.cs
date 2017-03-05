@@ -76,6 +76,9 @@ public class SquadManager : MonoBehaviour {
 
     // allow for game manager to assign it a list of enemies
     public List<GameObject> EnemySquadObjects { get { return enemySquadObjects; } set { enemySquadObjects = value; } }
+
+    // allow this squad to pass enemy NPCs in to its melee pirates
+    public List<GameObject> Pirates { get { return pirates; } }
     #endregion
 
     // Use this for initialization
@@ -185,6 +188,7 @@ public class SquadManager : MonoBehaviour {
             {
                 enemyTarget = enemySquadObjects[i];
                 GenerateEngagementZone();
+                AssignEnemies();
                 return true;
             }
         }
@@ -200,6 +204,20 @@ public class SquadManager : MonoBehaviour {
         Debug.Log("Engage");
         engagementZoneCentroid = (CalcDistance(this.transform.position, enemyTarget.transform.position) / 2) + transform.position;
         drawZone = true;
+    }
+
+    /// <summary>
+    /// This method will assign an enemy list to each melee pirate in the squad
+    /// </summary>
+    private void AssignEnemies()
+    {
+        for (int i = 1; i <= maxPirates; i++)
+        {
+            if (pirates[i].GetComponent<MeleeNPC>() != null)
+            {
+                pirates[i].GetComponent<MeleeNPC>().Enemies = enemyTarget.GetComponent<SquadManager>().Pirates;
+            }
+        }
     }
 
     private void OnDrawGizmos()
@@ -250,7 +268,14 @@ public class SquadManager : MonoBehaviour {
     #region State Methods
     private void Combat()
     {
-
+        for (int i = 0; i < pirates.Count; i++)
+        {
+            if (pirates[i].GetComponent<NPC>().Health <= 0)
+            {
+                pirates.Remove(pirates[i]);
+                GameObject.Destroy(pirates[i]);
+            }
+        }
     }
 
     /// <summary>

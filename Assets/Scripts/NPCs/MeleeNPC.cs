@@ -18,10 +18,13 @@ public class MeleeNPC : NPC {
     private int attackDam;
     [SerializeField]
     private float followDist;
+    [SerializeField]
+    private float combatDist;
     #endregion
 
     #region Accessors
     public GameObject Leader { set { leader = value; } }
+    public List<GameObject> Enemies { set { enemies = value; } }
     #endregion
 
     // Use this for initialization
@@ -68,7 +71,11 @@ public class MeleeNPC : NPC {
     #region State Methods
     protected override void Combat()
     {
-        
+        agent.radius = combatDist;
+        if (FindNearestEnemy().GetComponent<MeleeNPC>() != null)
+        {
+            Seek(FindNearestEnemy().transform.position);
+        }
     }
     protected override void Patrol()
     {
