@@ -38,7 +38,7 @@ public class TreasureHunter : BasePirate
         pickingUp = false;
         hasTreasure = false;
 
-        visionAngle = 35;
+        visionAngle = 30;
 	}
 
     protected override void Update() //Update is called once per frame
@@ -55,18 +55,6 @@ public class TreasureHunter : BasePirate
         if (!pickingUp)
             base.FixedUpdate();
     }
-
-    //private void OnTriggerStay(Collider coll)
-    //{
-    //    if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure
-    //        canPickup = true;
-    //}
-    //
-    //private void OnTriggerExit(Collider coll)
-    //{
-    //    if (coll.tag == "Treasure" && pirateActive) //If this pirate is within range of the treasure
-    //        canPickup = false;
-    //}
     #endregion
 
     #region Methods
@@ -81,7 +69,9 @@ public class TreasureHunter : BasePirate
     /// </summary>
     private void Pickup()
     {
-        if (Input.GetButton("Attack") && !pickingUp)
+        //TODO: update raycast outside of button press for UI purposes
+        //When trying to pick something up, make sure nothing is currently held and the object is within the vision cone
+        if (Input.GetButton("Attack") && !hasTreasure && !pickingUp)
         {
             Vector3 direction = treasure.transform.position - transform.position;
             float angle = Vector3.Angle(transform.forward, direction);
@@ -89,14 +79,11 @@ public class TreasureHunter : BasePirate
             //Raycast to pick up the treasure
             Physics.Raycast(transform.position, direction, out hit);
 
-            Debug.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(visionAngle, transform.up) * transform.forward * 20);
-            Debug.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(-visionAngle, transform.up) * transform.forward * 20);
-
             if (visionAngle > angle && direction.magnitude < 5 && hit.transform.tag == "Treasure")
                 canPickup = true;
         }
 
-        //Start pickup
+        //Start pickup or putdown
         if (!pickingUp && canPickup)
         {
             pirateAnim.Play("Pickup1");

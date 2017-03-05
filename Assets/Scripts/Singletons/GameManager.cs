@@ -8,18 +8,20 @@ using System.Collections.Generic;
 /// </summary>
 public class GameManager : Singleton<GameManager>
 {
-	#region Fields
-	//Assigned in inspector
-	//public Player player;
+    #region Fields
+    //Assigned in inspector
+    //public Player player;
 
-	
-	#endregion
+    // put enums in here so all NPC's and squads have access to them
+    public enum Team { RED, BLUE };
 
-	#region Properties
+    #endregion
 
-	#endregion
+    #region Properties
 
-	protected GameManager(){}
+    #endregion
+
+    protected GameManager(){}
 
 	void Awake()
 	{

@@ -58,7 +58,14 @@ public class HunterNPC : NPC {
     /// </summary>
     protected override void Patrol()
     {
-        Seek();
+        if (target.GetComponentInParent<NPC>() == null)
+        {
+            Seek(target.transform.position);
+        }
+        else
+        {
+            target = squad.gameObject;
+        }
 
         agent.speed = 5f;
     }
@@ -89,7 +96,7 @@ public class HunterNPC : NPC {
     protected override void ReturnTreasure()
     {
         //target = treasureDestination;
-        Seek();
+        Seek(target.transform.position);
 
         agent.speed = 3f;
     }

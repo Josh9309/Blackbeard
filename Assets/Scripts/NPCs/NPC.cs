@@ -12,7 +12,6 @@ using UnityEngine.AI;
 public abstract class NPC : MonoBehaviour {
 
     public enum PirateType { BUCCANEER, HUNTER };
-    public enum Team { RED, BLUE};
 
     #region Attributes
     // Components
@@ -34,7 +33,7 @@ public abstract class NPC : MonoBehaviour {
     // this variable will represent what team the NPC is on, two options are Red or Blue
     // this cooresponds to the string tag of the agent, to check if an agent is on a team
     // check if their tag equals their team attribute
-    protected Team team;
+    protected GameManager.Team team;
 
     // for seeking using NavMeshAgent
     protected GameObject target;
@@ -45,9 +44,6 @@ public abstract class NPC : MonoBehaviour {
     #endregion
 
     #region Accessors
-    // use team accessor to return a string representing NPC's team
-    public Team getTeam { get { return team; } }
-
     // state accessors for allowing the SquadManager to manage NPC states
     public FSM.State NPCPatrol { get { return patrol; } }
     public FSM.State NPCCombat { get { return combat; } }
@@ -64,6 +60,9 @@ public abstract class NPC : MonoBehaviour {
     public GameObject Target { set { target = value; } get { return target; } }
     #endregion
 
+    // use team accessor to return a string representing NPC's team
+    public GameManager.Team getTeam { get { return team; } set { team = value; } }
+ 
     // Use this for initialization
     protected virtual void Start () {
         // assign components
@@ -124,11 +123,11 @@ public abstract class NPC : MonoBehaviour {
     }
 
     /// <summary>
-    /// Tells the agent to seek the current target
+    /// Tells the agent to seek the given target
     /// </summary>
-    protected void Seek()
+    protected void Seek(Vector3 seekTarget)
     {
-        agent.destination = target.transform.position;
+        agent.destination = seekTarget;
     }
     #endregion
 

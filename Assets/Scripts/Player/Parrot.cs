@@ -5,6 +5,7 @@ using UnityEngine;
 public class Parrot : MonoBehaviour
 {
     #region Attributes
+    //Health and flight
     private int health = 10;
     [SerializeField] private float speed = 2.0f;
     [SerializeField] private float turnSpeed = 2.0f;
@@ -12,15 +13,26 @@ public class Parrot : MonoBehaviour
     [SerializeField] private float maxHeight = 15;
     private float currentHeight;
     private bool active; //If the parrot is active
-    BasePirate basePirateScript; //The pirate
-    Buccaneer buccScript; //Buccaneer script
-    TreasureHunter treasureHScript; //Treasure hunter script
-    private bool canChangeCharacter; //If the parrot can land or take off again
-    private NPC npcScript;
-
     private Rigidbody rBody;
     private bool rotateParrot = false;
-    Vector3 parrotRotation = new Vector3(); //parrot euler angle rotation
+    private Vector3 parrotRotation; //parrot euler angle rotation
+
+    //Switching
+    private BasePirate basePirateScript; //The pirate
+    private Buccaneer buccScript; //Buccaneer script
+    private TreasureHunter treasureHScript; //Treasure hunter script
+    private NPC npcScript;
+    private bool canChangeCharacter; //If the parrot can land or take off again
+
+    //Item pickup
+    private GameObject[] items;
+    private Rigidbody[] itemsRB;
+    private GameObject carriedItem;
+    private Rigidbody carriedItemRB;
+    private Transform itemSlot;
+    private RaycastHit hit;
+    private int visionAngle;
+    private bool buttonDown;
 
     //input stuff
     private float inputDelay = 0.3f;
@@ -44,7 +56,17 @@ public class Parrot : MonoBehaviour
         //The parrot is active
         active = true;
         //The parrot can be a parrotsite
-        canChangeCharacter = true; 
+        canChangeCharacter = true;
+
+        items = GameObject.FindGameObjectsWithTag("Item");
+        itemsRB = new Rigidbody[items.Length];
+        for (int i = 0; i < items.Length; i++)
+            itemsRB[i] = items[i].GetComponent<Rigidbody>();
+        carriedItem = null;
+        carriedItemRB = null;
+        itemSlot = GameObject.FindGameObjectWithTag("ItemSlot").transform;
+        visionAngle = 45;
+        buttonDown = false;
 	}
 
     //Update is called once per frame
@@ -53,6 +75,9 @@ public class Parrot : MonoBehaviour
         //Let the parrot take off again
         if (!active)
             Takeoff();
+
+        if (active)
+            Pickup();
     }
 
     //Physics updates
@@ -96,16 +121,16 @@ public class Parrot : MonoBehaviour
             //Disable the parrot
             active = false; 
 
-            StartCoroutine(ChangeTimer());
+            StartCoroutine(ChangeTimer(2));
         }
     }
 
     //Coroutine to prevent immediate landing or takeoff from pirate
-    internal IEnumerator ChangeTimer() 
+    internal IEnumerator ChangeTimer(int time) 
     {
         canChangeCharacter = false;
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(time);
 
         canChangeCharacter = true;
     }
@@ -249,7 +274,58 @@ public class Parrot : MonoBehaviour
             npcScript.Active = true;
             npcScript = null;
 
-            StartCoroutine(ChangeTimer());
+            StartCoroutine(ChangeTimer(2));
+        }
+    }
+
+    /// <summary>
+    /// Let the parrot pick up treasure
+    /// </summary>
+    private void Pickup()
+    {
+        //Checking if the items can be picked up or put down
+        if (carriedItem == null) //If no item is currently carried, search for an item for the player to pick up
+        {
+            for (int i = 0; i < items.Length; i++)
+            {
+                Vector3 direction = (items[i].transform.position + new Vector3(0, items[i].transform.localScale.y / 2, 0)) - transform.position;
+
+                //Raycast to pick up the treasure
+                Physics.Raycast(transform.position, direction, out hit);
+
+                //TODO: update this with UI cues
+                if (direction.magnitude < 1.5f && Vector3.Dot(direction, transform.forward) > -.1f)
+                {
+                    if (Input.GetButton("Attack"))
+                    {
+                        carriedItem = items[i];
+                        carriedItemRB = itemsRB[i];
+                        buttonDown = true; //Prevents immediate release of items
+                        break;
+                    }
+                }
+            }
+        }
+        else if (Input.GetButtonUp("Attack")) //Lets items be released
+            buttonDown = false;
+
+        //Picking up and putting down items
+        if (Input.GetButton("Attack") && !buttonDown && carriedItem != null) //Putting down items
+        {
+            carriedItemRB.useGravity = true;
+            carriedItem.transform.parent = null;
+
+            carriedItem = null;
+            carriedItemRB = null;
+        }
+        else if (carriedItem != null) //When trying to pick something up, make sure nothing is currently held
+        {
+            carriedItemRB.useGravity = false;
+            
+            //Set the treasure for when it is picked up
+            carriedItem.transform.parent = itemSlot;
+            carriedItem.transform.localPosition = Vector3.zero;
+            carriedItem.transform.rotation = itemSlot.transform.rotation;
         }
     }
     #endregion
