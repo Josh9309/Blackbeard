@@ -51,12 +51,15 @@ public class StartWindow : BaseWindow
     //method for new game button
     protected void NewGame()
     {
-
-        
         MenuManager.Instance.GoToScreen("GameHUD");
         Debug.Log("New Game Pressed");
     }   
-
+    //method for main menu
+    public void MainMenu()
+    {
+        MenuManager.Instance.GoToScreen("Start");
+        Debug.Log("Main Menu");
+    }
     //method for options button
     protected void Options()
     {
