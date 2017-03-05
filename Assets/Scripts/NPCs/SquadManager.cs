@@ -63,6 +63,7 @@ public class SquadManager : MonoBehaviour {
     private Vector3 engagementZoneCentroid;
     [SerializeField]
     private float initialSpawnRadius;
+    private bool drawZone = false;
 
     // flocking
     Vector3 direction;
@@ -197,8 +198,17 @@ public class SquadManager : MonoBehaviour {
     private void GenerateEngagementZone()
     {
         Debug.Log("Engage");
-        engagementZoneCentroid = CalcDistance(this.transform.position, enemyTarget.transform.position) / 2;
-        //Gizmos.DrawWireSphere(engagementZoneCentroid, engagementZoneRadius);
+        engagementZoneCentroid = (CalcDistance(this.transform.position, enemyTarget.transform.position) / 2) + transform.position;
+        drawZone = true;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (drawZone)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(engagementZoneCentroid, engagementZoneRadius);
+        }       
     }
 
     /// <summary>

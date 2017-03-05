@@ -45,7 +45,7 @@ public class MeleeNPC : NPC {
     /// Helper method for finding the closest enemy based on the enemies list
     /// </summary>
     /// <returns>closest enemy to this NPC</returns>
-    protected GameObject FindNearestEnemy()
+    private GameObject FindNearestEnemy()
     {
         GameObject closest = enemies[0];
 
