@@ -25,10 +25,12 @@ public class Parrot : MonoBehaviour
     private bool canChangeCharacter; //If the parrot can land or take off again
 
     //Item pickup
-    private GameObject[] items;
-    private Rigidbody[] itemsRB;
+    private List<GameObject> items;
+    private List<Rigidbody> itemsRB;
+    private List<Item> itemsScripts;
     private GameObject carriedItem;
     private Rigidbody carriedItemRB;
+    private Item carriedItemScript;
     private Transform itemSlot;
     private RaycastHit hit;
     private int visionAngle;
@@ -58,10 +60,17 @@ public class Parrot : MonoBehaviour
         //The parrot can be a parrotsite
         canChangeCharacter = true;
 
-        items = GameObject.FindGameObjectsWithTag("Item");
-        itemsRB = new Rigidbody[items.Length];
-        for (int i = 0; i < items.Length; i++)
-            itemsRB[i] = items[i].GetComponent<Rigidbody>();
+        //Item pickup
+        items = new List<GameObject>();
+        itemsRB = new List<Rigidbody>();
+        itemsScripts = new List<Item>();
+        GameObject[] foundItems = GameObject.FindGameObjectsWithTag("Item");
+        for (int i = 0; i < foundItems.Length; i++) //Get all of the needed item componenets
+        {
+            items.Add(foundItems[i]);
+            itemsRB.Add(foundItems[i].GetComponent<Rigidbody>());
+            itemsScripts.Add(foundItems[i].GetComponent<Item>());
+        }
         carriedItem = null;
         carriedItemRB = null;
         itemSlot = GameObject.FindGameObjectWithTag("ItemSlot").transform;
@@ -101,7 +110,7 @@ public class Parrot : MonoBehaviour
     private void OnTriggerStay(Collider coll)
     {
         //Landing on pirate
-        if (coll.tag == "Pirate" && Input.GetButton("Interact") && active && canChangeCharacter) 
+        if (coll.tag == "Pirate" && Input.GetButton("Interact") && active && canChangeCharacter && carriedItem == null) 
         {
             //Set the target of the camera
             cam.Target = coll.gameObject.transform;
@@ -286,8 +295,16 @@ public class Parrot : MonoBehaviour
         //Checking if the items can be picked up or put down
         if (carriedItem == null) //If no item is currently carried, search for an item for the player to pick up
         {
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < items.Count; i++)
             {
+                //If an item will been destroyed outside of this script
+                if (items[i] == null)
+                {
+                    items.Remove(items[i]);
+                    itemsRB.Remove(itemsRB[i]);
+                    itemsScripts.Remove(itemsScripts[i]);
+                }
+
                 Vector3 direction = (items[i].transform.position + new Vector3(0, items[i].transform.localScale.y / 2, 0)) - transform.position;
 
                 //Raycast to pick up the treasure
@@ -300,6 +317,7 @@ public class Parrot : MonoBehaviour
                     {
                         carriedItem = items[i];
                         carriedItemRB = itemsRB[i];
+                        carriedItemScript = itemsScripts[i];
                         buttonDown = true; //Prevents immediate release of items
                         break;
                     }
@@ -312,11 +330,41 @@ public class Parrot : MonoBehaviour
         //Picking up and putting down items
         if (Input.GetButton("Attack") && !buttonDown && carriedItem != null) //Putting down items
         {
-            carriedItemRB.useGravity = true;
-            carriedItem.transform.parent = null;
+            carriedItemScript.Active = true; //Activate the items
+            carriedItem.transform.rotation = Quaternion.AngleAxis(0, Vector3.zero); //Rotate the item for the drop
 
+            //Determine the properties of the item being dropped and drop it
+            if (carriedItem.name.Contains("Coconut") || carriedItem.name.Contains("Bomb"))
+            {
+                carriedItemRB.useGravity = true;
+                carriedItem.transform.parent = null;
+            }
+            else if (carriedItem.name.Contains("Rum") && health < 10) //Restore health if it can be restored
+            {
+                health = 10;
+
+                Destroy(carriedItem); //Destroy the rum
+
+                //Remove the items from the list and set them to null
+                items.Remove(carriedItem);
+                itemsRB.Remove(carriedItemRB);
+                itemsScripts.Remove(carriedItemScript);
+            }
+            else if (carriedItem.name.Contains("Rum") && health >= 10) //Drop rum
+            {
+                carriedItemRB.useGravity = true;
+                carriedItem.transform.parent = null;
+            }
+
+            //Remove the items from the list and set them to null
+            items.Remove(carriedItem);
+            itemsRB.Remove(carriedItemRB);
+            itemsScripts.Remove(carriedItemScript);
+
+            //Set all current items to null
             carriedItem = null;
             carriedItemRB = null;
+            carriedItemScript = null;
         }
         else if (carriedItem != null) //When trying to pick something up, make sure nothing is currently held
         {

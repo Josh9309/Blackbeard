@@ -34,7 +34,7 @@ public class PirateCamera : MonoBehaviour
     }
     #endregion
 
-    #region InBuildMethods
+    #region InBuiltMethods
     void Start() //Use this for initialization
     {
         target = FindObjectOfType<Parrot>().gameObject.transform; //Target the parrot from the start

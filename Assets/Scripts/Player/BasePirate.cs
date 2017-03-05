@@ -237,7 +237,7 @@ public abstract class BasePirate: MonoBehaviour
     /// </summary>
     public void ModifyHealth(int mod)
     {
-        health += mod; ; //Add mod amount to health.
+        health += mod; //Add mod amount to health
         CheckHealth(); //check the status of health
     }
 
@@ -249,6 +249,10 @@ public abstract class BasePirate: MonoBehaviour
         if (health > maxHealth) 
         {
             health = maxHealth; //resets the health to max health if health is over max health.
+        }
+        else if (health < maxHealth && health > 0) //For visual damage feedback
+        {
+            //TODO: visual feedback
         }
         else if (health <= 0)
         {
