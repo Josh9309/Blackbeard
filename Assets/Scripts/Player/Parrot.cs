@@ -211,13 +211,13 @@ public class Parrot : MonoBehaviour
         else if(Mathf.Abs(flyUpInput) > inputDelay && transform.position.y < maxHeight)
         {
             rBody.velocity += new Vector3(0, speed, 0);
-            parrotRotation += new Vector3(-15, 0, 0);
+            parrotRotation += new Vector3(-45, 0, 0);
         }
         //parrot fly down
         else if (Mathf.Abs(flyDownInput) > inputDelay && transform.position.y > minHeight) 
         {
             rBody.velocity += new Vector3(0, -speed, 0);
-            parrotRotation += new Vector3(15, 0, 0);
+            parrotRotation += new Vector3(45, 0, 0);
         }
 
         //controls parrot turning

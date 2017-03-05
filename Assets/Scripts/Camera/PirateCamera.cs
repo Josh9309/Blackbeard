@@ -13,12 +13,12 @@ public class PirateCamera : MonoBehaviour
     private bool reset;
 
     //Parrot
-    int parrotMinAngle = 320;
-    int parrotMaxAngle = 20;
+    private int parrotMinAngle = 300;
+    private int parrotMaxAngle = 35;
 
     //Pirate
-    int pirateMinAngle = 330;
-    int pirateMaxAngle = 10;
+    private int pirateMinAngle = 330;
+    private int pirateMaxAngle = 10;
 
     //Input attributes
     private float deadZone = 0.1f;
