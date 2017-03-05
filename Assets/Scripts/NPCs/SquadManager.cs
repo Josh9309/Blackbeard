@@ -93,7 +93,7 @@ public class SquadManager : MonoBehaviour {
         {
             //Vector3 pos = (transform.position + Quaternion.AngleAxis(spawnAngle, transform.up) * transform.forward) * 10;
 
-            Vector3 pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius), transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius));
+            Vector3 pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.x, transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.z);
 
             pirates.Add(GameObject.Instantiate(meleeNPC, pos, Quaternion.identity));
             pirates[i].GetComponent<NPC>().Squad = this.gameObject;
@@ -139,6 +139,8 @@ public class SquadManager : MonoBehaviour {
             totalX += pirates[i].transform.position.x;
             totalZ += pirates[i].transform.position.z;
         }
+
+        Debug.Log(totalX + " " + totalZ);
 
         transform.position = new Vector3(totalX / pirates.Count, totalY, totalZ / pirates.Count);   
     }
