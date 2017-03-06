@@ -14,6 +14,7 @@ public abstract class BasePirate: MonoBehaviour
     //pirate Stats
     [SerializeField] protected int health = 25;
     protected int maxHealth;
+    protected bool invincible = false;
     protected float speed = 5.0f;
     [SerializeField] protected PirateType pirate;
     protected bool pirateActive; //The pirate will only recieve input if it is active
@@ -48,6 +49,11 @@ public abstract class BasePirate: MonoBehaviour
     public int Health
     {
         get { return health; }
+    }
+
+    public bool Invincible
+    {
+        get { return invincible; }
     }
 
     public Rigidbody RBody

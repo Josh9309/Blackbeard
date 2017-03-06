@@ -6,7 +6,7 @@ using UnityEngine;
 /// This is the Sword based Melee Pirate Class
 /// </summary>
 public class Buccaneer : BasePirate {
-    public enum AttackState { Idle, Attack1, Attack2, Attack3};
+    public enum AttackState { Idle, Attack1, Attack2, Attack3, Block};
     #region Attributes
     [SerializeField] private int attackDam;
 
@@ -16,7 +16,7 @@ public class Buccaneer : BasePirate {
     private bool canQueue2 = false; //can attack 2 Queue
     private bool canQueue3 = false; //can attack 3 Queue
     private AttackState attState = AttackState.Idle; //attack State for buccaneer. set to idle to begin
-
+    
     //sword attributes
     Sword buccaneerSword;
     #endregion
@@ -60,7 +60,14 @@ public class Buccaneer : BasePirate {
 
         if (pirateActive) //Does not inherit, still must be active
         {
-            Attack();
+            if (attState != AttackState.Block) //make sure player is not currently blocking
+            {
+                Attack();
+            }
+            if(attState != AttackState.Attack1 && AttackState.Attack2 != attState && attState != AttackState.Attack3) //make sure player is not currently attacking
+            {
+                Block(); 
+            }
         }
 	}
 
@@ -95,6 +102,43 @@ public class Buccaneer : BasePirate {
             Debug.Log("Attack 1");
             attState = AttackState.Attack1;
         }
+
+        //if in the idle animation
+        AnimatorStateInfo currentState = pirateAnim.GetCurrentAnimatorStateInfo(0);
+        if (currentState.IsName("Idle"))
+        {
+            attState = AttackState.Idle;
+            pirateAnim.SetBool("canAttack2", false);
+            pirateAnim.SetBool("canAttack3", false);
+        }
+    }
+
+    /// <summary>
+    /// This method will control the blocking system
+    /// </summary>
+    private void Block()
+    {
+        if(Input.GetButton("Block") && attState == AttackState.Idle)
+        {
+            Debug.Log("Block 1");
+            pirateAnim.SetBool("isBlocking", true);
+            invincible = true;
+            attState = AttackState.Block;
+        }
+        else if(!Input.GetButton("Block") && AttState == AttackState.Block)
+        {
+            pirateAnim.SetBool("isBlocking", false);
+            invincible = false;
+            attState = AttackState.Idle;
+        }
+
+        //if in the idle animation
+        //AnimatorStateInfo currentState = pirateAnim.GetCurrentAnimatorStateInfo(0);
+        //if (currentState.IsName("Idle"))
+        //{
+        //    attState = AttackState.Idle;
+        //    pirateAnim.SetBool("isBlocking", false);
+        //}
     }
 
     /// <summary>

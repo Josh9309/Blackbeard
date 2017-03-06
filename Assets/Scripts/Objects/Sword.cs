@@ -33,7 +33,7 @@ public class Sword : MonoBehaviour {
     {
         BasePirate enemy = other.gameObject.GetComponent<BasePirate>();
 
-        if (enemy != null)
+        if (enemy != null && !enemy.Invincible)
         {
             enemy.ModifyHealth(-pirate.AttackDam);
             Debug.Log(pirate.name + " hit " + enemy.name);
