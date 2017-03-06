@@ -20,6 +20,7 @@ public abstract class NPC : MonoBehaviour {
     protected FSM fsm;
     protected GameObject squad;
     protected Animator anim;
+    protected float radius;
 
     // states
     protected FSM.State patrol;
@@ -72,6 +73,7 @@ public abstract class NPC : MonoBehaviour {
         agent = GetComponent<NavMeshAgent>();
         fsm = GetComponent<FSM>();
         anim = GetComponent<Animator>();
+        radius = agent.radius;
 
         // for now, disable animator if this script runs, it breaks movement
         //anim.enabled = false;

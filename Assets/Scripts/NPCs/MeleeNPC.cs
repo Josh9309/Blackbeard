@@ -72,10 +72,13 @@ public class MeleeNPC : NPC {
     protected override void Combat()
     {
         agent.radius = combatDist;
+
         if (FindNearestEnemy().GetComponent<MeleeNPC>() != null)
         {
-            Seek(FindNearestEnemy().transform.position);
+            target = FindNearestEnemy();
         }
+
+        Seek(target.transform.position);
     }
     protected override void Patrol()
     {

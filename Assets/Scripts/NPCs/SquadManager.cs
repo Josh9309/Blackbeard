@@ -66,7 +66,10 @@ public class SquadManager : MonoBehaviour {
     private bool drawZone = false;
 
     // flocking
-    Vector3 direction;
+    private Vector3 direction;
+    [SerializeField]
+    private GameObject DestinationNode;
+    private GameObject currentNode;
 
     #endregion
 
@@ -89,6 +92,7 @@ public class SquadManager : MonoBehaviour {
         treasure = GameObject.FindGameObjectWithTag("Treasure");
         treasureDestination = GameObject.FindGameObjectWithTag("TreasureDestination");
         direction = new Vector3(0, 0, 0);
+        currentNode = GameObject.Instantiate(DestinationNode, transform.position, Quaternion.identity);
 
         // initialize states
         patrol = Patrol;
@@ -102,6 +106,7 @@ public class SquadManager : MonoBehaviour {
         treasureHunter.GetComponent<NPC>().Squad = this.gameObject;
         treasureHunter.GetComponent<NPC>().getTeam = team;
 
+        int numSpawned = 1;
         // spawn melee pirates
         for (int i = 1; i <= maxPirates; i++)
         {
@@ -109,11 +114,19 @@ public class SquadManager : MonoBehaviour {
 
             Vector3 pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.x, transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.z);
 
+            for (int j = 0; j < numSpawned; j++)
+            {
+                while(CalcDistance(pos, pirates[j].transform.position).magnitude <= 2)
+                {
+                    pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.x, transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.z);
+                }
+            }
+
             pirates.Add(GameObject.Instantiate(meleeNPC, pos, Quaternion.identity));
             pirates[i].GetComponent<NPC>().Squad = this.gameObject;
             pirates[i].GetComponent<NPC>().getTeam = team;
             pirates[i].GetComponent<MeleeNPC>().Leader= treasureHunter;
-
+            numSpawned++;
         }
 
         // set initial state
@@ -203,6 +216,13 @@ public class SquadManager : MonoBehaviour {
     {
         Debug.Log("Engage");
         engagementZoneCentroid = (CalcDistance(this.transform.position, enemyTarget.transform.position) / 2) + transform.position;
+        currentNode.transform.position = engagementZoneCentroid;
+
+        for (int i = 1; i <= maxPirates; i++)
+        {
+            pirates[i].GetComponent<NPC>().Target = currentNode;
+        }
+
         drawZone = true;
     }
 
