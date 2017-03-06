@@ -71,7 +71,6 @@ public abstract class NPC : MonoBehaviour {
         // assign components
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-        fsm = GetComponent<FSM>();
         anim = GetComponent<Animator>();
         radius = agent.radius;
 
@@ -132,6 +131,16 @@ public abstract class NPC : MonoBehaviour {
     protected void Seek(Vector3 seekTarget)
     {
         agent.destination = seekTarget;
+    }
+
+    /// <summary>
+    /// Method responsible for applying damage, the attacker should be the one applying
+    /// the damage
+    /// </summary>
+    /// <param name="damage">amount of damage to be taken</param>
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
     }
     #endregion
 

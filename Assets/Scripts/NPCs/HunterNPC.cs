@@ -27,6 +27,7 @@ public class HunterNPC : NPC {
     protected override void Start () {
         base.Start();
 
+        fsm = GetComponent<FSM>();
         target = GameObject.FindGameObjectWithTag("Treasure");
         treasureSlot = GameObject.FindGameObjectWithTag("Slot").transform;
         treasureRB = target.GetComponent<Rigidbody>();

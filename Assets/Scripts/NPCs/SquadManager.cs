@@ -11,6 +11,9 @@ using UnityEngine;
 public class SquadManager : MonoBehaviour {
 
     #region Attributes
+    // reference to the game manager
+    private GameManager gm;
+
     // int values for parsing through statess
     private const int PATROL_ID = 0;
     private const int COMBAT_ID = 1;
@@ -67,9 +70,14 @@ public class SquadManager : MonoBehaviour {
 
     // flocking
     private Vector3 direction;
+
+    // if you want to directly set a target for the squad
     [SerializeField]
     private GameObject DestinationNode;
     private GameObject currentNode;
+
+    // boolean trackers
+    private bool playerInEnemy = false;
 
     #endregion
 
@@ -93,6 +101,7 @@ public class SquadManager : MonoBehaviour {
         treasureDestination = GameObject.FindGameObjectWithTag("TreasureDestination");
         direction = new Vector3(0, 0, 0);
         currentNode = GameObject.Instantiate(DestinationNode, transform.position, Quaternion.identity);
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
         // initialize states
         patrol = Patrol;
@@ -107,11 +116,10 @@ public class SquadManager : MonoBehaviour {
         treasureHunter.GetComponent<NPC>().getTeam = team;
 
         int numSpawned = 1;
+
         // spawn melee pirates
         for (int i = 1; i <= maxPirates; i++)
         {
-            //Vector3 pos = (transform.position + Quaternion.AngleAxis(spawnAngle, transform.up) * transform.forward) * 10;
-
             Vector3 pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.x, transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.z);
 
             for (int j = 0; j < numSpawned; j++)
@@ -288,6 +296,19 @@ public class SquadManager : MonoBehaviour {
     #region State Methods
     private void Combat()
     {
+
+        if (gm.CurrentPlayerState == GameManager.PlayerState.BUCCANEER && playerInEnemy == false)
+        {
+            if (CalcDistance(gm.Player.transform.position, engagementZoneCentroid).magnitude <= engagementZoneRadius)
+            {
+                for (int i = 1; i <= maxPirates; i++)
+                {
+                    pirates[i].GetComponent<MeleeNPC>().Enemies.Add(gm.Player);
+                }
+            }
+            playerInEnemy = true;
+        }
+
         for (int i = 0; i < pirates.Count; i++)
         {
             if (pirates[i].GetComponent<NPC>().Health <= 0)
@@ -304,6 +325,9 @@ public class SquadManager : MonoBehaviour {
     /// </summary>
     private void Patrol()
     {
+        if (playerInEnemy == false)
+            playerInEnemy = true;
+
         if (firstRun == true)
         {
             SetSquadState(PATROL_ID);
@@ -328,6 +352,9 @@ public class SquadManager : MonoBehaviour {
     /// </summary>
     private void PickupTreasure()
     {
+        if (playerInEnemy == false)
+            playerInEnemy = true;
+
         if (treasureHunter.GetComponent<HunterNPC>().HasTreasure)
         {
             fsm.SetState(returnTreasure);
@@ -338,6 +365,9 @@ public class SquadManager : MonoBehaviour {
 
     private void ReturnTreasure()
     {
+        if (playerInEnemy == false)
+            playerInEnemy = true;
+
         if (CalcDistance(treasureHunter.transform.position, treasureDestination.transform.position).magnitude <= 5)
         {
             Debug.Log("GAME WON");

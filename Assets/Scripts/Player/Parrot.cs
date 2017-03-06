@@ -44,6 +44,7 @@ public class Parrot : MonoBehaviour
     private float flyDownInput = 0;
 
     private PirateCamera cam;
+    private GameManager gm;
     #endregion
 
     #region Properties
@@ -59,6 +60,7 @@ public class Parrot : MonoBehaviour
         active = true;
         //The parrot can be a parrotsite
         canChangeCharacter = true;
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
         //Item pickup
         items = new List<GameObject>();
@@ -121,9 +123,18 @@ public class Parrot : MonoBehaviour
             npcScript.Active = false;
 
             if (basePirateScript is Buccaneer)
+            {
                 buccScript = coll.GetComponent<Buccaneer>();
+                gm.CurrentPlayerState = GameManager.PlayerState.BUCCANEER;
+            }
             else if (basePirateScript is TreasureHunter)
+            {
                 treasureHScript = coll.GetComponent<TreasureHunter>();
+                gm.CurrentPlayerState = GameManager.PlayerState.HUNTER;
+            }
+
+            gm.Player = coll.gameObject;
+            
 
             //Enable the pirate
             basePirateScript.PirateActive = true;
@@ -268,7 +279,10 @@ public class Parrot : MonoBehaviour
             //Set the target of the camera
             cam.Target = gameObject.transform;
             //Activate the parrot
-            active = true; 
+            active = true;
+
+            gm.Player = this.gameObject;
+            gm.CurrentPlayerState = GameManager.PlayerState.PARROT;
             
             //TODO: update this with the AI
             basePirateScript.RBody.velocity = Vector3.zero;

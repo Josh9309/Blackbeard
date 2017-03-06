@@ -11,9 +11,12 @@ public class GameManager : Singleton<GameManager>
     #region Fields
     //Assigned in inspector
     //public Player player;
+    private GameObject player;
 
     // put enums in here so all NPC's and squads have access to them
     public enum Team { RED, BLUE };
+    public enum PlayerState { PARROT, BUCCANEER, HUNTER};
+    private PlayerState currentPlayerState = PlayerState.PARROT;
 
     // temporary value, will delete when gameManager is overhauled
     [SerializeField]
@@ -32,7 +35,8 @@ public class GameManager : Singleton<GameManager>
     #endregion
 
     #region Properties
-
+    public GameObject Player { set { player = value; } get { return player; } }
+    public PlayerState CurrentPlayerState { set { currentPlayerState = value; } get { return currentPlayerState; } }
     #endregion
 
     protected GameManager(){}
@@ -46,6 +50,7 @@ public class GameManager : Singleton<GameManager>
 
         //redSquads = new List<GameObject>();
         //blueSquads = new List<GameObject>();
+        player = GameObject.FindGameObjectWithTag("Parrot");
 
         StartRound();
 	}
