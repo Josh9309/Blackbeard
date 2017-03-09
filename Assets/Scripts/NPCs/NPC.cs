@@ -28,6 +28,7 @@ public abstract class NPC : MonoBehaviour {
     protected FSM.State pickupTreasure;
     protected FSM.State returnTreasure;
     protected bool active = true;
+    protected bool rbActive = false;
 
     // identifications
     protected PirateType type;
@@ -99,12 +100,15 @@ public abstract class NPC : MonoBehaviour {
         {
             if (!agent.enabled)
                 agent.enabled = true;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
             fsm.UpdateState();
         }
         else
         {
             if (agent.enabled)
                 agent.enabled = false;
+            rb.constraints = RigidbodyConstraints.None;
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
 	}
 
