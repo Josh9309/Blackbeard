@@ -274,7 +274,7 @@ public class Parrot : MonoBehaviour
         //Taking off from pirate
         //Timer for switching must be completed
         //Pirate must not be jumping, picking up treasure, or attacking
-        if (Input.GetButton("Interact") && !active && canChangeCharacter && basePirateScript.Grounded && !doingRelevantAction) 
+        if (basePirateScript.Health <= 0 || (Input.GetButton("Interact") && !active && canChangeCharacter && basePirateScript.Grounded && !doingRelevantAction)) 
         {
             //Set the target of the camera
             cam.Target = gameObject.transform;
