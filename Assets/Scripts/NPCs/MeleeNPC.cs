@@ -104,6 +104,7 @@ public class MeleeNPC : NPC {
         yield return new WaitForSeconds(blockTime);
         combatFSM.SetState(idle);
     }
+
     /// <summary>
     /// This method is responsible for allowing the melee NPC to follow the Treasure Pirate
     /// </summary>
