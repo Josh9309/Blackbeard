@@ -58,11 +58,11 @@ public class TreasureHunter : BasePirate
     #endregion
 
     #region Methods
-    protected override void Dead()
-    {
-        Debug.Log("Pirate: " + name + "has Died");
-        Destroy(gameObject);
-    }
+    //protected override void Dead()
+    //{
+    //    Debug.Log("Pirate: " + name + "has Died");
+    //    Destroy(gameObject);
+    //}
 
     /// <summary>
     /// Let the treasure pirate pick up treasure

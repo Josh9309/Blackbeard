@@ -263,13 +263,13 @@ public abstract class BasePirate: MonoBehaviour
         else if (health <= 0)
         {
             health = 0;
-            Dead(); //calls pirates dead method if health is 0 or bellow
+            //Dead(); //calls pirates dead method if health is 0 or bellow
         }
     }
 
     /// <summary>
     /// Dead will run all the neccessary code for when a pirate dies. Each pirate class must implement a Dead() Method.
     /// </summary>
-    abstract protected void Dead();
+    //abstract protected void Dead();
     #endregion
 }

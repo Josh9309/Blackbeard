@@ -283,10 +283,13 @@ public class Parrot : MonoBehaviour
 
             gm.Player = this.gameObject;
             gm.CurrentPlayerState = GameManager.PlayerState.PARROT;
-            
+
             //TODO: update this with the AI
-            basePirateScript.RBody.velocity = Vector3.zero;
-            basePirateScript.transform.localEulerAngles = Vector3.zero;
+            if (basePirateScript != null)
+            {
+                basePirateScript.RBody.velocity = Vector3.zero;
+                basePirateScript.transform.localEulerAngles = Vector3.zero;
+            }
 
             //Disable the pirate scripts
             basePirateScript.PirateActive = false;

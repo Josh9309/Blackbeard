@@ -46,7 +46,7 @@ public class GameManager : Singleton<GameManager>
         // assign arrays
         //blueSquadsArray = GameObject.FindGameObjectsWithTag("BlueSquad");
         //redSquadsArray = GameObject.FindGameObjectsWithTag("RedSquad");
-        Debug.Log("Game Manager is alive");
+        //Debug.Log("Game Manager is alive");
 
         //redSquads = new List<GameObject>();
         //blueSquads = new List<GameObject>();

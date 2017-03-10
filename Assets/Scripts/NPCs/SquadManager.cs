@@ -47,6 +47,10 @@ public class SquadManager : MonoBehaviour {
     private int maxPirates;
     private GameObject treasureHunter;
 
+    //Scripts
+    private List<NPC> npcScript;
+    private List<BasePirate> basePirateScript;
+
     // components and prefabs
     [SerializeField]
     private GameObject treasureNPC;
@@ -102,6 +106,8 @@ public class SquadManager : MonoBehaviour {
         direction = new Vector3(0, 0, 0);
         currentNode = GameObject.Instantiate(DestinationNode, transform.position, Quaternion.identity);
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        npcScript = new List<NPC>();
+        basePirateScript = new List<BasePirate>();
 
         // initialize states
         patrol = Patrol;
@@ -137,14 +143,36 @@ public class SquadManager : MonoBehaviour {
             numSpawned++;
         }
 
+        for (int i = 0; i < pirates.Count; i++)
+        {
+            npcScript.Add(pirates[i].GetComponent<NPC>());
+            basePirateScript.Add(pirates[i].GetComponent<BasePirate>());
+        }
+
+        Debug.Log(pirates.Count);
+
         // set initial state
         fsm.SetState(patrol);
     }
 	
 	// Update is called once per frame
-	void Update () {
-        CalcCentroid();
-        CalcDirection();
+	void Update ()
+    {
+        //Remove dead pirates from the group
+        for (int i = 0; i < pirates.Count; i++)
+        {
+            if (npcScript[i].Health <= 0 || basePirateScript[i].Health <= 0)
+            {
+                Destroy(pirates[i]);
+                pirates.Remove(pirates[i]);
+            }
+        }
+
+        if (pirates.Count > 0)
+        {
+            CalcCentroid();
+            CalcDirection();
+        }
 
         fsm.UpdateState();
 	}
@@ -309,14 +337,14 @@ public class SquadManager : MonoBehaviour {
             playerInEnemy = true;
         }
 
-        for (int i = 0; i < pirates.Count; i++)
-        {
-            if (pirates[i].GetComponent<NPC>().Health <= 0)
-            {
-                pirates.Remove(pirates[i]);
-                GameObject.Destroy(pirates[i]);
-            }
-        }
+        //for (int i = 0; i < pirates.Count; i++)
+        //{
+        //    if (pirates[i].GetComponent<NPC>().Health <= 0)
+        //    {
+        //        pirates.Remove(pirates[i]);
+        //        GameObject.Destroy(pirates[i]);
+        //    }
+        //}
     }
 
     /// <summary>

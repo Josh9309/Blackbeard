@@ -237,10 +237,10 @@ public class Buccaneer : BasePirate {
                 break;
         }
     }
-    protected override void Dead()
-    {
-        Debug.Log("Pirate: " + name + "has Died");
-        Destroy(gameObject);
-    }
+    //protected override void Dead()
+    //{
+    //    Debug.Log("Pirate: " + name + "has Died");
+    //    Destroy(gameObject);
+    //}
     #endregion
 }
