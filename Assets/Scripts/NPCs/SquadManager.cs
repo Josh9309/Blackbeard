@@ -165,6 +165,10 @@ public class SquadManager : MonoBehaviour {
             {
                 Destroy(pirates[i]);
                 pirates.Remove(pirates[i]);
+                if (enemyTarget != null)
+                {
+                    enemyTarget.GetComponent<SquadManager>().pirates[i].GetComponent<MeleeNPC>().Enemies.Remove(pirates[i]);
+                }
             }
         }
 
@@ -324,7 +328,6 @@ public class SquadManager : MonoBehaviour {
     #region State Methods
     private void Combat()
     {
-
         if (gm.CurrentPlayerState == GameManager.PlayerState.BUCCANEER && playerInEnemy == false)
         {
             if (CalcDistance(gm.Player.transform.position, engagementZoneCentroid).magnitude <= engagementZoneRadius)
@@ -335,6 +338,12 @@ public class SquadManager : MonoBehaviour {
                 }
             }
             playerInEnemy = true;
+        }
+
+        if (enemyTarget.GetComponent<SquadManager>().Pirates.Count <= 0)
+        {
+            fsm.SetState(patrol);
+            SetSquadState(PATROL_ID);
         }
 
         //for (int i = 0; i < pirates.Count; i++)
@@ -353,8 +362,8 @@ public class SquadManager : MonoBehaviour {
     /// </summary>
     private void Patrol()
     {
-        if (playerInEnemy == false)
-            playerInEnemy = true;
+        if (playerInEnemy == true)
+            playerInEnemy = false;
 
         if (firstRun == true)
         {
@@ -380,8 +389,8 @@ public class SquadManager : MonoBehaviour {
     /// </summary>
     private void PickupTreasure()
     {
-        if (playerInEnemy == false)
-            playerInEnemy = true;
+        if (playerInEnemy == true)
+            playerInEnemy = false;
 
         if (treasureHunter.GetComponent<HunterNPC>().HasTreasure)
         {
@@ -393,8 +402,8 @@ public class SquadManager : MonoBehaviour {
 
     private void ReturnTreasure()
     {
-        if (playerInEnemy == false)
-            playerInEnemy = true;
+        if (playerInEnemy == true)
+            playerInEnemy = false;
 
         if (CalcDistance(treasureHunter.transform.position, treasureDestination.transform.position).magnitude <= 5)
         {

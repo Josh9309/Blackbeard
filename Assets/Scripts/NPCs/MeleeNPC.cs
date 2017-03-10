@@ -27,7 +27,9 @@ public class MeleeNPC : NPC {
     private float followDist;
     [SerializeField]
     private float combatDist;
-    private bool canAttack = false;
+    private bool canAttack = true;
+    private bool attackNow = false;
+    System.Random rand;
 
     // combat skills
     [SerializeField]
@@ -51,6 +53,7 @@ public class MeleeNPC : NPC {
     protected override void Start () {
         base.Start();
 
+        rand = new System.Random();
         fsms = GetComponents<FSM>();
         fsm = fsms[0];
         combatFSM = fsms[1];
@@ -99,6 +102,15 @@ public class MeleeNPC : NPC {
         combatFSM.SetState(attack);
     }
 
+    private IEnumerator AttemptNPCAttack()
+    {
+        canAttack = false;
+        yield return new WaitForSeconds(meleeCooldown);
+        attackNow = true;
+        canAttack = true;
+        Debug.Log(name + " Attempts an attack!");
+    }
+
     private IEnumerator Block()
     {
         yield return new WaitForSeconds(blockTime);
@@ -113,9 +125,43 @@ public class MeleeNPC : NPC {
         Seek(leader.transform.position - leader.transform.forward * (-1 * followDist));
     }
 
+    /// <summary>
+    /// this method will be called any time this agent is being attacked by another
+    /// agent 
+    /// </summary>
+    /// <returns>returns whether or not the attempted attack was successful</returns>
+    public bool NPCDefense(GameObject attacker)
+    {
+        if (attacker.GetInstanceID() == target.GetInstanceID())
+        {
+            Debug.Log(team + " pirate is defending");
+            if (rand.Next(0, 100) < meleeDefense)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     #region State Methods
     protected override void Combat()
     {
+        //Remove dead pirates from the group
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i] == null)
+            {
+                enemies.Remove(enemies[i]);
+            }
+        }
+
         agent.radius = combatDist;
 
         if (FindNearestEnemy().GetComponent<MeleeNPC>() != null)
@@ -126,16 +172,29 @@ public class MeleeNPC : NPC {
         Seek(target.transform.position);
 
         // if they are fighting another NPC
-        if ((CalcDistance(target.transform.position).magnitude <= combatDist + .05) && target.GetComponent<MeleeNPC>().Active == true)
+        if ((CalcDistance(target.transform.position).magnitude <= combatDist + 4) && target.GetComponent<MeleeNPC>().Active == true)
         {
-            
+            if (canAttack && attackNow == false)
+                StartCoroutine(AttemptNPCAttack());
+            if (rand.Next(0, 100) < meleeAttack && attackNow == true)
+            {
+                Debug.Log(name + "'s attack has hit!");
+                if (target.GetComponent<MeleeNPC>().NPCDefense(this.gameObject))
+                {
+                    target.GetComponent<MeleeNPC>().TakeDamage(attackDam);
+                    Debug.Log(target.name + "'s defense has failed!");
+                }
+            }
+            attackNow = false;
         }
 
-        if ((CalcDistance(target.transform.position).magnitude <= combatDist + .05) && target.GetComponent<MeleeNPC>().Active != true)
+        // if fighting against a player
+        if ((CalcDistance(target.transform.position).magnitude <= combatDist + 0.5) && target.GetComponent<MeleeNPC>().Active != true)
         {
             combatFSM.UpdateState();
         }
     }
+
     protected override void Patrol()
     {
         FollowLeader();
@@ -153,12 +212,19 @@ public class MeleeNPC : NPC {
     #endregion
 
     #region Combat State Methods
+
+    /// <summary>
+    /// Responsible for playing the animation that will swing the sword and do damage
+    /// </summary>
     private void Attack()
     {
         anim.Play("SwordAttack1");
         combatFSM.SetState(idle);
     }
 
+    /// <summary>
+    /// The idle animation is the base state for player vs. AI combat
+    /// </summary>
     private void Idle()
     {
         switch (target.GetComponent<Buccaneer>().AttState)
@@ -195,6 +261,9 @@ public class MeleeNPC : NPC {
         Seek(target.transform.position);
     }
 
+    /// <summary>
+    /// Defend will have a probability of playing when a player attacks the NPC
+    /// </summary>
     private void Defend()
     {
         anim.SetBool("isBlocking", true);
