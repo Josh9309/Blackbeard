@@ -10,8 +10,7 @@ public class HunterNPC : NPC {
 
     #region Attributes
     // destination for taking the treasure to
-    [SerializeField]
-    GameObject treasureDestination;
+    public GameObject treasureDestination;
 
     // for picking up treasure
     private Transform treasureSlot;
@@ -29,7 +28,7 @@ public class HunterNPC : NPC {
 
         fsm = GetComponent<FSM>();
         target = GameObject.FindGameObjectWithTag("Treasure");
-        treasureSlot = GameObject.FindGameObjectWithTag("Slot").transform;
+        treasureSlot = transform.FindChild("TreasureSlot");
         treasureRB = target.GetComponent<Rigidbody>();
 
         type = PirateType.HUNTER;
@@ -50,7 +49,7 @@ public class HunterNPC : NPC {
 
     protected override void Combat()
     {
-        
+        agent.destination = transform.position;
     }
 
     /// <summary>

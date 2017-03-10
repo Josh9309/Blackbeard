@@ -11,6 +11,10 @@ using UnityEngine;
 public class SquadManager : MonoBehaviour {
 
     #region Attributes
+    //FIX LATER
+    public GameObject TreasureDest;
+
+
     // reference to the game manager
     private GameManager gm;
 
@@ -120,6 +124,7 @@ public class SquadManager : MonoBehaviour {
         pirates.Add(treasureHunter);
         treasureHunter.GetComponent<NPC>().Squad = this.gameObject;
         treasureHunter.GetComponent<NPC>().getTeam = team;
+        treasureHunter.GetComponent<HunterNPC>().treasureDestination = TreasureDest;
 
         int numSpawned = 1;
 

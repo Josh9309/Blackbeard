@@ -33,7 +33,7 @@ public class TreasureHunter : BasePirate
         treasure = GameObject.FindGameObjectWithTag("Treasure");
         treasureRB = treasure.GetComponent<Rigidbody>();
 
-        treasureSlot = GameObject.FindGameObjectWithTag("Slot").transform;
+        treasureSlot = transform.FindChild("TreasureSlot");
 
         canPickup = false;
         pickingUp = false;
