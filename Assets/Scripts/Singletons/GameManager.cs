@@ -37,6 +37,20 @@ public class GameManager : Singleton<GameManager>
     #region Properties
     public GameObject Player { set { player = value; } get { return player; } }
     public PlayerState CurrentPlayerState { set { currentPlayerState = value; } get { return currentPlayerState; } }
+    public List<GameObject> BlueSquads
+    {
+        get
+        {
+            return blueSquads;
+        }
+    }
+    public List<GameObject> RedSquads
+    {
+        get
+        {
+            return redSquads;
+        }
+    }
     #endregion
 
     protected GameManager(){}

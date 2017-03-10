@@ -21,6 +21,7 @@ public abstract class NPC : MonoBehaviour {
     protected GameObject squad;
     protected Animator anim;
     protected float radius;
+    protected Transform top;
 
     // states
     protected FSM.State patrol;
@@ -62,6 +63,14 @@ public abstract class NPC : MonoBehaviour {
 
     // for allowing SquadManager to set targets
     public GameObject Target { set { target = value; } get { return target; } }
+
+    public Transform Top
+    {
+        get
+        {
+            return top;
+        }
+    }
     #endregion
 
     // use team accessor to return a string representing NPC's team
@@ -77,6 +86,12 @@ public abstract class NPC : MonoBehaviour {
 
         // for now, disable animator if this script runs, it breaks movement
         //anim.enabled = false;
+
+        Transform  []tops = GetComponentsInChildren<Transform>();
+
+        foreach (Transform t in tops)
+            if (t.tag == "Top")
+                top = t;
 
         // assign states
         patrol = Patrol;

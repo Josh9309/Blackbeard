@@ -23,6 +23,7 @@ public class Parrot : MonoBehaviour
     private TreasureHunter treasureHScript; //Treasure hunter script
     private NPC npcScript;
     private bool canChangeCharacter; //If the parrot can land or take off again
+    private GameObject targetPirate; //The currently targeted pirate
 
     //Item pickup
     private List<GameObject> items;
@@ -88,7 +89,10 @@ public class Parrot : MonoBehaviour
             Takeoff();
 
         if (active)
+        {
+            Land();
             Pickup();
+        }
     }
 
     //Physics updates
@@ -227,29 +231,61 @@ public class Parrot : MonoBehaviour
     /// </summary>
     private void Land()
     {
+        //Get a close player
+        foreach (GameObject bPlayer in gm.BlueSquads)
+        {
+            if (targetPirate != null)
+                break;
+
+            foreach (GameObject bNPC in bPlayer.GetComponent<SquadManager>().Pirates)
+            {
+                if ((bNPC.GetComponent<NPC>().Top.position - transform.position).magnitude <= 3)
+                {
+                    Debug.Log("B " + bNPC.name);
+                    targetPirate = bNPC;
+                    break;
+                }
+            }
+        }
+        foreach (GameObject rPlayer in gm.RedSquads)
+        {
+            if (targetPirate != null)
+                break;
+
+            foreach (GameObject rNPC in rPlayer.GetComponent<SquadManager>().Pirates)
+            {
+                if ((rNPC.GetComponent<NPC>().Top.position - transform.position).magnitude <= 3)
+                {
+                    Debug.Log("R " + rNPC.name);
+                    targetPirate = rNPC;
+                    break;
+                }
+            }
+        }
+
         //Landing on pirate
-        if (coll.tag == "Pirate" && Input.GetButton("Interact") && active && canChangeCharacter && carriedItem == null)
+        if (targetPirate != null && Input.GetButton("Interact") && active && canChangeCharacter && carriedItem == null)
         {
             //Set the target of the camera
-            cam.Target = coll.gameObject.transform;
+            cam.Target = targetPirate.gameObject.transform;
 
             //Get scripts from the pirate
-            basePirateScript = coll.GetComponent<BasePirate>();
-            npcScript = coll.GetComponent<NPC>();
+            basePirateScript = targetPirate.GetComponent<BasePirate>();
+            npcScript = targetPirate.GetComponent<NPC>();
             npcScript.Active = false;
 
             if (basePirateScript is Buccaneer)
             {
-                buccScript = coll.GetComponent<Buccaneer>();
+                buccScript = targetPirate.GetComponent<Buccaneer>();
                 gm.CurrentPlayerState = GameManager.PlayerState.BUCCANEER;
             }
             else if (basePirateScript is TreasureHunter)
             {
-                treasureHScript = coll.GetComponent<TreasureHunter>();
+                treasureHScript = targetPirate.GetComponent<TreasureHunter>();
                 gm.CurrentPlayerState = GameManager.PlayerState.HUNTER;
             }
 
-            gm.Player = coll.gameObject;
+            gm.Player = targetPirate.gameObject;
 
 
             //Enable the pirate
@@ -259,6 +295,8 @@ public class Parrot : MonoBehaviour
 
             StartCoroutine(ChangeTimer(2));
         }
+
+        targetPirate = null;
     }
 
     /// <summary>
