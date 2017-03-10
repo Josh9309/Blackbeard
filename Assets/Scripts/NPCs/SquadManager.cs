@@ -165,15 +165,13 @@ public class SquadManager : MonoBehaviour {
             {
                 Destroy(pirates[i]);
                 pirates.Remove(pirates[i]);
-<<<<<<< HEAD
                 npcScript.Remove(npcScript[i]);
                 basePirateScript.Remove(basePirateScript[i]);
-=======
+
                 if (enemyTarget != null)
                 {
                     enemyTarget.GetComponent<SquadManager>().pirates[i].GetComponent<MeleeNPC>().Enemies.Remove(pirates[i]);
                 }
->>>>>>> origin/Test
             }
         }
 
