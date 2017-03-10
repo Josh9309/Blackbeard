@@ -100,7 +100,7 @@ public abstract class NPC : MonoBehaviour {
         {
             if (!agent.enabled)
                 agent.enabled = true;
-            rb.constraints = RigidbodyConstraints.FreezeAll;
+            rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
             fsm.UpdateState();
         }
         else
