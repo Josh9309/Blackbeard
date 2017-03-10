@@ -28,6 +28,7 @@ public class TreasureHunter : BasePirate
     protected override void Start() //Use this for initialization
     {
         base.Start();
+        base.health = 100;
 
         treasure = GameObject.FindGameObjectWithTag("Treasure");
         treasureRB = treasure.GetComponent<Rigidbody>();

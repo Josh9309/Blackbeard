@@ -12,7 +12,7 @@ public abstract class BasePirate: MonoBehaviour
     public enum PirateType { BUCCANEER, HUNTER };
 
     //pirate Stats
-    [SerializeField] protected int health = 25;
+    [SerializeField] protected int health;
     protected int maxHealth;
     protected bool invincible = false;
     protected float speed = 5.0f;

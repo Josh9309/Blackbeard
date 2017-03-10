@@ -109,42 +109,6 @@ public class Parrot : MonoBehaviour
         }
 	}
 
-    private void OnTriggerStay(Collider coll)
-    {
-        //Landing on pirate
-        if (coll.tag == "Pirate" && Input.GetButton("Interact") && active && canChangeCharacter && carriedItem == null) 
-        {
-            //Set the target of the camera
-            cam.Target = coll.gameObject.transform;
-
-            //Get scripts from the pirate
-            basePirateScript = coll.GetComponent<BasePirate>();
-            npcScript = coll.GetComponent<NPC>();
-            npcScript.Active = false;
-
-            if (basePirateScript is Buccaneer)
-            {
-                buccScript = coll.GetComponent<Buccaneer>();
-                gm.CurrentPlayerState = GameManager.PlayerState.BUCCANEER;
-            }
-            else if (basePirateScript is TreasureHunter)
-            {
-                treasureHScript = coll.GetComponent<TreasureHunter>();
-                gm.CurrentPlayerState = GameManager.PlayerState.HUNTER;
-            }
-
-            gm.Player = coll.gameObject;
-            
-
-            //Enable the pirate
-            basePirateScript.PirateActive = true;
-            //Disable the parrot
-            active = false; 
-
-            StartCoroutine(ChangeTimer(2));
-        }
-    }
-
     //Coroutine to prevent immediate landing or takeoff from pirate
     internal IEnumerator ChangeTimer(int time) 
     {
@@ -256,6 +220,45 @@ public class Parrot : MonoBehaviour
 
         //update the parrot rotation
         transform.localEulerAngles = parrotRotation; 
+    }
+
+    /// <summary>
+    /// This method is used to allow the parrot to land
+    /// </summary>
+    private void Land()
+    {
+        //Landing on pirate
+        if (coll.tag == "Pirate" && Input.GetButton("Interact") && active && canChangeCharacter && carriedItem == null)
+        {
+            //Set the target of the camera
+            cam.Target = coll.gameObject.transform;
+
+            //Get scripts from the pirate
+            basePirateScript = coll.GetComponent<BasePirate>();
+            npcScript = coll.GetComponent<NPC>();
+            npcScript.Active = false;
+
+            if (basePirateScript is Buccaneer)
+            {
+                buccScript = coll.GetComponent<Buccaneer>();
+                gm.CurrentPlayerState = GameManager.PlayerState.BUCCANEER;
+            }
+            else if (basePirateScript is TreasureHunter)
+            {
+                treasureHScript = coll.GetComponent<TreasureHunter>();
+                gm.CurrentPlayerState = GameManager.PlayerState.HUNTER;
+            }
+
+            gm.Player = coll.gameObject;
+
+
+            //Enable the pirate
+            basePirateScript.PirateActive = true;
+            //Disable the parrot
+            active = false;
+
+            StartCoroutine(ChangeTimer(2));
+        }
     }
 
     /// <summary>

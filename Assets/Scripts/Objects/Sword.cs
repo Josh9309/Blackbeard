@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour {
     #region Attributes
-    private bool hit;
+    public bool hit = false;
     private float knockback = 300000;
     private Buccaneer pirate;
     #endregion
@@ -33,11 +33,14 @@ public class Sword : MonoBehaviour {
     {
         BasePirate enemy = other.gameObject.GetComponent<BasePirate>();
 
-        if (enemy != null && !enemy.Invincible)
+        
+
+        if (enemy != null && !enemy.Invincible && !hit)
         {
             enemy.ModifyHealth(-pirate.AttackDam);
             Debug.Log(pirate.name + " hit " + enemy.name);
             enemy.GetComponent<Rigidbody>().AddForce(pirate.transform.forward * knockback);
+            hit = true;
         }
     }
 }

@@ -41,8 +41,8 @@ public class Buccaneer : BasePirate {
         //call base pirate start
         base.Start();
         //setup Buccaneer Pirate stats
-        health = 150;
-        maxHealth = health;
+        base.health = 150;
+        base.maxHealth = health;
 
         //get buccanner Sword
         buccaneerSword = transform.FindChild("Sword").GetComponent<Sword>();
@@ -110,6 +110,7 @@ public class Buccaneer : BasePirate {
             attState = AttackState.Idle;
             pirateAnim.SetBool("canAttack2", false);
             pirateAnim.SetBool("canAttack3", false);
+            buccaneerSword.hit = false;
         }
     }
 
@@ -236,6 +237,11 @@ public class Buccaneer : BasePirate {
                 pirateAnim.SetBool("canAttack3", false);
                 break;
         }
+    }
+
+    private void resetSword()
+    {
+        buccaneerSword.hit = false;
     }
     //protected override void Dead()
     //{

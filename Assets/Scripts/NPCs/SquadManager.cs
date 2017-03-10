@@ -165,6 +165,8 @@ public class SquadManager : MonoBehaviour {
             {
                 Destroy(pirates[i]);
                 pirates.Remove(pirates[i]);
+                npcScript.Remove(npcScript[i]);
+                basePirateScript.Remove(basePirateScript[i]);
             }
         }
 
