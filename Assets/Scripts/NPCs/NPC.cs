@@ -24,10 +24,13 @@ public abstract class NPC : MonoBehaviour {
     protected Transform top;
 
     // states
+    public enum State { PATROL, COMBAT, PICKUP_TREASURE, RETURN_TREASURE, DEAD};
+    protected State currentState;
     protected FSM.State patrol;
     protected FSM.State combat;
     protected FSM.State pickupTreasure;
     protected FSM.State returnTreasure;
+    protected FSM.State dead;
     protected bool active = true;
     protected bool rbActive = false;
 
@@ -52,6 +55,7 @@ public abstract class NPC : MonoBehaviour {
     public FSM.State NPCCombat { get { return combat; } }
     public FSM.State NPCReturnTreasure { get { return returnTreasure; } }
     public FSM.State NPCPickupTreasure { get { return pickupTreasure; } }
+    public State CurrentState { get { return currentState; } }
 
     public int Health { get { return health; } }
 
@@ -98,12 +102,7 @@ public abstract class NPC : MonoBehaviour {
         combat = Combat;
         returnTreasure = ReturnTreasure;
         pickupTreasure = PickupTreasure;
-
-        // assign team based on tag
-        // will pull from SM
-
-        // everything starts in a patrol state
-        //fsm.SetState(patrol);
+        dead = Dead;
 
         // for target initialization
         target = null;
@@ -116,6 +115,7 @@ public abstract class NPC : MonoBehaviour {
             if (!agent.enabled)
                 agent.enabled = true;
             rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+            DeadCheck();
             fsm.UpdateState();
         }
         else
@@ -161,17 +161,61 @@ public abstract class NPC : MonoBehaviour {
     {
         health -= damage;
     }
+
+    /// <summary>
+    /// Method responsible for checking if the pirate is dead and changing its state if true
+    /// </summary>
+    private void DeadCheck()
+    {
+        if (health <= 0) // NOTE: replace health variable when health system is redone
+        {
+            fsm.SetState(dead);
+        }
+    }
     #endregion
 
     #region State Methods
+    /// <summary>
+    /// Agent will be in this state when SquadManager detects another enemy squad
+    /// </summary>
+    protected virtual void Combat()
+    {
+        currentState = State.COMBAT;
+    }
 
-    protected abstract void Combat();
+    /// <summary>
+    /// Agent will be in this state when looking for the treasure
+    /// </summary>
+    protected virtual void Patrol()
+    {
+        currentState = State.PATROL;
+    }
 
-    protected abstract void Patrol();
+    /// <summary>
+    /// Agent will be in this state when its squad has the treasure
+    /// </summary>
+    protected virtual void ReturnTreasure()
+    {
+        currentState = State.RETURN_TREASURE;
+    }
 
-    protected abstract void ReturnTreasure();
+    /// <summary>
+    /// Agent will be in this state when its squad is currently picking up the treasure
+    /// </summary>
+    protected virtual void PickupTreasure()
+    {
+        currentState = State.PICKUP_TREASURE;
+    }
 
-    protected abstract void PickupTreasure();
+    /// <summary>
+    /// Agent will be in this state when its health is less than or equal to 0
+    /// </summary>
+    protected void Dead()
+    {
+        currentState = State.DEAD;
+        squad.GetComponent<SquadManager>().Remove(this.gameObject, type);
+        Destroy(this.gameObject);
+    }
 
     #endregion
 }

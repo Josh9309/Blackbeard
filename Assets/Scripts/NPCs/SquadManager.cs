@@ -40,6 +40,8 @@ public class SquadManager : MonoBehaviour {
     private GameObject enemyTarget;
 
     // states
+    public enum State { PATROL, COMBAT, RETURN_TREASURE, PICKUP_TREASURE};
+    private State currentState;
     FSM.State patrol;
     FSM.State combat;
     FSM.State returnTreasure;
@@ -47,6 +49,7 @@ public class SquadManager : MonoBehaviour {
 
     // variables related to pirates in squad
     private List<GameObject> pirates;
+    private List<GameObject> meleePirates;
     [SerializeField]
     private int maxPirates;
     private GameObject treasureHunter;
@@ -98,6 +101,8 @@ public class SquadManager : MonoBehaviour {
 
     // allow this squad to pass enemy NPCs in to its melee pirates
     public List<GameObject> Pirates { get { return pirates; } }
+    public List<GameObject> MeleePirates { get { return meleePirates; } }
+    public GameObject TreasureHunter { get { return treasureHunter; } }
     #endregion
 
     // Use this for initialization
@@ -105,6 +110,7 @@ public class SquadManager : MonoBehaviour {
         // initialize variables
         fsm = GetComponent<FSM>();
         pirates = new List<GameObject>();
+        meleePirates = new List<GameObject>();
         treasure = GameObject.FindGameObjectWithTag("Treasure");
         treasureDestination = GameObject.FindGameObjectWithTag("TreasureDestination");
         direction = new Vector3(0, 0, 0);
@@ -145,6 +151,9 @@ public class SquadManager : MonoBehaviour {
             pirates[i].GetComponent<NPC>().Squad = this.gameObject;
             pirates[i].GetComponent<NPC>().getTeam = team;
             pirates[i].GetComponent<MeleeNPC>().Leader= treasureHunter;
+
+            // add to meleePirates list for tracking
+            meleePirates.Add(pirates[i]);
             numSpawned++;
         }
 
@@ -154,8 +163,6 @@ public class SquadManager : MonoBehaviour {
             basePirateScript.Add(pirates[i].GetComponent<BasePirate>());
         }
 
-        Debug.Log(pirates.Count);
-
         // set initial state
         fsm.SetState(patrol);
     }
@@ -164,23 +171,23 @@ public class SquadManager : MonoBehaviour {
 	void Update ()
     {
         //Remove dead pirates from the group
-        for (int i = 0; i < pirates.Count; i++)
-        {
-            if (npcScript[i].Health <= 0 || basePirateScript[i].Health <= 0)
-            {
-                Destroy(pirates[i]);
-                pirates.Remove(pirates[i]);
-
-                npcScript.Remove(npcScript[i]);
-                basePirateScript.Remove(basePirateScript[i]);
-
-                if (enemyTarget != null)
-                {
-                    enemyTarget.GetComponent<SquadManager>().pirates[i].GetComponent<MeleeNPC>().Enemies.Remove(pirates[i]);
-                }
-
-            }
-        }
+        //for (int i = 0; i < pirates.Count; i++)
+        //{
+        //    if (npcScript[i].Health <= 0 || basePirateScript[i].Health <= 0)
+        //    {
+        //        Destroy(pirates[i]);
+        //        pirates.Remove(pirates[i]);
+        //
+        //        npcScript.Remove(npcScript[i]);
+        //        basePirateScript.Remove(basePirateScript[i]);
+        //
+        //        if (enemyTarget != null)
+        //        {
+        //            enemyTarget.GetComponent<SquadManager>().pirates[i].GetComponent<MeleeNPC>().Enemies.Remove(pirates[i]);
+        //        }
+        //
+        //    }
+        //}
 
         if (pirates.Count > 0)
         {
@@ -192,6 +199,49 @@ public class SquadManager : MonoBehaviour {
 	}
 
     #region Helper Methods
+    /// <summary>
+    /// Method responsible for removing all references to a dead pirate from this
+    /// squad's list of pirates as well as any enemy list
+    /// </summary>
+    /// <param name="squadMember">pirate's gameObject</param>
+    /// <param name="type">NPC.PirateType of what the pirate is</param>
+    public void Remove(GameObject squadMember, NPC.PirateType type)
+    {
+        pirates.Remove(squadMember);
+
+        if (type == NPC.PirateType.HUNTER)
+        {
+            treasureHunter = null;
+        }
+        
+        // FUTURE: check if any pirates are squadless and reassign them or
+        // call in a request from gameManager to spawn a new squad member
+
+        // remove reference to enemy squad enemy list
+        if (currentState == State.COMBAT)
+        {
+            enemyTarget.GetComponent<SquadManager>().RemoveEnemy(squadMember, type);
+        }
+    }
+
+    /// <summary>
+    /// removes an enemy from this squad's enemy list if it is removed and if it is
+    /// in combat
+    /// </summary>
+    /// <param name="enemy">enemy's gameObject</param>
+    /// <param name="type">NPC.PirateType of what the pirate is</param>
+    public void RemoveEnemy(GameObject enemy, NPC.PirateType type)
+    {
+        for (int i = 0; i < meleePirates.Count ; i++)
+        {
+            if (meleePirates[i].GetComponent<MeleeNPC>().Enemies.Contains(enemy))
+            {
+                meleePirates[i].GetComponent<MeleeNPC>().Enemies.Remove(enemy);
+                AssignEnemies();
+            }
+        }
+    }
+
     /// <summary>
     /// Helper method for calculating the distance between two objects
     /// </summary>
@@ -268,9 +318,9 @@ public class SquadManager : MonoBehaviour {
         engagementZoneCentroid = (CalcDistance(this.transform.position, enemyTarget.transform.position) / 2) + transform.position;
         currentNode.transform.position = engagementZoneCentroid;
 
-        for (int i = 1; i <= maxPirates; i++)
+        for (int i = 0; i < meleePirates.Count; i++)
         {
-            pirates[i].GetComponent<NPC>().Target = currentNode;
+            meleePirates[i].GetComponent<NPC>().Target = currentNode;
         }
 
         drawZone = true;
@@ -281,12 +331,13 @@ public class SquadManager : MonoBehaviour {
     /// </summary>
     private void AssignEnemies()
     {
-        for (int i = 1; i <= maxPirates; i++)
+        for (int i = 0; i < meleePirates.Count; i++)
         {
-            if (pirates[i].GetComponent<MeleeNPC>() != null)
-            {
-                pirates[i].GetComponent<MeleeNPC>().Enemies = enemyTarget.GetComponent<SquadManager>().Pirates;
-            }
+            // if there are still melee pirates left in the enemy squad
+            if (enemyTarget.GetComponent<SquadManager>().MeleePirates.Count > 0)
+                meleePirates[i].GetComponent<MeleeNPC>().Enemies = enemyTarget.GetComponent<SquadManager>().MeleePirates;
+            else // otherwise they'll target the treasure hunter
+                meleePirates[i].GetComponent<MeleeNPC>().Enemies.Add(enemyTarget.GetComponent<SquadManager>().TreasureHunter);
         }
     }
 
@@ -338,6 +389,7 @@ public class SquadManager : MonoBehaviour {
     #region State Methods
     private void Combat()
     {
+        currentState = State.COMBAT;
         if (gm.CurrentPlayerState == GameManager.PlayerState.BUCCANEER && playerInEnemy == false)
         {
             if (CalcDistance(gm.Player.transform.position, engagementZoneCentroid).magnitude <= engagementZoneRadius)
@@ -372,6 +424,7 @@ public class SquadManager : MonoBehaviour {
     /// </summary>
     private void Patrol()
     {
+        currentState = State.PATROL;
         if (playerInEnemy == true)
             playerInEnemy = false;
 
@@ -394,11 +447,9 @@ public class SquadManager : MonoBehaviour {
         }
     }
 
-    /// <summary>
-    /// Useless for now
-    /// </summary>
     private void PickupTreasure()
     {
+        currentState = State.PICKUP_TREASURE;
         if (playerInEnemy == true)
             playerInEnemy = false;
 
@@ -412,6 +463,7 @@ public class SquadManager : MonoBehaviour {
 
     private void ReturnTreasure()
     {
+        currentState = State.RETURN_TREASURE;
         if (playerInEnemy == true)
             playerInEnemy = false;
 

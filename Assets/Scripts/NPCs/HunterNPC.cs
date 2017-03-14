@@ -49,6 +49,7 @@ public class HunterNPC : NPC {
 
     protected override void Combat()
     {
+        base.Combat();
         agent.destination = transform.position;
     }
 
@@ -58,6 +59,7 @@ public class HunterNPC : NPC {
     /// </summary>
     protected override void Patrol()
     {
+        base.Patrol();
         if (target.GetComponentInParent<NPC>() == null)
         {
             Seek(target.transform.position);
@@ -76,6 +78,7 @@ public class HunterNPC : NPC {
     /// </summary>
     protected override void PickupTreasure()
     {
+        base.PickupTreasure();
         anim.Play("Pickup1");
         anim.SetTime(0);
         if (!hasTreasure)
@@ -95,10 +98,12 @@ public class HunterNPC : NPC {
 
     protected override void ReturnTreasure()
     {
+        base.ReturnTreasure();
         //target = treasureDestination;
         Seek(target.transform.position);
 
         agent.speed = 3f;
     }
+
     #endregion
 }

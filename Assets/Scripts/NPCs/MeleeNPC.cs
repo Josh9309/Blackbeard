@@ -77,6 +77,7 @@ public class MeleeNPC : NPC {
         base.FixedUpdate();
     }
 
+    #region Helper Methods
     /// <summary>
     /// Helper method for finding the closest enemy based on the enemies list
     /// </summary>
@@ -149,30 +150,21 @@ public class MeleeNPC : NPC {
             return false;
         }
     }
+    #endregion
 
     #region State Methods
     protected override void Combat()
     {
-        //Remove dead pirates from the group
-        for (int i = 0; i < enemies.Count; i++)
-        {
-            if (enemies[i] == null)
-            {
-                enemies.Remove(enemies[i]);
-            }
-        }
+        base.Combat();
 
         agent.radius = combatDist;
 
-        if (FindNearestEnemy().GetComponent<MeleeNPC>() != null)
-        {
-            target = FindNearestEnemy();
-        }
+        target = FindNearestEnemy();
 
         Seek(target.transform.position);
 
         // if they are fighting another NPC
-        if ((CalcDistance(target.transform.position).magnitude <= combatDist + 4) && target.GetComponent<MeleeNPC>().Active == true)
+        if ((CalcDistance(target.transform.position).magnitude <= combatDist + 4) && target.GetComponent<NPC>().Active == true)
         {
             if (canAttack && attackNow == false)
                 StartCoroutine(AttemptNPCAttack());
@@ -197,18 +189,22 @@ public class MeleeNPC : NPC {
 
     protected override void Patrol()
     {
+        base.Patrol();
         FollowLeader();
     }
 
     protected override void ReturnTreasure()
     {
+        base.ReturnTreasure();
         FollowLeader();
     }
 
     protected override void PickupTreasure()
     {
+        base.PickupTreasure();
         FollowLeader();
     }
+
     #endregion
 
     #region Combat State Methods
