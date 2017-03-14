@@ -57,6 +57,9 @@ public abstract class NPC : MonoBehaviour {
     public FSM.State NPCPickupTreasure { get { return pickupTreasure; } }
     public State CurrentState { get { return currentState; } }
 
+    // return type for identification
+    public PirateType Type { get { return type; } }
+
     public int Health { get { return health; } }
 
     // for player to change the state

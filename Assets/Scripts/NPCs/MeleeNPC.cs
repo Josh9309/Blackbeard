@@ -171,10 +171,19 @@ public class MeleeNPC : NPC {
             if (rand.Next(0, 100) < meleeAttack && attackNow == true)
             {
                 Debug.Log(name + "'s attack has hit!");
-                if (target.GetComponent<MeleeNPC>().NPCDefense(this.gameObject))
+
+                // if target is a treasure pirate, apply damage, otherwise roll for defense
+                if (target.GetComponent<NPC>().Type == NPC.PirateType.HUNTER)
                 {
-                    target.GetComponent<MeleeNPC>().TakeDamage(attackDam);
-                    Debug.Log(target.name + "'s defense has failed!");
+                    target.GetComponent<HunterNPC>().TakeDamage(attackDam);
+                }
+                else
+                {
+                    if (target.GetComponent<MeleeNPC>().NPCDefense(this.gameObject))
+                    {
+                        target.GetComponent<MeleeNPC>().TakeDamage(attackDam);
+                        Debug.Log(target.name + "'s defense has failed!");
+                    }
                 }
             }
             attackNow = false;
