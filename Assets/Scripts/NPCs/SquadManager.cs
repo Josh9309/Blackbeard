@@ -222,6 +222,19 @@ public class SquadManager : MonoBehaviour {
         {
             enemyTarget.GetComponent<SquadManager>().RemoveEnemy(squadMember, type);
         }
+
+        // if that was the last squad member, then delete the squad
+        if (pirates.Count <= 0)
+        {
+            // remove this squad from the enemy lists of all of its enemies
+            for (int i = 0; i < enemySquadObjects.Count; i++)
+            {
+                enemySquadObjects[i].GetComponent<SquadManager>().RemoveEnemySquad(this.gameObject);
+            }
+
+            GameObject.Destroy(this.gameObject);
+            GameObject.Destroy(currentNode);
+        }
     }
 
     /// <summary>
@@ -240,6 +253,17 @@ public class SquadManager : MonoBehaviour {
                 AssignEnemies();
             }
         }
+    }
+
+    /// <summary>
+    /// This will remove an enemy squad from a list of enemies if its last pirate
+    /// has been killed and the squad is about to be destroyed
+    /// </summary>
+    /// <param name="enemy">gameObject of the enemy squad</param>
+    public void RemoveEnemySquad(GameObject enemy)
+    {
+        if (enemySquadObjects.Contains(enemy))
+            enemySquadObjects.Remove(enemy);
     }
 
     /// <summary>
@@ -390,6 +414,14 @@ public class SquadManager : MonoBehaviour {
     private void Combat()
     {
         currentState = State.COMBAT;
+
+        // if the enemy squad is ever deleted
+        if (enemyTarget == null)
+        {
+            fsm.SetState(patrol);
+            SetSquadState(PATROL_ID);
+        }
+        
         if (gm.CurrentPlayerState == GameManager.PlayerState.BUCCANEER && playerInEnemy == false)
         {
             if (CalcDistance(gm.Player.transform.position, engagementZoneCentroid).magnitude <= engagementZoneRadius)
@@ -402,11 +434,7 @@ public class SquadManager : MonoBehaviour {
             playerInEnemy = true;
         }
 
-        if (enemyTarget.GetComponent<SquadManager>().Pirates.Count <= 0)
-        {
-            fsm.SetState(patrol);
-            SetSquadState(PATROL_ID);
-        }
+        
 
         //for (int i = 0; i < pirates.Count; i++)
         //{
