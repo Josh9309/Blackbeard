@@ -175,13 +175,13 @@ public class MeleeNPC : NPC {
                 // if target is a treasure pirate, apply damage, otherwise roll for defense
                 if (target.GetComponent<NPC>().Type == NPC.PirateType.HUNTER)
                 {
-                    target.GetComponent<HunterNPC>().TakeDamage(attackDam);
+                    target.GetComponent<HunterNPC>().ModifyHealth(-attackDam, false);
                 }
                 else
                 {
                     if (target.GetComponent<MeleeNPC>().NPCDefense(this.gameObject))
                     {
-                        target.GetComponent<MeleeNPC>().TakeDamage(attackDam);
+                        target.GetComponent<MeleeNPC>().ModifyHealth(-attackDam, false);
                         Debug.Log(target.name + "'s defense has failed!");
                     }
                 }

@@ -47,6 +47,7 @@ public abstract class NPC : MonoBehaviour {
     // gameplay
     [SerializeField]
     protected int health;
+    protected HealthSynch hpSynch;
     #endregion
 
     #region Accessors
@@ -60,7 +61,24 @@ public abstract class NPC : MonoBehaviour {
     // return type for identification
     public PirateType Type { get { return type; } }
 
-    public int Health { get { return health; } }
+    public int Health {
+        get { return health; }
+        set
+        {
+            if (value >= hpSynch.MaxHealth)
+            {
+                health = hpSynch.MaxHealth;
+            }
+            else if (value < 0)
+            {
+                health = 0;
+            }
+            else
+            {
+                health = value;
+            }
+        }
+    }
 
     // for player to change the state
     public bool Active { set { active = value; } get { return active; } }
@@ -85,6 +103,9 @@ public abstract class NPC : MonoBehaviour {
  
     // Use this for initialization
     protected virtual void Start () {
+        //setup health
+        hpSynch = GetComponent<HealthSynch>();
+
         // assign components
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
@@ -156,14 +177,25 @@ public abstract class NPC : MonoBehaviour {
     }
 
     /// <summary>
-    /// Method responsible for applying damage, the attacker should be the one applying
-    /// the damage
+    /// The Modify method should be used to make any modifications to the pirates health. It can either replace the health, or modify it; and it will update the other
+    /// pirate script accordingly
     /// </summary>
-    /// <param name="damage">amount of damage to be taken</param>
-    public void TakeDamage(int damage)
+    /// <param name="mod">either the new health amount or the amount you want to modify the health by</param>
+    /// <param name="replaceHealth">tells method whether to replace the health with new value or just modify it by new value </param>
+    public void ModifyHealth(int mod, bool replaceHealth)
     {
-        health -= damage;
+        if (!replaceHealth) //check if you are just modifying the health
+        {
+            health += mod; //Add mod amount to health
+            hpSynch.UpdateHealth(false); //tells hpSynch to update the player pirate script
+        }
+        else //you are replacing the health
+        {
+            health = mod; //sets health = to new health
+            hpSynch.UpdateHealth(false); //tells hpSynch to update the player pirate script
+        }
     }
+
 
     /// <summary>
     /// Method responsible for checking if the pirate is dead and changing its state if true
