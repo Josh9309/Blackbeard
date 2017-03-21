@@ -214,6 +214,12 @@ public class MeleeNPC : NPC {
         FollowLeader();
     }
 
+    protected override void DefendTreasure()
+    {
+        base.DefendTreasure();
+        FollowLeader();
+    }
+
     #endregion
 
     #region Combat State Methods

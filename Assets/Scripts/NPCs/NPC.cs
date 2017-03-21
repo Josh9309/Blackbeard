@@ -7,7 +7,7 @@ using UnityEngine.AI;
 /// <summary>
 /// abstract class to govern NPCs when they are not under the player's control
 /// this class will contain attributes and methods relating to both child classes
-/// this class is abstract and has two children, RedNPC and BlueNPC
+/// this class is abstract and has two children, MeleeNPC and HunterNPC
 /// </summary>
 public abstract class NPC : MonoBehaviour {
 
@@ -24,13 +24,14 @@ public abstract class NPC : MonoBehaviour {
     protected Transform top;
 
     // states
-    public enum State { PATROL, COMBAT, PICKUP_TREASURE, RETURN_TREASURE, DEAD};
+    public enum State { PATROL, COMBAT, PICKUP_TREASURE, RETURN_TREASURE, DEFEND_TREASURE, DEAD};
     protected State currentState;
     protected FSM.State patrol;
     protected FSM.State combat;
     protected FSM.State pickupTreasure;
     protected FSM.State returnTreasure;
     protected FSM.State dead;
+    protected FSM.State defendTreasure;
     protected bool active = true;
     protected bool rbActive = false;
 
@@ -56,6 +57,7 @@ public abstract class NPC : MonoBehaviour {
     public FSM.State NPCCombat { get { return combat; } }
     public FSM.State NPCReturnTreasure { get { return returnTreasure; } }
     public FSM.State NPCPickupTreasure { get { return pickupTreasure; } }
+    public FSM.State NPCDefendTreasure { get { return defendTreasure; } }
     public State CurrentState { get { return currentState; } }
 
     // return type for identification
@@ -126,6 +128,7 @@ public abstract class NPC : MonoBehaviour {
         combat = Combat;
         returnTreasure = ReturnTreasure;
         pickupTreasure = PickupTreasure;
+        defendTreasure = DefendTreasure;
         dead = Dead;
 
         // for target initialization
@@ -240,6 +243,14 @@ public abstract class NPC : MonoBehaviour {
     protected virtual void PickupTreasure()
     {
         currentState = State.PICKUP_TREASURE;
+    }
+
+    /// <summary>
+    /// Agent will be in this state when another squad on its team has the treasure
+    /// </summary>
+    protected virtual void DefendTreasure()
+    {
+        currentState = State.DEFEND_TREASURE;
     }
 
     /// <summary>
