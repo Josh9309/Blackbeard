@@ -99,13 +99,19 @@ public class MeleeNPC : NPC {
 
     public override void SetInactive()
     {
-        squad.GetComponent<SquadManager>().Remove(this.gameObject, PirateType.BUCCANEER);
+        if (squad != null)
+            squad.GetComponent<SquadManager>().Remove(this.gameObject, PirateType.BUCCANEER);
+        else
+            Destroy(this.gameObject); // TODO: replace this with updated spawn pool code
         active = false;
     }
 
     public override void SetActive()
     {
-        squad.GetComponent<SquadManager>().Add(this.gameObject, PirateType.BUCCANEER);
+        if (squad != null)
+            squad.GetComponent<SquadManager>().Add(this.gameObject, PirateType.BUCCANEER);
+        else
+            Destroy(this.gameObject); // TODO: replace this with updated spawn pool code
         active = true;
     }
 

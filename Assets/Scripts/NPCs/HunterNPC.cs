@@ -48,13 +48,19 @@ public class HunterNPC : NPC {
     #region Helper Methods
     public override void SetInactive()
     {
-        squad.GetComponent<SquadManager>().Remove(this.gameObject, PirateType.HUNTER);
+        if (squad != null)
+            squad.GetComponent<SquadManager>().Remove(this.gameObject, PirateType.HUNTER);
+        else
+            Destroy(this.gameObject); // TODO: replace this with updated spawn pool code
         active = false;
     }
 
     public override void SetActive()
     {
-        squad.GetComponent<SquadManager>().Add(this.gameObject, PirateType.HUNTER);
+        if (squad != null)
+            squad.GetComponent<SquadManager>().Add(this.gameObject, PirateType.HUNTER);
+        else
+            Destroy(this.gameObject); // TODO: replace this with updated spawn pool code
         active = true;
     }
     #endregion
