@@ -206,6 +206,12 @@ public abstract class NPC : MonoBehaviour {
     public abstract void SetInactive();
 
     /// <summary>
+    /// Method responsible for setting this NPC to be active if the player leaves them
+    /// NOTE: use this method for setting things to be active, don't directly modify the bool
+    /// </summary>
+    public abstract void SetActive();
+
+    /// <summary>
     /// Method responsible for checking if the pirate is dead and changing its state if true
     /// </summary>
     private void DeadCheck()
