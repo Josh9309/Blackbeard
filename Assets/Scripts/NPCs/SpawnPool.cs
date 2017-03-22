@@ -19,7 +19,7 @@ public class SpawnPool : MonoBehaviour {
     private List<GameObject> squads;
     private List<GameObject> orphans;
     [SerializeField] private float spawnRadius = 15;
-    private float spawnDelay = 10;
+    [SerializeField] private float spawnDelay = 20;
     private bool canSpawn;
     private int MaxSquads = 2;
     public Queue<SpawnRequest> spawnRequests;
@@ -39,6 +39,12 @@ public class SpawnPool : MonoBehaviour {
         //create the first squad
         GameObject squad = SpawnSquad(4);
         squads.Add(squad); //adds the new squad to the spawn pools list of squads
+
+       // SpawnRequest sr;
+       // sr.loneHunter = false;
+       // sr.numMeleePirates = 4;
+       //
+       // spawnRequests.Enqueue(sr);
     }
 	
 	// Update is called once per frame
@@ -53,7 +59,7 @@ public class SpawnPool : MonoBehaviour {
     /// </summary>
     private void ProccessRequests()
     {
-        if(spawnRequests.Count == 0  || !canSpawn || squads.Capacity == 2) //checks if queue is empty, or if a squad cannot be spawned right now
+        if(spawnRequests.Count == 0  || !canSpawn || squads.Count == 2) //checks if queue is empty, or if a squad cannot be spawned right now
         {
             return; //leave method
         }
@@ -86,9 +92,19 @@ public class SpawnPool : MonoBehaviour {
         squadMan.TreasureDest = treasureDestination;
         squadMan.spawningPool = this;
         //squadMan.runStart = true;
-       // squadMan.Start();
+        // squadMan.Start();
 
+        StartCoroutine(SpawnCooldown());
         return sq;
+    }
+
+    private IEnumerator SpawnCooldown()
+    {
+        canSpawn = false;
+
+        yield return new WaitForSeconds(spawnDelay);
+
+        canSpawn = true;
     }
     #endregion
 }
