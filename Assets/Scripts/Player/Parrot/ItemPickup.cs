@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class ItemPickup : MonoBehaviour
 {
-    #region Properties
+    #region Attributes
     private List<GameObject> items;
     private List<Rigidbody> itemsRB;
     private List<Item> itemsScripts;
     private List<float> itemHalfHeight;
     private GameObject carriedItem;
     private Rigidbody carriedItemRB;
+    float carriedItemHalfHeight;
     private Item carriedItemScript;
     private Transform itemSlot;
     private RaycastHit hit;
@@ -47,6 +48,7 @@ public class ItemPickup : MonoBehaviour
 
         carriedItem = null;
         carriedItemRB = null;
+        carriedItemHalfHeight = 0;
         itemSlot = GameObject.FindGameObjectWithTag("ItemSlot").transform;
         visionAngle = 45;
         buttonDown = false;
@@ -72,8 +74,8 @@ public class ItemPickup : MonoBehaviour
                     {
                         items.Remove(items[i]);
                         itemsRB.Remove(itemsRB[i]);
-                        itemsScripts.Remove(itemsScripts[i]);
                         itemHalfHeight.Remove(itemHalfHeight[i]);
+                        itemsScripts.Remove(itemsScripts[i]);
                     }
 
                     Vector3 direction = (items[i].transform.position + new Vector3(0, itemHalfHeight[i], 0)) - transform.position;
@@ -84,12 +86,11 @@ public class ItemPickup : MonoBehaviour
                     //TODO: update this with UI cues
                     if (direction.magnitude < 1.5f && Vector3.Dot(direction, transform.forward) > -.1f)
                     {
-                        Debug.Log("2");
                         if (Input.GetButton("Attack"))
                         {
-                            Debug.Log("3");
                             carriedItem = items[i];
                             carriedItemRB = itemsRB[i];
+                            carriedItemHalfHeight = itemHalfHeight[i];
                             carriedItemScript = itemsScripts[i];
                             buttonDown = true; //Prevents immediate release of items
                             break;
@@ -113,20 +114,23 @@ public class ItemPickup : MonoBehaviour
                 //Remove the items from the list and set them to null
                 items.Remove(carriedItem);
                 itemsRB.Remove(carriedItemRB);
+                itemHalfHeight.Remove(carriedItemHalfHeight);
                 itemsScripts.Remove(carriedItemScript);
 
                 //Set all current items to null
                 carriedItem = null;
                 carriedItemRB = null;
+                carriedItemHalfHeight = 0;
                 carriedItemScript = null;
             }
             else if (carriedItem != null) //When trying to pick something up, make sure nothing is currently held
             {
+                Debug.Log(-carriedItemHalfHeight);
                 carriedItemRB.useGravity = false;
 
-                //Set the treasure for when it is picked up
+                //Set the item for when it is picked up
                 carriedItem.transform.parent = itemSlot;
-                carriedItem.transform.localPosition = Vector3.zero;
+                carriedItem.transform.localPosition = new Vector3(0, -carriedItemHalfHeight, 0); //Make sure the item is in the right position below the parrot
                 carriedItem.transform.rotation = itemSlot.transform.rotation;
             }
         }
