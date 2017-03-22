@@ -13,7 +13,7 @@ public abstract class BasePirate: MonoBehaviour
 
     //pirate Stats
     [SerializeField] protected int health;
-    protected int maxHealth;
+    protected HealthSynch hpSynch;
     protected bool invincible = false;
     protected float speed = 5.0f;
     [SerializeField] protected PirateType pirate;
@@ -49,6 +49,21 @@ public abstract class BasePirate: MonoBehaviour
     public int Health
     {
         get { return health; }
+        set
+        {
+            if(value >= hpSynch.MaxHealth)
+            {
+                health = hpSynch.MaxHealth;
+            }
+            else if(value < 0)
+            {
+                health = 0;
+            }
+            else
+            {
+                health = value;
+            }
+        }
     }
 
     public bool Invincible
@@ -102,14 +117,10 @@ public abstract class BasePirate: MonoBehaviour
         pirateAnim = GetComponent<Animator>();
 
         gameCamera = GameObject.FindGameObjectWithTag("MainCamera").transform; //Get the camera
-        ////Get all cameras and assign the main camera
-        //Camera[] camList = FindObjectsOfType<Camera>();
-        //foreach (Camera c in camList)
-        //{
-        //    if (c.name.Contains("Pirate"))
-        //        gameCamera = c.transform;
-        //}
+
         maxHealth = health;
+
+        hpSynch = GetComponent<HealthSynch>();
 
         pirateActive = false;
     }
@@ -240,33 +251,25 @@ public abstract class BasePirate: MonoBehaviour
     }
 
     /// <summary>
-    /// This method is for outside gameobjects to apply damage to the Pirate. It will go through apply the damage and check to see if the player is dead.
+    /// The Modify method should be used to make any modifications to the pirates health. It can either replace the health, or modify it; and it will update the other
+    /// pirate script accordingly
     /// </summary>
-    public void ModifyHealth(int mod)
+    /// <param name="mod">either the new health amount or the amount you want to modify the health by</param>
+    /// <param name="replaceHealth">tells method whether to replace the health with new value or just modify it by new value </param>
+    public void ModifyHealth(int mod, bool replaceHealth)
     {
-        health += mod; //Add mod amount to health
-        CheckHealth(); //check the status of health
-    }
-
-    /// <summary>
-    /// CheckHealth will check to see what the status is of the health. If health is bellow zero It will call the death Method and it will not let health go above max health.
-    /// </summary>
-    protected virtual void CheckHealth()
-    {
-        if (health > maxHealth) 
+        if (!replaceHealth) //check if you are just modifying the health
         {
-            health = maxHealth; //resets the health to max health if health is over max health.
+            health += mod; //Add mod amount to health
+            hpSynch.UpdateHealth(true); //tells hpSynch to update the ai pirate script
         }
-        else if (health < maxHealth && health > 0) //For visual damage feedback
+        else //you are replacing the health
         {
-            //TODO: visual feedback
-        }
-        else if (health <= 0)
-        {
-            health = 0;
-            //Dead(); //calls pirates dead method if health is 0 or bellow
+            health = mod; //sets health = to new health
+            hpSynch.UpdateHealth(true); //tells hpSynch to update the ai pirate script
         }
     }
+    
 
     /// <summary>
     /// Dead will run all the neccessary code for when a pirate dies. Each pirate class must implement a Dead() Method.

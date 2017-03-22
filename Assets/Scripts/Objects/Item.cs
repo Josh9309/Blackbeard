@@ -47,7 +47,7 @@ public class Item : MonoBehaviour
                     if (c.gameObject.tag == "Pirate")
                     {
                         basePirateScript = c.gameObject.GetComponent<BasePirate>();
-                        basePirateScript.ModifyHealth(explosionDamage);
+                        basePirateScript.ModifyHealth(explosionDamage, false);
                     }
                 }
 
@@ -70,7 +70,7 @@ public class Item : MonoBehaviour
                     if (c.gameObject.tag == "Pirate")
                     {
                         basePirateScript = c.gameObject.GetComponent<BasePirate>();
-                        basePirateScript.ModifyHealth(explosionDamage);
+                        basePirateScript.ModifyHealth(explosionDamage, false);
                     }
                 }
 
@@ -79,7 +79,7 @@ public class Item : MonoBehaviour
             else //If this is any other object
             {
                 basePirateScript = coll.gameObject.GetComponent<BasePirate>();
-                basePirateScript.ModifyHealth(damage);
+                basePirateScript.ModifyHealth(damage, false);
 
                 Destroy(gameObject);
             }

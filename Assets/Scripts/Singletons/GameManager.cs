@@ -91,6 +91,43 @@ public class GameManager : Singleton<GameManager>
 
 	}
 
+    /// <summary>
+    /// Any time a squad needs to notify the GameManager of something, it should
+    /// call this method
+    /// </summary>
+    /// <param name="squad">squad that is notifying</param>
+    /// <param name="note">enum notification</param>
+    public void Notify(Team team, GameObject squad, SquadManager.Notification note)
+    {
+        switch(note)
+        {
+            case SquadManager.Notification.HAS_TREASURE:
+                if (team == Team.BLUE)
+                {
+                    foreach (GameObject s in blueSquads)
+                    {
+                        s.GetComponent<SquadManager>().AllyHasTreasure = true;
+                    }
+                }
+                else
+                {
+                    foreach (GameObject s in redSquads)
+                    {
+                        s.GetComponent<SquadManager>().AllyHasTreasure = true;
+                    }
+                }
+                break;
+
+            case SquadManager.Notification.SPAWN_REQUEST_MELEE:
+                Debug.Log("Spawn Request unhandled at this time. STAHP BREAKIN MUH CODE");
+                break;
+
+            case SquadManager.Notification.SPAWN_REQUEST_TREASURE:
+                Debug.Log("Spawn Request unhandled at this time. STAHP BREAKIN MUH CODE");
+                break;
+        }
+    }
+
     void Update()
     {
 
