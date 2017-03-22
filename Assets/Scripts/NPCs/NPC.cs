@@ -160,6 +160,18 @@ public abstract class NPC : MonoBehaviour {
     }
 
     #region Helper Methods
+    //SATCH CAUSED THIS !!
+    public void SetStates()
+    {
+        // assign states
+        patrol = Patrol;
+        combat = Combat;
+        returnTreasure = ReturnTreasure;
+        pickupTreasure = PickupTreasure;
+        defendTreasure = DefendTreasure;
+        dead = Dead;
+    }
+
     /// <summary>
     /// Helper method for calculating the distance from the NPC's current position
     /// to a given target
