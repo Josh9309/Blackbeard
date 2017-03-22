@@ -173,7 +173,7 @@ public class PlayerSwitching : MonoBehaviour
                 treasureHScript = null;
                 basePirateScript = null;
 
-                npcScript.SetInactive();
+                npcScript.SetActive();
                 npcScript = null;
 
                 StartCoroutine(ChangeTimer(2));
