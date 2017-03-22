@@ -103,6 +103,12 @@ public class MeleeNPC : NPC {
         active = false;
     }
 
+    public override void SetActive()
+    {
+        // add to squad
+        active = true;
+    }
+
     private IEnumerator AttemptAttack()
     {
         yield return new WaitForSeconds(meleeCooldown);
