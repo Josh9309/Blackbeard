@@ -272,7 +272,7 @@ public class Parrot : MonoBehaviour
             //Get scripts from the pirate
             basePirateScript = targetPirate.GetComponent<BasePirate>();
             npcScript = targetPirate.GetComponent<NPC>();
-            npcScript.Active = false;
+            npcScript.SetInactive();
 
             if (basePirateScript is Buccaneer)
             {
@@ -338,7 +338,8 @@ public class Parrot : MonoBehaviour
             treasureHScript = null;
             basePirateScript = null;
 
-            npcScript.Active = true;
+            //npcScript.Active = true;
+            //TODO: add activate method here
             npcScript = null;
 
             StartCoroutine(ChangeTimer(2));

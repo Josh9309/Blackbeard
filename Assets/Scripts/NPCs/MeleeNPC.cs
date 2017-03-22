@@ -97,6 +97,12 @@ public class MeleeNPC : NPC {
         return closest;
     }
 
+    public override void SetInactive()
+    {
+        squad.GetComponent<SquadManager>().Remove(this.gameObject, PirateType.BUCCANEER);
+        active = false;
+    }
+
     private IEnumerator AttemptAttack()
     {
         yield return new WaitForSeconds(meleeCooldown);

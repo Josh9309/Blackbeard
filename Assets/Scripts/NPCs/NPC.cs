@@ -83,7 +83,7 @@ public abstract class NPC : MonoBehaviour {
     }
 
     // for player to change the state
-    public bool Active { set { active = value; } get { return active; } }
+    public bool Active { get { return active; } }
 
     // getters and setters to modify states through the SquadManager
     public GameObject Squad { set { squad = value; } get { return squad; } }
@@ -199,6 +199,11 @@ public abstract class NPC : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Method responsible for setting this NPC to be inactive if the player possesses them
+    /// NOTE: use this method for setting things to be inactive, don't directly modify the bool
+    /// </summary>
+    public abstract void SetInactive();
 
     /// <summary>
     /// Method responsible for checking if the pirate is dead and changing its state if true

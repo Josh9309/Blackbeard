@@ -455,17 +455,17 @@ public class SquadManager : MonoBehaviour {
                 
         }
 
-        if (gm.CurrentPlayerState == GameManager.PlayerState.BUCCANEER && playerInEnemy == false)
-        {
-            if (CalcDistance(gm.Player.transform.position, engagementZoneCentroid).magnitude <= engagementZoneRadius)
-            {
-                for (int i = 1; i <= maxPirates; i++) // needs to be refactored with new melee enemy list
-                {
-                    pirates[i].GetComponent<MeleeNPC>().Enemies.Add(gm.Player);
-                }
-            }
-            playerInEnemy = true;
-        }
+        //if (gm.CurrentPlayerState == GameManager.PlayerState.BUCCANEER && playerInEnemy == false)
+        //{
+        //    if (CalcDistance(gm.Player.transform.position, engagementZoneCentroid).magnitude <= engagementZoneRadius)
+        //    {
+        //        for (int i = 1; i <= maxPirates; i++) // needs to be refactored with new melee enemy list
+        //        {
+        //            pirates[i].GetComponent<MeleeNPC>().Enemies.Add(gm.Player);
+        //        }
+        //    }
+        //    playerInEnemy = true;
+        //}
     }
 
     /// <summary>
@@ -512,7 +512,7 @@ public class SquadManager : MonoBehaviour {
         if (treasureHunter.GetComponent<HunterNPC>().HasTreasure)
         {
             fsm.SetState(returnTreasure);
-            gm.Notify(team, this.gameObject, Notification.HAS_TREASURE);
+            //gm.Notify(team, this.gameObject, Notification.HAS_TREASURE); - breaks currently
             treasureHunter.GetComponent<HunterNPC>().Target = treasureDestination;
             SetSquadState(RETURN_TREASURE_ID);
         }
