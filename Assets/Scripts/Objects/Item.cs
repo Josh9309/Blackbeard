@@ -35,7 +35,7 @@ public class Item : MonoBehaviour
     private void OnCollisionEnter(Collision coll)
     {
         //Dropped items
-        if (active && coll.gameObject.name == "Terrain")
+        if (active && coll.gameObject.tag == "Terrain") //Colliding with the ground
         {
             if (gameObject.name.Contains("Bomb")) //If this is a bomb
             {
@@ -58,7 +58,7 @@ public class Item : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        else if (active && coll.gameObject.name.Contains("Pirate"))
+        else if (active && coll.gameObject.name.Contains("Pirate")) //Colliding with a pirate
         {
             if (gameObject.name.Contains("Bomb")) //If this is a bomb
             {

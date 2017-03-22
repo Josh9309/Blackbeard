@@ -101,13 +101,14 @@ public abstract class BasePirate: MonoBehaviour
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
 
-        //Get all cameras and assign the main camera
-        Camera[] camList = FindObjectsOfType<Camera>();
-        foreach (Camera c in camList)
-        {
-            if (c.name.Contains("Pirate"))
-                gameCamera = c.transform;
-        }
+        gameCamera = GameObject.FindGameObjectWithTag("MainCamera").transform; //Get the camera
+        ////Get all cameras and assign the main camera
+        //Camera[] camList = FindObjectsOfType<Camera>();
+        //foreach (Camera c in camList)
+        //{
+        //    if (c.name.Contains("Pirate"))
+        //        gameCamera = c.transform;
+        //}
         maxHealth = health;
 
         pirateActive = false;
