@@ -118,8 +118,6 @@ public abstract class BasePirate: MonoBehaviour
 
         gameCamera = GameObject.FindGameObjectWithTag("MainCamera").transform; //Get the camera
 
-        maxHealth = health;
-
         hpSynch = GetComponent<HealthSynch>();
 
         pirateActive = false;

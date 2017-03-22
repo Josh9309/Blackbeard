@@ -101,7 +101,7 @@ public class PlayerSwitching : MonoBehaviour
                 //Get scripts from the pirate
                 basePirateScript = targetPirate.GetComponent<BasePirate>();
                 npcScript = targetPirate.GetComponent<NPC>();
-                npcScript.Active = false;
+                npcScript.SetInactive();
 
                 if (basePirateScript is Buccaneer)
                 {
@@ -173,7 +173,7 @@ public class PlayerSwitching : MonoBehaviour
                 treasureHScript = null;
                 basePirateScript = null;
 
-                npcScript.Active = true;
+                npcScript.SetInactive();
                 npcScript = null;
 
                 StartCoroutine(ChangeTimer(2));
