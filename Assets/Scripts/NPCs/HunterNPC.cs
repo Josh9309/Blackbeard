@@ -54,7 +54,7 @@ public class HunterNPC : NPC {
 
     public override void SetActive()
     {
-        // add to squad
+        squad.GetComponent<SquadManager>().Add(this.gameObject, PirateType.HUNTER);
         active = true;
     }
     #endregion

@@ -105,7 +105,7 @@ public class MeleeNPC : NPC {
 
     public override void SetActive()
     {
-        // add to squad
+        squad.GetComponent<SquadManager>().Add(this.gameObject, PirateType.BUCCANEER);
         active = true;
     }
 

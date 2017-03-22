@@ -15,6 +15,7 @@ public class SquadManager : MonoBehaviour {
     public GameObject TreasureDest;
 
     // enum representing which notification to notify the GameManager of
+    // NOTE: spawn requests may remain unused
     public enum Notification { HAS_TREASURE, SPAWN_REQUEST_MELEE, SPAWN_REQUEST_TREASURE};  
 
     // reference to the game manager
@@ -225,12 +226,19 @@ public class SquadManager : MonoBehaviour {
         {
             treasureHunter = null;
         }
+        //else
+        //{
+        //    if (meleePirates.Contains(squadMember))
+        //    {
+        //        meleePirates.Remove(squadMember);
+        //    }
+        //}
         
         // FUTURE: check if any pirates are squadless and reassign them or
         // call in a request from gameManager to spawn a new squad member
 
         // remove reference to enemy squad enemy list
-        if (currentState == State.COMBAT)
+        if (currentState == State.COMBAT && enemyTarget != null)
         {
             enemyTarget.GetComponent<SquadManager>().RemoveEnemy(squadMember, type);
         }
@@ -283,6 +291,53 @@ public class SquadManager : MonoBehaviour {
     {
         if (enemySquadObjects.Contains(enemy))
             enemySquadObjects.Remove(enemy);
+    }
+
+    /// <summary>
+    /// Adds a pirate to a squad
+    /// </summary>
+    /// <param name="squadMember">pirate to be added</param>
+    /// <param name="type">NPC.PirateType of what the pirate is</param>
+    public void Add(GameObject squadMember, NPC.PirateType type)
+    {
+        pirates.Add(squadMember);
+
+        if (type == NPC.PirateType.HUNTER)
+        {
+            treasureHunter = gameObject;
+        }
+        else
+        {
+            if (!meleePirates.Contains(squadMember))
+            {
+                meleePirates.Add(squadMember);
+            }
+        }
+
+        if (currentState == State.COMBAT && enemyTarget != null)
+        {
+            enemyTarget.GetComponent<SquadManager>().AddEnemy(squadMember, type);
+        }
+
+        // FUTURE: check if squad is over its max squadmembers limit, if so, orphan the pirate
+    }
+
+    /// <summary>
+    /// Adds an enemy pirate to this squad's melee pirates' list of enemies
+    /// </summary>
+    /// <param name="enemy">enemy GameObject</param>
+    /// <param name="type">NPC.PirateType of what the pirate is</param>
+    public void AddEnemy(GameObject enemy, NPC.PirateType type)
+    {
+        for (int i = 0; i < meleePirates.Count; i++)
+        {
+            // should only be necessary if player is a melee pirate
+            if (!meleePirates[i].GetComponent<MeleeNPC>().Enemies.Contains(enemy) && type == NPC.PirateType.BUCCANEER)
+            {
+                meleePirates[i].GetComponent<MeleeNPC>().Enemies.Add(enemy);
+                AssignEnemies();
+            }
+        }
     }
 
     /// <summary>
