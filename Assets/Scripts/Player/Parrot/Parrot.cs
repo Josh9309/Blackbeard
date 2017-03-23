@@ -8,6 +8,7 @@ public class Parrot : MonoBehaviour
     //Health and flight
     private int health = 10;
     [SerializeField] private float speed = 2.0f;
+    private float maxSpeed;
     [SerializeField] private float turnSpeed = 2.0f;
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
@@ -48,6 +49,8 @@ public class Parrot : MonoBehaviour
 
         switchingScript = GetComponent<PlayerSwitching>(); //Get the player switching script
         pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
+
+        maxSpeed = speed * 3;
 	}
 
     //Update is called once per frame
@@ -99,21 +102,34 @@ public class Parrot : MonoBehaviour
         //if accelerate btn is pressed
         if (boost && boostInput > 0) 
         {
+            //---old back up ----
             //parrot speed is doubled
-            rBody.velocity = transform.forward * (2 * speed); 
+            //rBody.velocity = transform.forward * (2 * speed); 
+
+            //increase speed
+            speed += 0.1f;
+            if(speed > maxSpeed)
+            {
+                speed = maxSpeed;
+            }
         }
         //if Decelerate btn is pressed
         else if (boost && boostInput < 0) 
         {
             //parrot speed is halved
-            rBody.velocity = transform.forward * (0.5f * speed); 
+            //rBody.velocity = transform.forward * (0.5f * speed); 
+
+            //decrease speed
+            speed -= 0.1f;
+            if(speed < 0)
+            {
+                speed = 0;
+            }
         }
-        //if niether the acclerate btn or decelerate btn is pressed 
-        else
-        {
-            //parrot speed is normal
-            rBody.velocity += transform.forward * speed; 
-        }
+        //if neither the accelerate btn or decelerate btn is pressed 
+        
+        //parrot speed is added to velocity
+        rBody.velocity += transform.forward * speed; 
 
         //Parrot fly up
         //make sure input is greater than deadzone range
