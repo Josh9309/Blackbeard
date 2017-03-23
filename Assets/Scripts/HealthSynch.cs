@@ -18,6 +18,7 @@ public class HealthSynch : MonoBehaviour {
     {
         get { return maxHealth; }
     }
+
     #endregion
 
     // Use this for initialization
