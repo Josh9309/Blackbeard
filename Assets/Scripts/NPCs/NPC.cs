@@ -7,7 +7,7 @@ using UnityEngine.AI;
 /// <summary>
 /// abstract class to govern NPCs when they are not under the player's control
 /// this class will contain attributes and methods relating to both child classes
-/// this class is abstract and has two children, RedNPC and BlueNPC
+/// this class is abstract and has two children, MeleeNPC and HunterNPC
 /// </summary>
 public abstract class NPC : MonoBehaviour {
 
@@ -24,13 +24,14 @@ public abstract class NPC : MonoBehaviour {
     protected Transform top;
 
     // states
-    public enum State { PATROL, COMBAT, PICKUP_TREASURE, RETURN_TREASURE, DEAD};
+    public enum State { PATROL, COMBAT, PICKUP_TREASURE, RETURN_TREASURE, DEFEND_TREASURE, DEAD};
     protected State currentState;
     protected FSM.State patrol;
     protected FSM.State combat;
     protected FSM.State pickupTreasure;
     protected FSM.State returnTreasure;
     protected FSM.State dead;
+    protected FSM.State defendTreasure;
     protected bool active = true;
     protected bool rbActive = false;
 
@@ -47,6 +48,7 @@ public abstract class NPC : MonoBehaviour {
     // gameplay
     [SerializeField]
     protected int health;
+    protected HealthSynch hpSynch;
     #endregion
 
     #region Accessors
@@ -55,15 +57,33 @@ public abstract class NPC : MonoBehaviour {
     public FSM.State NPCCombat { get { return combat; } }
     public FSM.State NPCReturnTreasure { get { return returnTreasure; } }
     public FSM.State NPCPickupTreasure { get { return pickupTreasure; } }
+    public FSM.State NPCDefendTreasure { get { return defendTreasure; } }
     public State CurrentState { get { return currentState; } }
 
     // return type for identification
     public PirateType Type { get { return type; } }
 
-    public int Health { get { return health; } }
+    public int Health {
+        get { return health; }
+        set
+        {
+            if (value >= hpSynch.MaxHealth)
+            {
+                health = hpSynch.MaxHealth;
+            }
+            else if (value < 0)
+            {
+                health = 0;
+            }
+            else
+            {
+                health = value;
+            }
+        }
+    }
 
     // for player to change the state
-    public bool Active { set { active = value; } get { return active; } }
+    public bool Active { get { return active; } }
 
     // getters and setters to modify states through the SquadManager
     public GameObject Squad { set { squad = value; } get { return squad; } }
@@ -85,6 +105,9 @@ public abstract class NPC : MonoBehaviour {
  
     // Use this for initialization
     protected virtual void Start () {
+        //setup health
+        hpSynch = GetComponent<HealthSynch>();
+
         // assign components
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
@@ -105,6 +128,7 @@ public abstract class NPC : MonoBehaviour {
         combat = Combat;
         returnTreasure = ReturnTreasure;
         pickupTreasure = PickupTreasure;
+        defendTreasure = DefendTreasure;
         dead = Dead;
 
         // for target initialization
@@ -136,6 +160,18 @@ public abstract class NPC : MonoBehaviour {
     }
 
     #region Helper Methods
+    //SATCH CAUSED THIS !!
+    public void SetStates()
+    {
+        // assign states
+        patrol = Patrol;
+        combat = Combat;
+        returnTreasure = ReturnTreasure;
+        pickupTreasure = PickupTreasure;
+        defendTreasure = DefendTreasure;
+        dead = Dead;
+    }
+
     /// <summary>
     /// Helper method for calculating the distance from the NPC's current position
     /// to a given target
@@ -156,14 +192,36 @@ public abstract class NPC : MonoBehaviour {
     }
 
     /// <summary>
-    /// Method responsible for applying damage, the attacker should be the one applying
-    /// the damage
+    /// The Modify method should be used to make any modifications to the pirates health. It can either replace the health, or modify it; and it will update the other
+    /// pirate script accordingly
     /// </summary>
-    /// <param name="damage">amount of damage to be taken</param>
-    public void TakeDamage(int damage)
+    /// <param name="mod">either the new health amount or the amount you want to modify the health by</param>
+    /// <param name="replaceHealth">tells method whether to replace the health with new value or just modify it by new value </param>
+    public void ModifyHealth(int mod, bool replaceHealth)
     {
-        health -= damage;
+        if (!replaceHealth) //check if you are just modifying the health
+        {
+            health += mod; //Add mod amount to health
+            hpSynch.UpdateHealth(false); //tells hpSynch to update the player pirate script
+        }
+        else //you are replacing the health
+        {
+            health = mod; //sets health = to new health
+            hpSynch.UpdateHealth(false); //tells hpSynch to update the player pirate script
+        }
     }
+
+    /// <summary>
+    /// Method responsible for setting this NPC to be inactive if the player possesses them
+    /// NOTE: use this method for setting things to be inactive, don't directly modify the bool
+    /// </summary>
+    public abstract void SetInactive();
+
+    /// <summary>
+    /// Method responsible for setting this NPC to be active if the player leaves them
+    /// NOTE: use this method for setting things to be active, don't directly modify the bool
+    /// </summary>
+    public abstract void SetActive();
 
     /// <summary>
     /// Method responsible for checking if the pirate is dead and changing its state if true
@@ -208,6 +266,14 @@ public abstract class NPC : MonoBehaviour {
     protected virtual void PickupTreasure()
     {
         currentState = State.PICKUP_TREASURE;
+    }
+
+    /// <summary>
+    /// Agent will be in this state when another squad on its team has the treasure
+    /// </summary>
+    protected virtual void DefendTreasure()
+    {
+        currentState = State.DEFEND_TREASURE;
     }
 
     /// <summary>

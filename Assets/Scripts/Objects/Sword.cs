@@ -37,7 +37,7 @@ public class Sword : MonoBehaviour {
 
         if (enemy != null && !enemy.Invincible && !hit)
         {
-            enemy.ModifyHealth(-pirate.AttackDam);
+            enemy.ModifyHealth(-pirate.AttackDam, false);
             Debug.Log(pirate.name + " hit " + enemy.name);
             enemy.GetComponent<Rigidbody>().AddForce(pirate.transform.forward * knockback);
             hit = true;

@@ -45,6 +45,26 @@ public class HunterNPC : NPC {
         base.FixedUpdate();
     }
 
+    #region Helper Methods
+    public override void SetInactive()
+    {
+        if (squad != null)
+            squad.GetComponent<SquadManager>().Remove(this.gameObject, PirateType.HUNTER);
+        else
+            Destroy(this.gameObject); // TODO: replace this with updated spawn pool code
+        active = false;
+    }
+
+    public override void SetActive()
+    {
+        if (squad != null)
+            squad.GetComponent<SquadManager>().Add(this.gameObject, PirateType.HUNTER);
+        else
+            Destroy(this.gameObject); // TODO: replace this with updated spawn pool code
+        active = true;
+    }
+    #endregion
+
     #region State Methods
 
     protected override void Combat()
@@ -60,14 +80,7 @@ public class HunterNPC : NPC {
     protected override void Patrol()
     {
         base.Patrol();
-        if (target.GetComponentInParent<NPC>() == null)
-        {
-            Seek(target.transform.position);
-        }
-        else
-        {
-            target = squad.gameObject;
-        }
+        Seek(target.transform.position);
 
         agent.speed = 5f;
     }
@@ -103,6 +116,13 @@ public class HunterNPC : NPC {
         Seek(target.transform.position);
 
         agent.speed = 3f;
+    }
+
+    protected override void DefendTreasure()
+    {
+        base.DefendTreasure();
+        Seek(target.transform.position);
+        agent.speed = 5f;
     }
 
     #endregion

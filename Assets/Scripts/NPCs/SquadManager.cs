@@ -14,6 +14,9 @@ public class SquadManager : MonoBehaviour {
     //FIX LATER
     public GameObject TreasureDest;
 
+    // enum representing which notification to notify the GameManager of
+    // NOTE: spawn requests may remain unused
+    public enum Notification { HAS_TREASURE, SPAWN_REQUEST_MELEE, SPAWN_REQUEST_TREASURE};  
 
     // reference to the game manager
     private GameManager gm;
@@ -23,10 +26,16 @@ public class SquadManager : MonoBehaviour {
     private const int COMBAT_ID = 1;
     private const int PICKUP_TREASURE_ID = 2;
     private const int RETURN_TREASURE_ID = 3;
+    private const int DEFEND_TREASURE_ID = 4;
 
     // the way that unity intanstiates objects is stupid so this variable is necessary
     // for making sure an initial state is assigned to the squad
     bool firstRun = true;
+
+    // this bool keeps track of if an allied squad has the treasure, if so, this squad will
+    // go to the defendTreasure state instead of the patrol state
+    // NOTE: GameManager is responsible for tracking this variable
+    private bool allyHasTreasure = false;
 
     // indentifiers
     [SerializeField]
@@ -40,12 +49,13 @@ public class SquadManager : MonoBehaviour {
     private GameObject enemyTarget;
 
     // states
-    public enum State { PATROL, COMBAT, RETURN_TREASURE, PICKUP_TREASURE};
+    public enum State { PATROL, COMBAT, RETURN_TREASURE, PICKUP_TREASURE, DEFEND_TREASURE};
     private State currentState;
     FSM.State patrol;
     FSM.State combat;
     FSM.State returnTreasure;
     FSM.State pickupTreasure;
+    FSM.State defendTreasure;
 
     // variables related to pirates in squad
     private List<GameObject> pirates;
@@ -75,8 +85,8 @@ public class SquadManager : MonoBehaviour {
     [SerializeField]
     private float engagementZoneRadius;
     private Vector3 engagementZoneCentroid;
-    [SerializeField]
-    private float initialSpawnRadius;
+    //[SerializeField]
+    public float initialSpawnRadius;
     private bool drawZone = false;
 
     // flocking
@@ -90,105 +100,108 @@ public class SquadManager : MonoBehaviour {
     // boolean trackers
     private bool playerInEnemy = false;
 
+    //spawn Pool
+    public SpawnPool spawningPool;
     #endregion
 
     #region Accessors
     // use team accessor to return a string representing NPC's team
-    public GameManager.Team getTeam { get { return team; } }
+    public GameManager.Team Team {
+        get { return team; }
+        set { team = value; }
+    }
 
     // allow for game manager to assign it a list of enemies
     public List<GameObject> EnemySquadObjects { get { return enemySquadObjects; } set { enemySquadObjects = value; } }
+
+    // allow for gameManager to assign when an allied squad has the treasure
+    public bool AllyHasTreasure { get { return allyHasTreasure; } set { allyHasTreasure = value; } }
 
     // allow this squad to pass enemy NPCs in to its melee pirates
     public List<GameObject> Pirates { get { return pirates; } }
     public List<GameObject> MeleePirates { get { return meleePirates; } }
     public GameObject TreasureHunter { get { return treasureHunter; } }
+    public int MaxPirates
+    {
+        get { return maxPirates; }
+        set
+        {
+            maxPirates = value;
+        }
+    }
+
+    public bool runStart = false;
     #endregion
 
     // Use this for initialization
-    void Start () {
-        // initialize variables
-        fsm = GetComponent<FSM>();
-        pirates = new List<GameObject>();
-        meleePirates = new List<GameObject>();
-        treasure = GameObject.FindGameObjectWithTag("Treasure");
-        treasureDestination = GameObject.FindGameObjectWithTag("TreasureDestination");
-        direction = new Vector3(0, 0, 0);
-        currentNode = GameObject.Instantiate(DestinationNode, transform.position, Quaternion.identity);
-        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        npcScript = new List<NPC>();
-        basePirateScript = new List<BasePirate>();
+    public void Start () {
+        //if (runStart)
+        //{
+            // initialize variables
+            fsm = GetComponent<FSM>();
+            pirates = new List<GameObject>();
+            meleePirates = new List<GameObject>();
+            treasure = GameObject.FindGameObjectWithTag("Treasure");
+            treasureDestination = GameObject.FindGameObjectWithTag("TreasureDestination");
+            direction = new Vector3(0, 0, 0);
+            currentNode = GameObject.Instantiate(DestinationNode, transform.position, Quaternion.identity);
+            gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+            npcScript = new List<NPC>();
+            basePirateScript = new List<BasePirate>();
 
-        // initialize states
-        patrol = Patrol;
-        combat = Combat;
-        pickupTreasure = PickupTreasure;
-        returnTreasure = ReturnTreasure;
+            // initialize states
+            patrol = Patrol;
+            combat = Combat;
+            pickupTreasure = PickupTreasure;
+            returnTreasure = ReturnTreasure;
+            defendTreasure = DefendTreasure;
 
-        // spawn a single treasure Hunter
-        treasureHunter = Instantiate(treasureNPC, transform.position, Quaternion.identity);
-        pirates.Add(treasureHunter);
-        treasureHunter.GetComponent<NPC>().Squad = this.gameObject;
-        treasureHunter.GetComponent<NPC>().getTeam = team;
-        treasureHunter.GetComponent<HunterNPC>().treasureDestination = TreasureDest;
+            // spawn a single treasure Hunter
+            treasureHunter = Instantiate(treasureNPC, transform.position, Quaternion.identity);
+            pirates.Add(treasureHunter);
+            treasureHunter.GetComponent<NPC>().Squad = this.gameObject;
+            treasureHunter.GetComponent<NPC>().getTeam = team;
+            treasureHunter.GetComponent<HunterNPC>().treasureDestination = TreasureDest;
 
-        int numSpawned = 1;
+            int numSpawned = 1;
 
-        // spawn melee pirates
-        for (int i = 1; i <= maxPirates; i++)
-        {
-            Vector3 pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.x, transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.z);
-
-            for (int j = 0; j < numSpawned; j++)
+            // spawn melee pirates
+            for (int i = 1; i <= maxPirates; i++)
             {
-                while(CalcDistance(pos, pirates[j].transform.position).magnitude <= 2)
+                Vector3 pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.x, transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.z);
+
+                for (int j = 0; j < numSpawned; j++)
                 {
-                    pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.x, transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.z);
+                    while (CalcDistance(pos, pirates[j].transform.position).magnitude <= 2)
+                    {
+                        pos = new Vector3(Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.x, transform.position.y, Random.Range(-initialSpawnRadius, initialSpawnRadius) + transform.position.z);
+                    }
                 }
+
+                pirates.Add(GameObject.Instantiate(meleeNPC, pos, Quaternion.identity));
+                pirates[i].GetComponent<NPC>().Squad = this.gameObject;
+                pirates[i].GetComponent<NPC>().getTeam = team;
+                pirates[i].GetComponent<MeleeNPC>().Leader = treasureHunter;
+
+                // add to meleePirates list for tracking
+                meleePirates.Add(pirates[i]);
+                numSpawned++;
             }
 
-            pirates.Add(GameObject.Instantiate(meleeNPC, pos, Quaternion.identity));
-            pirates[i].GetComponent<NPC>().Squad = this.gameObject;
-            pirates[i].GetComponent<NPC>().getTeam = team;
-            pirates[i].GetComponent<MeleeNPC>().Leader= treasureHunter;
+            for (int i = 0; i < pirates.Count; i++)
+            {
+                npcScript.Add(pirates[i].GetComponent<NPC>());
+                basePirateScript.Add(pirates[i].GetComponent<BasePirate>());
+            }
 
-            // add to meleePirates list for tracking
-            meleePirates.Add(pirates[i]);
-            numSpawned++;
-        }
-
-        for (int i = 0; i < pirates.Count; i++)
-        {
-            npcScript.Add(pirates[i].GetComponent<NPC>());
-            basePirateScript.Add(pirates[i].GetComponent<BasePirate>());
-        }
-
-        // set initial state
-        fsm.SetState(patrol);
+            // set initial state
+            fsm.SetState(patrol);
+        //}
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        //Remove dead pirates from the group
-        //for (int i = 0; i < pirates.Count; i++)
-        //{
-        //    if (npcScript[i].Health <= 0 || basePirateScript[i].Health <= 0)
-        //    {
-        //        Destroy(pirates[i]);
-        //        pirates.Remove(pirates[i]);
-        //
-        //        npcScript.Remove(npcScript[i]);
-        //        basePirateScript.Remove(basePirateScript[i]);
-        //
-        //        if (enemyTarget != null)
-        //        {
-        //            enemyTarget.GetComponent<SquadManager>().pirates[i].GetComponent<MeleeNPC>().Enemies.Remove(pirates[i]);
-        //        }
-        //
-        //    }
-        //}
-
         if (pirates.Count > 0)
         {
             CalcCentroid();
@@ -213,12 +226,19 @@ public class SquadManager : MonoBehaviour {
         {
             treasureHunter = null;
         }
+        //else
+        //{
+        //    if (meleePirates.Contains(squadMember))
+        //    {
+        //        meleePirates.Remove(squadMember);
+        //    }
+        //}
         
         // FUTURE: check if any pirates are squadless and reassign them or
         // call in a request from gameManager to spawn a new squad member
 
         // remove reference to enemy squad enemy list
-        if (currentState == State.COMBAT)
+        if (currentState == State.COMBAT && enemyTarget != null)
         {
             enemyTarget.GetComponent<SquadManager>().RemoveEnemy(squadMember, type);
         }
@@ -232,6 +252,13 @@ public class SquadManager : MonoBehaviour {
                 enemySquadObjects[i].GetComponent<SquadManager>().RemoveEnemySquad(this.gameObject);
             }
 
+            //make a new spawn request 
+            SpawnRequest sr;
+            sr.loneHunter = false;
+            sr.numMeleePirates = 4;
+
+            //send spawn request to spawnpool
+            spawningPool.spawnRequests.Enqueue(sr);
             GameObject.Destroy(this.gameObject);
             GameObject.Destroy(currentNode);
         }
@@ -264,6 +291,53 @@ public class SquadManager : MonoBehaviour {
     {
         if (enemySquadObjects.Contains(enemy))
             enemySquadObjects.Remove(enemy);
+    }
+
+    /// <summary>
+    /// Adds a pirate to a squad
+    /// </summary>
+    /// <param name="squadMember">pirate to be added</param>
+    /// <param name="type">NPC.PirateType of what the pirate is</param>
+    public void Add(GameObject squadMember, NPC.PirateType type)
+    {
+        pirates.Add(squadMember);
+
+        if (type == NPC.PirateType.HUNTER)
+        {
+            treasureHunter = gameObject;
+        }
+        else
+        {
+            if (!meleePirates.Contains(squadMember))
+            {
+                meleePirates.Add(squadMember);
+            }
+        }
+
+        if (currentState == State.COMBAT && enemyTarget != null)
+        {
+            enemyTarget.GetComponent<SquadManager>().AddEnemy(squadMember, type);
+        }
+
+        // FUTURE: check if squad is over its max squadmembers limit, if so, orphan the pirate
+    }
+
+    /// <summary>
+    /// Adds an enemy pirate to this squad's melee pirates' list of enemies
+    /// </summary>
+    /// <param name="enemy">enemy GameObject</param>
+    /// <param name="type">NPC.PirateType of what the pirate is</param>
+    public void AddEnemy(GameObject enemy, NPC.PirateType type)
+    {
+        for (int i = 0; i < meleePirates.Count; i++)
+        {
+            // should only be necessary if player is a melee pirate
+            if (!meleePirates[i].GetComponent<MeleeNPC>().Enemies.Contains(enemy) && type == NPC.PirateType.BUCCANEER)
+            {
+                meleePirates[i].GetComponent<MeleeNPC>().Enemies.Add(enemy);
+                AssignEnemies();
+            }
+        }
     }
 
     /// <summary>
@@ -400,10 +474,39 @@ public class SquadManager : MonoBehaviour {
                 case RETURN_TREASURE_ID:
                     pirateFsm.SetState(npc.NPCReturnTreasure);
                     break;
+                case DEFEND_TREASURE_ID:
+                    pirateFsm.SetState(npc.NPCDefendTreasure);
+                    break;
                 default:
                     Debug.Log("State ID invalid");
                     break;
             }
+        }
+    }
+
+    /// <summary>
+    /// used to calculate the closest enemy squad
+    /// </summary>
+    /// <returns>the closest enemy squad</returns>
+    private GameObject CalcNearestEnemySquad()
+    {
+        if (enemySquadObjects.Count > 0)
+        {
+            GameObject closest = enemySquadObjects[0];
+
+            for (int i = 0; i < enemySquadObjects.Count; i++)
+            {
+                if (CalcDistance(transform.position, enemySquadObjects[i].transform.position).magnitude <= CalcDistance(transform.position, closest.transform.position).magnitude)
+                {
+                    closest = enemySquadObjects[i];
+                }
+            }
+
+            return closest;
+        }
+        else
+        {
+            return null;
         }
     }
     #endregion
@@ -418,31 +521,30 @@ public class SquadManager : MonoBehaviour {
         // if the enemy squad is ever deleted
         if (enemyTarget == null)
         {
-            fsm.SetState(patrol);
-            SetSquadState(PATROL_ID);
-        }
-        
-        if (gm.CurrentPlayerState == GameManager.PlayerState.BUCCANEER && playerInEnemy == false)
-        {
-            if (CalcDistance(gm.Player.transform.position, engagementZoneCentroid).magnitude <= engagementZoneRadius)
+            
+            if (!allyHasTreasure)
             {
-                for (int i = 1; i <= maxPirates; i++)
-                {
-                    pirates[i].GetComponent<MeleeNPC>().Enemies.Add(gm.Player);
-                }
+                fsm.SetState(patrol);
+                SetSquadState(PATROL_ID);
+            }              
+            else
+            {
+                fsm.SetState(defendTreasure);
+                SetSquadState(DEFEND_TREASURE_ID);
             }
-            playerInEnemy = true;
+                
         }
 
-        
-
-        //for (int i = 0; i < pirates.Count; i++)
+        //if (gm.CurrentPlayerState == GameManager.PlayerState.BUCCANEER && playerInEnemy == false)
         //{
-        //    if (pirates[i].GetComponent<NPC>().Health <= 0)
+        //    if (CalcDistance(gm.Player.transform.position, engagementZoneCentroid).magnitude <= engagementZoneRadius)
         //    {
-        //        pirates.Remove(pirates[i]);
-        //        GameObject.Destroy(pirates[i]);
+        //        for (int i = 1; i <= maxPirates; i++) // needs to be refactored with new melee enemy list
+        //        {
+        //            pirates[i].GetComponent<MeleeNPC>().Enemies.Add(gm.Player);
+        //        }
         //    }
+        //    playerInEnemy = true;
         //}
     }
 
@@ -458,8 +560,18 @@ public class SquadManager : MonoBehaviour {
 
         if (firstRun == true)
         {
+            for(int i = 0; i < pirates.Count; i++)
+            {
+                pirates[i].GetComponent<NPC>().SetStates();
+            }
             SetSquadState(PATROL_ID);
             firstRun = false;
+        }
+
+        if (allyHasTreasure)
+        {
+            fsm.SetState(defendTreasure);
+            SetSquadState(PICKUP_TREASURE_ID);
         }
 
         if (CalcDistance(treasureHunter.transform.position, treasure.transform.position).magnitude <= 5 && treasure.GetComponentInParent<NPC>() == null)
@@ -484,6 +596,7 @@ public class SquadManager : MonoBehaviour {
         if (treasureHunter.GetComponent<HunterNPC>().HasTreasure)
         {
             fsm.SetState(returnTreasure);
+            //gm.Notify(team, this.gameObject, Notification.HAS_TREASURE); - breaks currently
             treasureHunter.GetComponent<HunterNPC>().Target = treasureDestination;
             SetSquadState(RETURN_TREASURE_ID);
         }
@@ -499,6 +612,14 @@ public class SquadManager : MonoBehaviour {
         {
             Debug.Log("GAME WON");
         }
+    }
+
+    private void DefendTreasure()
+    {
+        currentState = State.DEFEND_TREASURE;
+
+        //if (treasureHunter.GetComponent<HunterNPC>().Target == treasure)
+            treasureHunter.GetComponent<HunterNPC>().Target = CalcNearestEnemySquad();
     }
     #endregion
 }

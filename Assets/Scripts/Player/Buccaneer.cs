@@ -42,7 +42,6 @@ public class Buccaneer : BasePirate {
         base.Start();
         //setup Buccaneer Pirate stats
         base.health = 150;
-        base.maxHealth = health;
 
         //get buccanner Sword
         buccaneerSword = transform.FindChild("Sword").GetComponent<Sword>();

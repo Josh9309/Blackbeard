@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 //child of BaseWindow
 //code for start Menu
@@ -51,7 +52,8 @@ public class StartWindow : BaseWindow
     //method for new game button
     protected void NewGame()
     {
-        MenuManager.Instance.GoToScreen("GameHUD");
+        SceneManager.LoadScene("Test 1");
+        //MenuManager.Instance.GoToScreen("GameHUD");
         Debug.Log("New Game Pressed");
     }   
     //method for main menu
