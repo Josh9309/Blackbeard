@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TO BE DELETED ONCE KEVIN RIPS Pick up from the treasure pirate
 public class TreasureHunter : BasePirate
 {
+    /*
     #region Attributes
     private bool canPickup, pickingUp; //If the treasure pirate is currently picking anything up
     private bool hasTreasure;
@@ -28,7 +30,6 @@ public class TreasureHunter : BasePirate
     protected override void Start() //Use this for initialization
     {
         base.Start();
-        base.health = 100;
 
         treasure = GameObject.FindGameObjectWithTag("Treasure");
         treasureRB = treasure.GetComponent<Rigidbody>();
@@ -140,4 +141,5 @@ public class TreasureHunter : BasePirate
         }
     }
     #endregion
+    */
 }

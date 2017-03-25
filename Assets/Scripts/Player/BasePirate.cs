@@ -12,8 +12,6 @@ public abstract class BasePirate: MonoBehaviour
     public enum PirateType { BUCCANEER, HUNTER };
 
     //pirate Stats
-    [SerializeField] protected int health;
-    protected HealthSynch hpSynch;
     protected bool invincible = false;
     protected float speed = 5.0f;
     [SerializeField] protected PirateType pirate;
@@ -46,26 +44,6 @@ public abstract class BasePirate: MonoBehaviour
     #endregion
 
     #region Properties
-    public int Health
-    {
-        get { return health; }
-        set
-        {
-            if(value >= hpSynch.MaxHealth)
-            {
-                health = hpSynch.MaxHealth;
-            }
-            else if(value < 0)
-            {
-                health = 0;
-            }
-            else
-            {
-                health = value;
-            }
-        }
-    }
-
     public bool Invincible
     {
         get { return invincible; }
@@ -117,8 +95,6 @@ public abstract class BasePirate: MonoBehaviour
         pirateAnim = GetComponent<Animator>();
 
         gameCamera = GameObject.FindGameObjectWithTag("MainCamera").transform; //Get the camera
-
-        hpSynch = GetComponent<HealthSynch>();
 
         pirateActive = false;
     }
@@ -246,28 +222,7 @@ public abstract class BasePirate: MonoBehaviour
             pirateAnim.SetBool("Grounded", false);
             groundPlaneNormal = Vector3.up;
         }
-    }
-
-    /// <summary>
-    /// The Modify method should be used to make any modifications to the pirates health. It can either replace the health, or modify it; and it will update the other
-    /// pirate script accordingly
-    /// </summary>
-    /// <param name="mod">either the new health amount or the amount you want to modify the health by</param>
-    /// <param name="replaceHealth">tells method whether to replace the health with new value or just modify it by new value </param>
-    public void ModifyHealth(int mod, bool replaceHealth)
-    {
-        if (!replaceHealth) //check if you are just modifying the health
-        {
-            health += mod; //Add mod amount to health
-            hpSynch.UpdateHealth(true); //tells hpSynch to update the ai pirate script
-        }
-        else //you are replacing the health
-        {
-            health = mod; //sets health = to new health
-            hpSynch.UpdateHealth(true); //tells hpSynch to update the ai pirate script
-        }
-    }
-    
+    }    
 
     /// <summary>
     /// Dead will run all the neccessary code for when a pirate dies. Each pirate class must implement a Dead() Method.
