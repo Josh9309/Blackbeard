@@ -28,11 +28,12 @@ public class TreasureHunter : BasePirate
     protected override void Start() //Use this for initialization
     {
         base.Start();
+        base.health = 100;
 
         treasure = GameObject.FindGameObjectWithTag("Treasure");
         treasureRB = treasure.GetComponent<Rigidbody>();
 
-        treasureSlot = GameObject.FindGameObjectWithTag("Slot").transform;
+        treasureSlot = transform.FindChild("TreasureSlot");
 
         canPickup = false;
         pickingUp = false;
@@ -58,11 +59,11 @@ public class TreasureHunter : BasePirate
     #endregion
 
     #region Methods
-    protected override void Dead()
-    {
-        Debug.Log("Pirate: " + name + "has Died");
-        Destroy(gameObject);
-    }
+    //protected override void Dead()
+    //{
+    //    Debug.Log("Pirate: " + name + "has Died");
+    //    Destroy(gameObject);
+    //}
 
     /// <summary>
     /// Let the treasure pirate pick up treasure

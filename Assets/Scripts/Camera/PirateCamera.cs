@@ -13,12 +13,12 @@ public class PirateCamera : MonoBehaviour
     private bool reset;
 
     //Parrot
-    int parrotMinAngle = 320;
-    int parrotMaxAngle = 20;
+    private int parrotMinAngle = 300;
+    private int parrotMaxAngle = 35;
 
     //Pirate
-    int pirateMinAngle = 330;
-    int pirateMaxAngle = 10;
+    private int pirateMinAngle = 330;
+    private int pirateMaxAngle = 10;
 
     //Input attributes
     private float deadZone = 0.1f;
@@ -34,7 +34,7 @@ public class PirateCamera : MonoBehaviour
     }
     #endregion
 
-    #region InBuildMethods
+    #region InBuiltMethods
     void Start() //Use this for initialization
     {
         target = FindObjectOfType<Parrot>().gameObject.transform; //Target the parrot from the start
@@ -106,7 +106,7 @@ public class PirateCamera : MonoBehaviour
 
         //Horizontal camera rotation
         if (Mathf.Abs(camX) > deadZone)
-            yRotation = 100 * Mathf.Sign(camX) * Time.deltaTime;
+            yRotation = 100 * -Mathf.Sign(camX) * Time.deltaTime;
 
         //Verical camera movement
         if (Mathf.Abs(camY) > deadZone)

@@ -53,7 +53,7 @@ public class SoundManager : Singleton<SoundManager>
 	public void PlaySfx(string name)
     { 
         //play sound from lib once
-		sfxSource.PlayOneShot(sfxLibrary[name]);
+		sfxSource.PlayOneShot(sfxLibrary[name], sfxSource.volume);
 	}
 
     /// <summary>
@@ -64,6 +64,26 @@ public class SoundManager : Singleton<SoundManager>
     public void PlaySfxAt(string name, Vector3 position)
     {
         //doesnt use source bc it creates its own for this
-        AudioSource.PlayClipAtPoint(sfxLibrary[name], position);
+        AudioSource.PlayClipAtPoint(sfxLibrary[name], position, sfxSource.volume);
+    }
+
+    /// <summary>
+    /// changes sfx volume
+    /// </summary>
+    /// <param name="volume">number 0-100 of volume</param>
+    public void ChangeSfxVolume(int volume)
+    {
+        //chnage volume into a float for the actual volume- and set to sfxVolume
+        sfxSource.volume = (volume / 100);
+    }
+
+    /// <summary>
+    /// changes music volume
+    /// </summary>
+    /// <param name="volume">number 0-100 of volume</param>
+    public void ChangeMusicVolume(int volume)
+    {
+        //chnage volume into a float for the actual volume- and set to sfxVolume
+        musicSource.volume = (volume / 100);
     }
 }

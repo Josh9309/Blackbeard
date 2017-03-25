@@ -22,11 +22,13 @@ public class FSM : MonoBehaviour
     {
         if (currentState != null)
         {
+            Debug.Log(gameObject.name);
             currentState();
         }
         else
         {
-            Debug.Log(this.gameObject.name + ": No assigned state");
+            int id = this.gameObject.GetInstanceID();
+            //Debug.Log( id + ": No assigned state");
         }
     }
 

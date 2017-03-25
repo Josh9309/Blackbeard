@@ -1,0 +1,196 @@
+fileFormatVersion: 2
+guid: db006b37c2047464ca1ec5f707b6ac0e
+timeCreated: 1489177595
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: back_ring_001
+    100002: back_ring_002
+    100004: cannon_axle_001
+    100006: cannon_axle_002
+    100008: cannon_barrel
+    100010: //RootNode
+    100012: cannon_side_001
+    100014: cannon_side_002
+    100016: cannon_wheel_001
+    100018: cannon_wheel_002
+    100020: cannon_wheel_003
+    100022: cannon_wheel_004
+    100024: cannon_wheels_001
+    100026: cannon_wheels_002
+    100028: chassis
+    100030: clamp_001
+    100032: clamp_002
+    100034: side_bolt_001
+    100036: side_bolt_002
+    100038: side_bolt_003
+    100040: side_bolt_004
+    100042: side_bolt_005
+    100044: side_bolt_006
+    100046: side_bolt_007
+    100048: side_bolt_008
+    100050: side_ring_001
+    100052: side_ring_002
+    400000: back_ring_001
+    400002: back_ring_002
+    400004: cannon_axle_001
+    400006: cannon_axle_002
+    400008: cannon_barrel
+    400010: //RootNode
+    400012: cannon_side_001
+    400014: cannon_side_002
+    400016: cannon_wheel_001
+    400018: cannon_wheel_002
+    400020: cannon_wheel_003
+    400022: cannon_wheel_004
+    400024: cannon_wheels_001
+    400026: cannon_wheels_002
+    400028: chassis
+    400030: clamp_001
+    400032: clamp_002
+    400034: side_bolt_001
+    400036: side_bolt_002
+    400038: side_bolt_003
+    400040: side_bolt_004
+    400042: side_bolt_005
+    400044: side_bolt_006
+    400046: side_bolt_007
+    400048: side_bolt_008
+    400050: side_ring_001
+    400052: side_ring_002
+    2300000: back_ring_001
+    2300002: back_ring_002
+    2300004: cannon_axle_001
+    2300006: cannon_axle_002
+    2300008: cannon_barrel
+    2300010: cannon_wheel_001
+    2300012: cannon_wheel_002
+    2300014: cannon_wheel_003
+    2300016: cannon_wheel_004
+    2300018: chassis
+    2300020: clamp_001
+    2300022: clamp_002
+    2300024: side_bolt_001
+    2300026: side_bolt_002
+    2300028: side_bolt_003
+    2300030: side_bolt_004
+    2300032: side_bolt_005
+    2300034: side_bolt_006
+    2300036: side_bolt_007
+    2300038: side_bolt_008
+    2300040: side_ring_001
+    2300042: side_ring_002
+    3300000: back_ring_001
+    3300002: back_ring_002
+    3300004: cannon_axle_001
+    3300006: cannon_axle_002
+    3300008: cannon_barrel
+    3300010: cannon_wheel_001
+    3300012: cannon_wheel_002
+    3300014: cannon_wheel_003
+    3300016: cannon_wheel_004
+    3300018: chassis
+    3300020: clamp_001
+    3300022: clamp_002
+    3300024: side_bolt_001
+    3300026: side_bolt_002
+    3300028: side_bolt_003
+    3300030: side_bolt_004
+    3300032: side_bolt_005
+    3300034: side_bolt_006
+    3300036: side_bolt_007
+    3300038: side_bolt_008
+    3300040: side_ring_001
+    3300042: side_ring_002
+    4300000: chassis
+    4300002: cannon_barrel
+    4300004: clamp_001
+    4300006: clamp_002
+    4300008: cannon_wheel_001
+    4300010: cannon_axle_001
+    4300012: cannon_wheel_002
+    4300014: cannon_wheel_003
+    4300016: cannon_axle_002
+    4300018: cannon_wheel_004
+    4300020: back_ring_001
+    4300022: back_ring_002
+    4300024: side_bolt_002
+    4300026: side_bolt_001
+    4300028: side_ring_001
+    4300030: side_bolt_004
+    4300032: side_bolt_003
+    4300034: side_bolt_005
+    4300036: side_bolt_006
+    4300038: side_bolt_007
+    4300040: side_bolt_008
+    4300042: side_ring_002
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 200
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

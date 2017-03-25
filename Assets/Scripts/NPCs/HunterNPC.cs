@@ -10,8 +10,7 @@ public class HunterNPC : NPC {
 
     #region Attributes
     // destination for taking the treasure to
-    [SerializeField]
-    GameObject treasureDestination;
+    public GameObject treasureDestination;
 
     // for picking up treasure
     private Transform treasureSlot;
@@ -27,8 +26,9 @@ public class HunterNPC : NPC {
     protected override void Start () {
         base.Start();
 
+        fsm = GetComponent<FSM>();
         target = GameObject.FindGameObjectWithTag("Treasure");
-        treasureSlot = GameObject.FindGameObjectWithTag("Slot").transform;
+        treasureSlot = transform.FindChild("TreasureSlot");
         treasureRB = target.GetComponent<Rigidbody>();
 
         type = PirateType.HUNTER;
@@ -45,11 +45,32 @@ public class HunterNPC : NPC {
         base.FixedUpdate();
     }
 
+    #region Helper Methods
+    public override void SetInactive()
+    {
+        if (squad != null)
+            squad.GetComponent<SquadManager>().Remove(this.gameObject, PirateType.HUNTER);
+        else
+            Destroy(this.gameObject); // TODO: replace this with updated spawn pool code
+        active = false;
+    }
+
+    public override void SetActive()
+    {
+        if (squad != null)
+            squad.GetComponent<SquadManager>().Add(this.gameObject, PirateType.HUNTER);
+        else
+            Destroy(this.gameObject); // TODO: replace this with updated spawn pool code
+        active = true;
+    }
+    #endregion
+
     #region State Methods
 
     protected override void Combat()
     {
-        
+        base.Combat();
+        agent.destination = transform.position;
     }
 
     /// <summary>
@@ -58,14 +79,8 @@ public class HunterNPC : NPC {
     /// </summary>
     protected override void Patrol()
     {
-        if (target.GetComponentInParent<NPC>() == null)
-        {
-            Seek(target.transform.position);
-        }
-        else
-        {
-            target = squad.gameObject;
-        }
+        base.Patrol();
+        Seek(target.transform.position);
 
         agent.speed = 5f;
     }
@@ -76,6 +91,7 @@ public class HunterNPC : NPC {
     /// </summary>
     protected override void PickupTreasure()
     {
+        base.PickupTreasure();
         anim.Play("Pickup1");
         anim.SetTime(0);
         if (!hasTreasure)
@@ -95,10 +111,19 @@ public class HunterNPC : NPC {
 
     protected override void ReturnTreasure()
     {
+        base.ReturnTreasure();
         //target = treasureDestination;
         Seek(target.transform.position);
 
         agent.speed = 3f;
     }
+
+    protected override void DefendTreasure()
+    {
+        base.DefendTreasure();
+        Seek(target.transform.position);
+        agent.speed = 5f;
+    }
+
     #endregion
 }
