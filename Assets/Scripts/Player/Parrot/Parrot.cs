@@ -6,7 +6,6 @@ public class Parrot : MonoBehaviour
 {
     #region Attributes
     //Health and flight
-    private int health = 10;
     [SerializeField] private float speed = 2.0f;
     private float maxSpeed;
     [SerializeField] private float turnSpeed = 2.0f;
@@ -17,9 +16,6 @@ public class Parrot : MonoBehaviour
     private Rigidbody rBody;
     private bool rotateParrot = false;
     private Vector3 parrotRotation; //parrot euler angle rotation
-
-    //Switching
-    private PlayerSwitching switchingScript;
 
     //Item pickup
     private ItemPickup pickupScript;
@@ -47,7 +43,6 @@ public class Parrot : MonoBehaviour
         //The parrot is active
         active = true;
 
-        switchingScript = GetComponent<PlayerSwitching>(); //Get the player switching script
         pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
 
         maxSpeed = speed * 3;
@@ -56,8 +51,6 @@ public class Parrot : MonoBehaviour
     //Update is called once per frame
     private void Update() 
     {
-        active = switchingScript.Land(active, pickupScript.CarriedItem); //Let the parrot land
-        active = switchingScript.Takeoff(active); //Let the parrot take off
 
         pickupScript.Pickup(active); //Let the parrot pickup treasure
     }
@@ -71,7 +64,6 @@ public class Parrot : MonoBehaviour
         }
         else if (!active) //Stop the parrot if it is not active
         {
-            switchingScript.StayWithPirate(rBody);
         }
 	}
     #endregion

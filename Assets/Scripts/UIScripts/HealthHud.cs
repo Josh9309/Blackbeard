@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TO BE DELETED WHEN AFTER SATCH DOUBLE CHECKS THAT THERE IS NOTHING WE NEED FROM IT
 public class HealthHud : MonoBehaviour
 {
-    MeleeNPC health;
+    /*
     //max health
    //public float totalHealth;
     float currentHealth;
@@ -30,4 +31,5 @@ public class HealthHud : MonoBehaviour
         healthBar.transform.localScale = new Vector3(healthbar, healthBar.transform.localScale.y, healthBar.transform.localScale.z);
        // Debug.Log(healthbar);
     }
+    */
 }
