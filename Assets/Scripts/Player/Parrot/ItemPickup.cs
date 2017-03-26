@@ -17,6 +17,7 @@ public class ItemPickup : MonoBehaviour
     private RaycastHit hit;
     private int visionAngle;
     private bool buttonDown;
+    private Parrot parrot;
     #endregion
 
     #region Properties
@@ -32,6 +33,8 @@ public class ItemPickup : MonoBehaviour
     #region InBuiltMethods
     void Start() //Use this for initialization
     {
+        parrot = gameObject.GetComponent<Parrot>();
+
         items = new List<GameObject>();
         itemsRB = new List<Rigidbody>();
         itemsScripts = new List<Item>();
@@ -86,7 +89,7 @@ public class ItemPickup : MonoBehaviour
                     //TODO: update this with UI cues
                     if (direction.magnitude < 1.5f && Vector3.Dot(direction, transform.forward) > -.1f)
                     {
-                        if (Input.GetButton("Attack"))
+                        if (Input.GetButton(parrot.InputManager.PARROT_PICKUP_AXIS))
                         {
                             carriedItem = items[i];
                             carriedItemRB = itemsRB[i];
@@ -98,11 +101,11 @@ public class ItemPickup : MonoBehaviour
                     }
                 }
             }
-            else if (Input.GetButtonUp("Attack")) //Lets items be released
+            else if (Input.GetButtonUp(parrot.InputManager.PARROT_PICKUP_AXIS)) //Lets items be released
                 buttonDown = false;
 
             //Picking up and putting down items
-            if (Input.GetButton("Attack") && !buttonDown && carriedItem != null) //Putting down items
+            if (Input.GetButton(parrot.InputManager.PARROT_PICKUP_AXIS) && !buttonDown && carriedItem != null) //Putting down items
             {
                 carriedItemScript.Active = true; //Activate the items
                 carriedItem.transform.rotation = Quaternion.AngleAxis(0, Vector3.zero); //Rotate the item for the drop

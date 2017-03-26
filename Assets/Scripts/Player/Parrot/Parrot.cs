@@ -5,7 +5,8 @@ using UnityEngine;
 public class Parrot : MonoBehaviour
 {
     #region Attributes
-    //Health and flight
+    //parrot Stats
+    [SerializeField] private int playerNum = 1;
     [SerializeField] private float speed = 2.0f;
     private float maxSpeed;
     [SerializeField] private float turnSpeed = 2.0f;
@@ -21,16 +22,23 @@ public class Parrot : MonoBehaviour
     private ItemPickup pickupScript;
 
     //input stuff
+    private PlayerInput inputManager;
     private float inputDelay = 0.3f;
     private float horizontalInput = 0;
     private float verticalInput = 0;
     private float flyUpInput = 0;
     private float flyDownInput = 0;
 
-    //private PirateCamera cam;
+    //Game Manager
+    private GameManager gm;
+
     #endregion
 
     #region Properties
+    public PlayerInput InputManager
+    {
+        get { return inputManager; }
+    }
     #endregion
 
     #region InBuiltMethods
@@ -38,8 +46,21 @@ public class Parrot : MonoBehaviour
     void Start()
     {
         rBody = GetComponent<Rigidbody>();
-        //cam = FindObjectOfType<PirateCamera>();
-      
+
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+
+        //get input manager
+        switch (playerNum)
+        {
+            case 1:
+                inputManager = gm.P1Input;
+                break;
+
+            case 2:
+                inputManager = gm.P2Input;
+                break;
+        }
+
         //The parrot is active
         active = true;
 
@@ -75,14 +96,14 @@ public class Parrot : MonoBehaviour
     private void ParrotMove()
     {
         //Get inputs for Parrot movement
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        horizontalInput = Input.GetAxis(inputManager.HORIZONTAL_AXIS);
+        verticalInput = Input.GetAxis(inputManager.VERTICAL_AXIS);
         
-        flyUpInput = Input.GetAxis("FlyUp");
-        flyDownInput = Input.GetAxis("FlyDown");
+        flyUpInput = Input.GetAxis(inputManager.FLY_UP_AXIS);
+        flyDownInput = Input.GetAxis(inputManager.FLY_DOWN_AXIS);
 
-        float boostInput = Input.GetAxis("BoostFly");
-        bool boost = Input.GetButton("BoostFly");
+        float boostInput = Input.GetAxis(inputManager.BOOST_AXIS);
+        bool boost = Input.GetButton(inputManager.BOOST_AXIS);
 
         //zero velocity
         rBody.velocity = Vector3.zero;
@@ -133,14 +154,14 @@ public class Parrot : MonoBehaviour
                 //a upwards velocity is add to parrot's current speed
                 rBody.velocity += new Vector3(0, speed, 0);
                 //rotates parrot up
-                parrotRotation += new Vector3(-15, 0, 0); 
+                parrotRotation += new Vector3(-45, 0, 0); 
             }
             //if vertical input is pointing down and greater than min height
             else if (transform.position.y > minHeight)
             {
                 //a downwards velocity is added to parrot's current velocity
                 rBody.velocity += new Vector3(0, -speed, 0); 
-                parrotRotation += new Vector3(15, 0, 0);
+                parrotRotation += new Vector3(45, 0, 0);
             }
         }
         //code below does same thing as code above except using the triggers

@@ -6,41 +6,45 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
 
-public abstract class BasePirate: MonoBehaviour
+public class CaptainPirate: MonoBehaviour
 {
     #region Attributes
-    public enum PirateType { BUCCANEER, HUNTER };
+    //Player Id
+    [SerializeField] private int playerNum;
 
     //pirate Stats
-    protected bool invincible = false;
-    protected float speed = 5.0f;
-    [SerializeField] protected PirateType pirate;
-    protected bool pirateActive; //The pirate will only recieve input if it is active
+    private bool invincible = false;
+    private float speed = 5.0f;
+    private bool pirateActive; //The pirate will only recieve input if it is active
 
     //pirate animation attributes
-    protected Animator pirateAnim;
+    private Animator pirateAnim;
 
     //pirate movement attributes
     private Vector3 movement;
     private Vector3 camForwards;
     private Vector3 groundPlaneNormal;
     private float groundedDist = 0.2f;
-    [SerializeField] protected float idleTurnSpeed = 360;
-    [SerializeField] protected float movingTurnSpeed = 180;
-    [SerializeField] protected float jumpForce = 50;
+    [SerializeField] private float idleTurnSpeed = 360;
+    [SerializeField] private float movingTurnSpeed = 180;
+    [SerializeField] private float jumpForce = 50;
     private float turnAmount;
     private float forwardAmount;
-    protected bool grounded;
+    private bool grounded;
     private bool isJumping;
-    
+
     //input attributes
-    [SerializeField] protected float inputDelay = 0.3f;
+    private PlayerInput inputManager;
+    [SerializeField] private float inputDelay = 0.3f;
     private float horizontalInput = 0;
     private float verticalInput = 0;
 
     //game camera variables
     private Transform gameCamera;
     private Rigidbody rBody;
+
+    //Game Manager
+    private GameManager gm;
     #endregion
 
     #region Properties
@@ -59,11 +63,6 @@ public abstract class BasePirate: MonoBehaviour
         {
             rBody = value;
         }
-    }
-
-    public PirateType Pirate
-    {
-        get { return pirate; }
     }
 
     public bool PirateActive
@@ -89,26 +88,40 @@ public abstract class BasePirate: MonoBehaviour
 
     #region InBuiltMethods
     // Use this for initialization
-    protected virtual void Start()
+    private void Start()
     {
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
 
         gameCamera = GameObject.FindGameObjectWithTag("MainCamera").transform; //Get the camera
 
-        pirateActive = false;
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+
+        //get input manager based on player num
+        switch (playerNum)
+        {
+            case 1:
+                inputManager = gm.P1Input;
+                break;
+
+            case 2:
+                inputManager = gm.P2Input;
+                break;
+        }
+
+        pirateActive = true;
     }
 	
 	// Update is called once per frame
-    protected virtual void Update()
+    private void Update()
     {
         if (!isJumping && grounded && pirateActive)
         {
-            isJumping = Input.GetButtonDown("Jump");
+            isJumping = Input.GetButtonDown(inputManager.JUMP_AXIS);
         }
     }
 
-	protected virtual void FixedUpdate ()
+	private void FixedUpdate ()
     {
         if (pirateActive)
         {
@@ -122,8 +135,8 @@ public abstract class BasePirate: MonoBehaviour
     private void GetMovementInput()
     {
         //Get inputs for Pirate movement
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        horizontalInput = Input.GetAxis(inputManager.HORIZONTAL_AXIS);
+        verticalInput = Input.GetAxis(inputManager.VERTICAL_AXIS);
 
         if (Mathf.Abs(verticalInput) > inputDelay || Math.Abs(horizontalInput) > inputDelay)
         {
@@ -200,7 +213,7 @@ public abstract class BasePirate: MonoBehaviour
         transform.Rotate(0, turnAmount * turnSpeed * Time.deltaTime, 0);
     }
 
-    protected void CheckIfGrounded()
+    private void CheckIfGrounded()
     {
         RaycastHit rayHit;
 
@@ -223,10 +236,5 @@ public abstract class BasePirate: MonoBehaviour
             groundPlaneNormal = Vector3.up;
         }
     }    
-
-    /// <summary>
-    /// Dead will run all the neccessary code for when a pirate dies. Each pirate class must implement a Dead() Method.
-    /// </summary>
-    //abstract protected void Dead();
     #endregion
 }

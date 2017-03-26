@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //TO BE DELETED ONCE KEVIN RIPS Pick up from the treasure pirate
-public class TreasureHunter : BasePirate
+public class TreasureHunter : CaptainPirate
 {
     /*
     #region Attributes

@@ -6,7 +6,7 @@ public class Item : MonoBehaviour
 {
     #region Attributes
     private bool active; //If the item is active
-    private BasePirate basePirateScript;
+    private CaptainPirate pirateScript;
     [SerializeField] private int damage;
     private int explosionDamage;
     #endregion
@@ -46,7 +46,7 @@ public class Item : MonoBehaviour
                 {
                     if (c.gameObject.tag == "Pirate")
                     {
-                        basePirateScript = c.gameObject.GetComponent<BasePirate>();
+                        pirateScript = c.gameObject.GetComponent<CaptainPirate>();
                     }
                 }
 
@@ -68,7 +68,7 @@ public class Item : MonoBehaviour
                 {
                     if (c.gameObject.tag == "Pirate")
                     {
-                        basePirateScript = c.gameObject.GetComponent<BasePirate>();
+                        pirateScript = c.gameObject.GetComponent<CaptainPirate>();
                     }
                 }
 
@@ -76,7 +76,7 @@ public class Item : MonoBehaviour
             }
             else //If this is any other object
             {
-                basePirateScript = coll.gameObject.GetComponent<BasePirate>();
+                pirateScript = coll.gameObject.GetComponent<CaptainPirate>();
 
                 Destroy(gameObject);
             }
