@@ -4,13 +4,22 @@ using UnityEngine;
 
 public class SplitScreenCamera : MonoBehaviour
 {
-    [SerializeField] private bool vertical;
-    private Camera player1Camera;
-    private Camera player2Camera;
-    private GameObject parrot1;
-    private GameObject parrot2;
-    private GameObject pirate1;
-    private GameObject pirate2;
+    #region Attributes
+    [SerializeField] private bool debug; //Single camera view for debug
+    [SerializeField] private bool vertical; //Camera split type
+
+    //Player objects
+    private CaptainPirate captain1;
+    private CaptainPirate captain2;
+    private Parrot parrot1;
+    private Parrot parrot2;
+
+    //Camera objects
+    private Camera captainCamera1;
+    private Camera captainCamera2;
+    private Camera parrotCamera1;
+    private Camera parrotCamera2;
+    #endregion
 
     #region Properties
     public bool Vertical
@@ -24,35 +33,125 @@ public class SplitScreenCamera : MonoBehaviour
             vertical = value;
         }
     }
+    public Camera CaptainCamera1
+    {
+        get
+        {
+            return captainCamera1;
+        }
+        set
+        {
+            captainCamera1 = value;
+        }
+    }
+    public Camera CaptainCamera2
+    {
+        get
+        {
+            return captainCamera2;
+        }
+        set
+        {
+            captainCamera2 = value;
+        }
+    }
+    public Camera ParrotCamera1
+    {
+        get
+        {
+            return parrotCamera1;
+        }
+        set
+        {
+            parrotCamera1 = value;
+        }
+    }
+    public Camera ParrotCamera2
+    {
+        get
+        {
+            return parrotCamera2;
+        }
+        set
+        {
+            parrotCamera2 = value;
+        }
+    }
     #endregion
 
     void Start() //Use this for initialization
     {
-        //Get the needed components
-        player1Camera = GameObject.FindGameObjectWithTag("Camera1").GetComponent<Camera>();
-        player2Camera = GameObject.FindGameObjectWithTag("Camera2").GetComponent<Camera>();
-        parrot1 = GameObject.FindGameObjectWithTag("ParrotPlayer1");
-        parrot2 = GameObject.FindGameObjectWithTag("ParrotPlayer2");
-        //Implement these later
-        //pirate1 = GameObject.FindGameObjectWithTag("PiratePlayer1");
-        //pirate2 = GameObject.FindGameObjectWithTag("PiratePlayer2");
+        //Get the game manager
+        GameManager gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
-		if (vertical)
+        //Get the player objects from the game manager
+        captain1 = gm.PirateP1;
+        captain2 = gm.PirateP2;
+        parrot1 = gm.ParrotP1;
+        parrot2 = gm.ParrotP2;
+
+        //Get the camera objects
+        captainCamera1 = GameObject.FindGameObjectWithTag("CaptainCamera1").GetComponent<Camera>();
+        captainCamera2 = GameObject.FindGameObjectWithTag("CaptainCamera2").GetComponent<Camera>();
+        parrotCamera1 = GameObject.FindGameObjectWithTag("ParrotCamera1").GetComponent<Camera>();
+        parrotCamera2 = GameObject.FindGameObjectWithTag("ParrotCamera2").GetComponent<Camera>();
+
+        //Splitscreen type
+        if (vertical)
         {
-            player1Camera.rect = new Rect(0, 0, .5f, 1);
-            player2Camera.rect = new Rect(.5f, 0, .5f, 1);
+            captainCamera1.rect = new Rect(0, 0, .5f, 1);
+            captainCamera2.rect = new Rect(.5f, 0, .5f, 1);
+            parrotCamera1.rect = new Rect(0, 0, .5f, 1);
+            parrotCamera2.rect = new Rect(.5f, 0, .5f, 1);
         }
         else
         {
-            player1Camera.rect = new Rect(0, 0, 1, .5f);
-            player2Camera.rect = new Rect(0, .5f, 1, .5f);
+            captainCamera1.rect = new Rect(0, 0, 1, .5f);
+            captainCamera2.rect = new Rect(0, .5f, 1, .5f);
+            parrotCamera1.rect = new Rect(0, 0, 1, .5f);
+            parrotCamera2.rect = new Rect(0, .5f, 1, .5f);
         }
-	}
+
+        //Start as a pirate, disable parrot cameras
+        parrotCamera1.enabled = false;
+        parrotCamera2.enabled = false;
+
+        if (debug)
+        {
+            //Resize viewports
+            captainCamera1.rect = new Rect(0, 0, 1, 1);
+            captainCamera2.rect = new Rect(0, 0, 0, 0);
+            parrotCamera1.rect = new Rect(0, 0, 1, 1);
+            parrotCamera2.rect = new Rect(0, 0, 0, 0);
+
+            //Deactivate other pirate camera
+            captainCamera2.enabled = false;
+        }
+    }
 	
 	void Update() //Update is called once per frame
     {
-        //For now, look at the parrots that are in the scene
-        player1Camera.transform.LookAt(parrot1.transform);
-        player2Camera.transform.LookAt(parrot2.transform);
+        SwitchCameras(); //Switches the cameras
 	}
+
+    /// <summary>
+    /// Switches the camera between the pirate and the parrot
+    /// </summary>
+    private void SwitchCameras()
+    {
+        if (captain1.PirateActive && captain2.PirateActive) //Pirate
+        {
+            captainCamera1.enabled = true;
+            captainCamera2.enabled = true;
+            parrotCamera1.enabled = false;
+            parrotCamera2.enabled = false;
+        }
+        else if (parrot1.active && parrot2.active) //Parrot
+        {
+            captainCamera1.enabled = false;
+            captainCamera2.enabled = false;
+            parrotCamera1.enabled = true;
+            parrotCamera2.enabled = true;
+        }
+    }
 }

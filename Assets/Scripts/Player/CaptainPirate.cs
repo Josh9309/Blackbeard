@@ -44,7 +44,10 @@ public class CaptainPirate: MonoBehaviour
     private Rigidbody rBody;
 
     //Game Manager
-    private GameManager gm;
+    //private GameManager gm;
+
+    //Camera access
+    //SplitScreenCamera ssCamera;
     #endregion
 
     #region Properties
@@ -93,20 +96,21 @@ public class CaptainPirate: MonoBehaviour
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
 
+        //Get stuff from the game manager
+        GameManager gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        SplitScreenCamera ssCamera = gm.GetComponent<SplitScreenCamera>();
+
         switch (playerNum)
         {
             case 1:
-                gameCamera = GameObject.Find("Pirate Camera 1").transform; //Get the camera
+                gameCamera = ssCamera.CaptainCamera1.transform; //Get the camera
                 break;
 
             case 2:
-                gameCamera = GameObject.Find("Pirate Camera 2").transform; //Get the camera
+                gameCamera = ssCamera.CaptainCamera2.transform; //Get the camera
                 break;
         }
         
-
-        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-
         //get input manager based on player num
         switch (playerNum)
         {

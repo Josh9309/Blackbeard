@@ -190,12 +190,6 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private CaptainPirate pirateP2;
     [SerializeField] private Parrot parrotP1;
     [SerializeField] private Parrot parrotP2;
-
-    //holds the cameras for each player
-    private Camera pirateCam1;
-    private Camera pirateCam2;
-    private Camera parrotCam1;
-    private Camera parrotCam2;
     
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
     private PlayerState currentPlayer2State = PlayerState.CAPTAIN;
@@ -221,6 +215,35 @@ public class GameManager : Singleton<GameManager>
     {
         get { return p2Input; }
     }
+
+    public CaptainPirate PirateP1
+    {
+        get
+        {
+            return pirateP1;
+        }
+    }
+    public CaptainPirate PirateP2
+    {
+        get
+        {
+            return pirateP2;
+        }
+    }
+    public Parrot ParrotP1
+    {
+        get
+        {
+            return parrotP1;
+        }
+    }
+    public Parrot ParrotP2
+    {
+        get
+        {
+            return parrotP2;
+        }
+    }
     #endregion
 
     protected GameManager(){}
@@ -232,30 +255,25 @@ public class GameManager : Singleton<GameManager>
 
 	public void StartGame()
 	{
-		MenuManager.Instance.GoToScreen("GameScreen");
-		
+        MenuManager.Instance.GoToScreen("GameScreen");
 	}
 
     void Start()
     {
+        //Get the player scripts
+        //pirateP1 = GameObject.FindGameObjectWithTag("Captain1").GetComponent<CaptainPirate>();
+        //pirateP2 = GameObject.FindGameObjectWithTag("Captain2").GetComponent<CaptainPirate>();
+        //parrotP1 = GameObject.FindGameObjectWithTag("Parrot1").GetComponent<Parrot>();
+        //parrotP2 = GameObject.FindGameObjectWithTag("Parrot2").GetComponent<Parrot>();
+
         p1Input.ConfigureInput(1);
         p2Input.ConfigureInput(2);
-
-        //get cameras
-        pirateCam1 = GameObject.Find("Pirate Camera 1").GetComponent<Camera>();
-        pirateCam2 = GameObject.Find("Pirate Camera 2").GetComponent<Camera>();
-        parrotCam1 = GameObject.Find("Parrot Camera 1").GetComponent<Camera>();
-        parrotCam2 = GameObject.Find("Parrot Camera 2").GetComponent<Camera>();
-
-        parrotCam1.gameObject.SetActive(false);
-        parrotCam2.gameObject.SetActive(false);
 
         pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
     }
 
     void Update()
     {
-
 
     }
 
@@ -264,17 +282,6 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void SwitchPiratePhase()
     {
-        ///TEST CAMERA SYSTEM TO BE REPLACED WITH SPLIT SCREEN CAMERA SYSTEM
-        //turn on pirate cameras
-        pirateCam1.gameObject.SetActive(true);
-        pirateCam2.gameObject.SetActive(true);
-
-        //turn off Parrot Cameras
-        parrotCam1.gameObject.SetActive(false);
-        parrotCam2.gameObject.SetActive(false);
-
-        ///-------------------------------------------------------------------
-        
         //set pirates to active
         pirateP1.PirateActive = true;
         pirateP2.PirateActive = true;
@@ -292,17 +299,6 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void SwitchParrotPhase()
     {
-        ///TEST CAMERA SYSTEM TO BE REPLACED WITH SPLIT SCREEN CAMERA SYSTEM
-        //turn off pirate cameras
-        pirateCam2.gameObject.SetActive(false);
-        pirateCam1.gameObject.SetActive(false);
-
-        //turn on Parrot Cameras
-        parrotCam2.gameObject.SetActive(true);
-        parrotCam1.gameObject.SetActive(true);
-
-        ///--------------------------------------------------------------------
-
         //set pirates to inactive
         pirateP1.PirateActive = false;
         pirateP2.PirateActive = false;
