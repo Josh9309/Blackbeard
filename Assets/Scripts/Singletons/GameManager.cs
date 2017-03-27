@@ -333,4 +333,12 @@ public class GameManager : Singleton<GameManager>
 
         pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
     } 
+
+    /// <summary>
+    /// This Method is called when the game is over and should handle all task for ending the game.
+    /// </summary>
+    public void EndGame()
+    {
+        StopAllCoroutines();
+    }
 }
