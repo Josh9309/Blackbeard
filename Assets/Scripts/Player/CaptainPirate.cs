@@ -87,6 +87,11 @@ public class CaptainPirate: MonoBehaviour
             return grounded;
         }
     }
+
+    public int PlayerNum
+    {
+        get { return playerNum; }
+    }
     #endregion
 
     #region InBuiltMethods
