@@ -85,6 +85,7 @@ public class Parrot : MonoBehaviour
         }
         else if (!active) //Stop the parrot if it is not active
         {
+            rBody.velocity = Vector3.zero;
         }
 	}
     #endregion
