@@ -52,7 +52,12 @@ public class ItemPickup : MonoBehaviour
         carriedItem = null;
         carriedItemRB = null;
         carriedItemHalfHeight = 0;
-        itemSlot = GameObject.FindGameObjectWithTag("ItemSlot").transform;
+
+        if (gameObject.tag == "Parrot1")
+            itemSlot = GameObject.FindGameObjectWithTag("ItemSlot1").transform;
+        else if (gameObject.tag == "Parrot2")
+            itemSlot = GameObject.FindGameObjectWithTag("ItemSlot2").transform;
+
         visionAngle = 45;
         buttonDown = false;
     }
