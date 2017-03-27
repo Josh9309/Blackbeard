@@ -13,7 +13,7 @@ public class Parrot : MonoBehaviour
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
     private float currentHeight;
-    private bool active; //If the parrot is active
+    public bool active; //If the parrot is active
     private Rigidbody rBody;
     private bool rotateParrot = false;
     private Vector3 parrotRotation; //parrot euler angle rotation
@@ -62,7 +62,7 @@ public class Parrot : MonoBehaviour
         }
 
         //The parrot is active
-        active = true;
+        active = false;
 
         pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
 
@@ -202,6 +202,11 @@ public class Parrot : MonoBehaviour
 
         //update the parrot rotation
         transform.localEulerAngles = parrotRotation;
+    }
+
+    public void ReturnToCaptain(Transform captainTransform)
+    {
+        
     }
     #endregion
 }

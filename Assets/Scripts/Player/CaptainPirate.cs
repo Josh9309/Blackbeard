@@ -93,7 +93,17 @@ public class CaptainPirate: MonoBehaviour
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
 
-        gameCamera = GameObject.FindGameObjectWithTag("MainCamera").transform; //Get the camera
+        switch (playerNum)
+        {
+            case 1:
+                gameCamera = GameObject.Find("Pirate Camera 1").transform; //Get the camera
+                break;
+
+            case 2:
+                gameCamera = GameObject.Find("Pirate Camera 2").transform; //Get the camera
+                break;
+        }
+        
 
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 

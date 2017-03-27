@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-//Controls everything relates Player input axis and their configuration
+/// <summary>
+/// Controls everything related Player input axis and their configuration
+/// </summary>
 public class PlayerInput
 {
     #region Attributes
@@ -170,34 +172,44 @@ public class PlayerInput
 /// </summary>
 public class GameManager : Singleton<GameManager>
 {
+    public enum PlayerState { PARROT, CAPTAIN };
+
     #region Fields
     //player input for player 1 + 2
     PlayerInput p1Input = new PlayerInput();
     PlayerInput p2Input = new PlayerInput();
 
-    private GameObject player1;
-    private GameObject player2;
+    //Phase Times
+    [SerializeField] private float piratePhaseTime;
+    [SerializeField] private float parrotPhaseTime;
+    private Coroutine pirateTimerRoutine;
+    private Coroutine parrotTimerRoutine;
 
+    //holds the Parrot and Pirate gameObjects for both players
+    [SerializeField] private CaptainPirate pirateP1;
+    [SerializeField] private CaptainPirate pirateP2;
+    [SerializeField] private Parrot parrotP1;
+    [SerializeField] private Parrot parrotP2;
+
+    //holds the cameras for each player
+    private Camera pirateCam1;
+    private Camera pirateCam2;
+    private Camera parrotCam1;
+    private Camera parrotCam2;
     
-    public enum PlayerState { PARROT, CAPTAIN};
-    private PlayerState currentPlayerState = PlayerState.CAPTAIN;
+    private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
+    private PlayerState currentPlayer2State = PlayerState.CAPTAIN;
     #endregion
 
     #region Properties
-    public GameObject Player1
+    public PlayerState CurrentPlayer1State
     {
-        get { return player1; }
-        set
-        {
-            player1 = value;
-        }
+        get { return currentPlayer1State; }
     }
 
-    public PlayerState CurrentPlayerState {
-        get { return currentPlayerState; }
-        set {
-            currentPlayerState = value;
-        }
+    public PlayerState CurrentPlayer2State
+    {
+        get { return currentPlayer2State; }
     }
     
     public PlayerInput P1Input
@@ -228,6 +240,17 @@ public class GameManager : Singleton<GameManager>
     {
         p1Input.ConfigureInput(1);
         p2Input.ConfigureInput(2);
+
+        //get cameras
+        pirateCam1 = GameObject.Find("Pirate Camera 1").GetComponent<Camera>();
+        pirateCam2 = GameObject.Find("Pirate Camera 2").GetComponent<Camera>();
+        parrotCam1 = GameObject.Find("Parrot Camera 1").GetComponent<Camera>();
+        parrotCam2 = GameObject.Find("Parrot Camera 2").GetComponent<Camera>();
+
+        parrotCam1.gameObject.SetActive(false);
+        parrotCam2.gameObject.SetActive(false);
+
+        pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
     }
 
     void Update()
@@ -235,4 +258,79 @@ public class GameManager : Singleton<GameManager>
 
 
     }
+
+    /// <summary>
+    /// Switch to Pirate phase
+    /// </summary>
+    private void SwitchPiratePhase()
+    {
+        ///TEST CAMERA SYSTEM TO BE REPLACED WITH SPLIT SCREEN CAMERA SYSTEM
+        //turn on pirate cameras
+        pirateCam1.gameObject.SetActive(true);
+        pirateCam2.gameObject.SetActive(true);
+
+        //turn off Parrot Cameras
+        parrotCam1.gameObject.SetActive(false);
+        parrotCam2.gameObject.SetActive(false);
+
+        ///-------------------------------------------------------------------
+        
+        //set pirates to active
+        pirateP1.PirateActive = true;
+        pirateP2.PirateActive = true;
+
+        //set parrots to inactive
+        parrotP1.active = false;
+        parrotP2.active = false;
+
+        currentPlayer1State = PlayerState.CAPTAIN;
+        currentPlayer2State = PlayerState.CAPTAIN;
+    }
+
+    /// <summary>
+    /// Switches to parrot phase
+    /// </summary>
+    private void SwitchParrotPhase()
+    {
+        ///TEST CAMERA SYSTEM TO BE REPLACED WITH SPLIT SCREEN CAMERA SYSTEM
+        //turn off pirate cameras
+        pirateCam2.gameObject.SetActive(false);
+        pirateCam1.gameObject.SetActive(false);
+
+        //turn on Parrot Cameras
+        parrotCam2.gameObject.SetActive(true);
+        parrotCam1.gameObject.SetActive(true);
+
+        ///--------------------------------------------------------------------
+
+        //set pirates to inactive
+        pirateP1.PirateActive = false;
+        pirateP2.PirateActive = false;
+
+        //set parrots to active
+        parrotP1.active = true;
+        parrotP2.active = true;
+
+        currentPlayer1State = PlayerState.PARROT;
+        currentPlayer2State = PlayerState.PARROT;
+    }
+
+    private IEnumerator PiratePhaseTimer()
+    {
+        SwitchPiratePhase();
+        Debug.Log("Pirate Phase");
+        yield return new WaitForSeconds(piratePhaseTime);
+
+        parrotTimerRoutine = StartCoroutine(ParrotPhaseTimer());
+    }
+
+    private IEnumerator ParrotPhaseTimer()
+    {
+        SwitchParrotPhase();
+        Debug.Log("Parrot Phase");
+
+        yield return new WaitForSeconds(parrotPhaseTime);
+
+        pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
+    } 
 }
