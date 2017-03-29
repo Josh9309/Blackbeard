@@ -32,7 +32,8 @@ public class SpikeTrap : BaseTrap {
 
     public override void Trigger(GameObject pirate)
     {
-        Vector3 knockbackForce = pirate.transform.forward * -100;
+        triggered = true;
+        Vector3 knockbackForce = pirate.transform.forward * -500;
         pirate.gameObject.GetComponent<Rigidbody>().AddForce(knockbackForce);
         StartCoroutine(pirate.GetComponent<CaptainPirate>().Stun(stunTime));
     }
