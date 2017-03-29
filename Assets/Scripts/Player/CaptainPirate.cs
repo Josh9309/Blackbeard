@@ -226,6 +226,12 @@ public class CaptainPirate: MonoBehaviour
         }
     }
 
+    public IEnumerator Stun(float stunTime)
+    {
+        
+        yield return new WaitForSeconds(stunTime);
+    }
+
     private void ApplyExtraTurnRotation()
     {
         float turnSpeed = Mathf.Lerp(idleTurnSpeed, movingTurnSpeed, forwardAmount);
