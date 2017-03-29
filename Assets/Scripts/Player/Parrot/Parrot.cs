@@ -17,6 +17,7 @@ public class Parrot : MonoBehaviour
     private Rigidbody rBody;
     private bool rotateParrot = false;
     private Vector3 parrotRotation; //parrot euler angle rotation
+    private GameObject captain; // object of the captain this pirate is tied to
 
     //Item pickup
     private ItemPickup pickupScript;
@@ -49,14 +50,16 @@ public class Parrot : MonoBehaviour
 
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
-        //get input manager
+        //get input manager and captains
         switch (playerNum)
         {
             case 1:
+                captain = gm.GetComponent<GameManager>().PirateP1.gameObject;
                 inputManager = gm.P1Input;
                 break;
 
             case 2:
+                captain = gm.GetComponent<GameManager>().PirateP2.gameObject;
                 inputManager = gm.P2Input;
                 break;
         }
@@ -86,6 +89,7 @@ public class Parrot : MonoBehaviour
         else if (!active) //Stop the parrot if it is not active
         {
             rBody.velocity = Vector3.zero;
+            StayWithCaptain();
         }
 	}
     #endregion
@@ -207,7 +211,16 @@ public class Parrot : MonoBehaviour
 
     public void ReturnToCaptain(Transform captainTransform)
     {
-        
+        // TODO: for use when we have parrot
+    }
+
+    /// <summary>
+    /// code for parrot staying with the captain without parenting
+    /// </summary>
+    private void StayWithCaptain()
+    {
+        transform.position = new Vector3(captain.transform.position.x, captain.transform.position.y + 2.5f, captain.transform.position.z);
+        transform.rotation = captain.transform.rotation;
     }
     #endregion
 }
