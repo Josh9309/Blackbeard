@@ -28,10 +28,10 @@ public abstract class BaseTrap : MonoBehaviour {
 
     // Use this for initialization
     protected virtual void Start () {
+        trapAnim = gameObject.GetComponent<Animator>();
+
         //make sure trap is deactivated
         Deactivate();
-
-        trapAnim = gameObject.GetComponent<Animator>();
 
         triggered = false;
 	}

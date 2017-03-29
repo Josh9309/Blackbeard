@@ -15,7 +15,6 @@ public class ItemPickup : MonoBehaviour
     private Item carriedItemScript;
     private Transform itemSlot;
     private RaycastHit hit;
-    private int visionAngle;
     private bool buttonDown;
     private Parrot parrot;
     #endregion
@@ -58,7 +57,6 @@ public class ItemPickup : MonoBehaviour
         else if (gameObject.tag == "Parrot2")
             itemSlot = GameObject.FindGameObjectWithTag("ItemSlot2").transform;
 
-        visionAngle = 45;
         buttonDown = false;
     }
     #endregion
@@ -92,7 +90,7 @@ public class ItemPickup : MonoBehaviour
                     Physics.Raycast(transform.position, direction, out hit);
 
                     //TODO: update this with UI cues
-                    if (direction.magnitude < 1.5f && Vector3.Dot(direction, transform.forward) > -.1f)
+                    if (direction.magnitude < 1.5f)
                     {
                         if (Input.GetButton(parrot.InputManager.PARROT_PICKUP_AXIS))
                         {

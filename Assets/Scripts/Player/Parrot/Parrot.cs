@@ -22,6 +22,9 @@ public class Parrot : MonoBehaviour
     //Item pickup
     private ItemPickup pickupScript;
 
+    //Trap interaction
+    private TrapInteraction trapScript;
+
     //input stuff
     private PlayerInput inputManager;
     private float inputDelay = 0.3f;
@@ -68,6 +71,7 @@ public class Parrot : MonoBehaviour
         active = false;
 
         pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
+        trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
 
         maxSpeed = speed * 3;
 	}
@@ -75,8 +79,8 @@ public class Parrot : MonoBehaviour
     //Update is called once per frame
     private void Update() 
     {
-
         pickupScript.Pickup(active); //Let the parrot pickup treasure
+        trapScript.Interact(active); //Let the parrot interact with traps
     }
 
     //Physics updates
