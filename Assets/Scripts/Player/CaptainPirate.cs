@@ -57,6 +57,18 @@ public class CaptainPirate: MonoBehaviour
         get { return invincible; }
     }
 
+    public float Speed
+    {
+        get
+        {
+            return speed;
+        }
+        set
+        {
+            speed = value;
+        }
+    }
+
     public Rigidbody RBody
     {
         get
