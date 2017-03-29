@@ -14,6 +14,7 @@ public class CaptainPirate: MonoBehaviour
 
     //pirate Stats
     private bool invincible = false;
+    private bool stunned = false;
     private float speed = 5.0f;
     private bool pirateActive; //The pirate will only recieve input if it is active
 
@@ -54,6 +55,18 @@ public class CaptainPirate: MonoBehaviour
     public bool Invincible
     {
         get { return invincible; }
+    }
+
+    public float Speed
+    {
+        get
+        {
+            return speed;
+        }
+        set
+        {
+            speed = value;
+        }
     }
 
     public Rigidbody RBody
@@ -134,7 +147,7 @@ public class CaptainPirate: MonoBehaviour
 	// Update is called once per frame
     private void Update()
     {
-        if (!isJumping && grounded && pirateActive)
+        if (!isJumping && grounded && pirateActive && !stunned)
         {
             isJumping = Input.GetButtonDown(inputManager.JUMP_AXIS);
         }
@@ -142,7 +155,7 @@ public class CaptainPirate: MonoBehaviour
 
 	private void FixedUpdate ()
     {
-        if (pirateActive)
+        if (pirateActive && !stunned)
         {
             GetMovementInput();
             PirateMove();
@@ -228,8 +241,11 @@ public class CaptainPirate: MonoBehaviour
 
     public IEnumerator Stun(float stunTime)
     {
-        
+        Debug.Log("Stunned!");
+        stunned = true;
         yield return new WaitForSeconds(stunTime);
+        Debug.Log("unStunned!");
+        stunned = false;
     }
 
     private void ApplyExtraTurnRotation()
