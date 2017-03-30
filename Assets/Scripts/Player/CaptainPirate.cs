@@ -33,6 +33,8 @@ public class CaptainPirate: MonoBehaviour
     private float forwardAmount;
     private bool grounded;
     private bool isJumping;
+    private bool onMoving; //pirate is on a surface that moves
+    private Vector3 movingPlatformVel = Vector3.zero; // the velocity of the moving platform that the pirate is on
 
     //input attributes
     private PlayerInput inputManager;
@@ -215,8 +217,15 @@ public class CaptainPirate: MonoBehaviour
         //determine which movement method to use depending on whether pirate is grounded or not
         if (grounded)
         {
+            
             //use grounded movement method
             rBody.velocity = transform.forward * forwardAmount * speed;
+
+            if (onMoving)
+            {
+                rBody.velocity += movingPlatformVel;
+            }
+
             Jump();
         }
         else
@@ -269,6 +278,18 @@ public class CaptainPirate: MonoBehaviour
             groundPlaneNormal = rayHit.normal; //set the ground plan normal to the raycast hit normal
             grounded = true; //set the pirate to grounded
             pirateAnim.SetBool("Grounded", true);
+
+            if(rayHit.collider.gameObject.tag == "MovingPlatform")
+            {
+                onMoving = true;
+                movingPlatformVel = rayHit.collider.gameObject.GetComponent<Rigidbody>().velocity;
+                Debug.Log("Grounded on moving");
+            }
+            else
+            {
+                onMoving = false;
+                movingPlatformVel = Vector3.zero;
+            }
         }
         else //raycast did not hit ground
         {
