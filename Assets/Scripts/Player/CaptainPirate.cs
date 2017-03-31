@@ -119,6 +119,9 @@ public class CaptainPirate: MonoBehaviour
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
 
+        //make it so pirates and parrots can't collide
+        Physics.IgnoreLayerCollision(10, 9);
+
         //Get stuff from the game manager
         GameManager gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         SplitScreenCamera ssCamera = gm.GetComponent<SplitScreenCamera>();
@@ -152,7 +155,7 @@ public class CaptainPirate: MonoBehaviour
 	// Update is called once per frame
     private void Update()
     {
-        if (!jumpInput && pirateActive && !stunned)
+        if (!jumpInput && (canDoubleJump || grounded) && pirateActive && !stunned)
         {
             jumpInput = Input.GetButtonDown(inputManager.JUMP_AXIS);
         }
@@ -266,9 +269,12 @@ public class CaptainPirate: MonoBehaviour
     public IEnumerator Stun(float stunTime)
     {
         Debug.Log("Stunned!");
+        pirateAnim.Play("Stun");
         stunned = true;
+        pirateAnim.SetBool("isStunned", true);
         yield return new WaitForSeconds(stunTime);
         Debug.Log("unStunned!");
+        pirateAnim.SetBool("isStunned", false);
         stunned = false;
     }
 
