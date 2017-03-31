@@ -32,7 +32,9 @@ public class CaptainPirate: MonoBehaviour
     private float turnAmount;
     private float forwardAmount;
     private bool grounded;
-    private bool isJumping;
+    private bool jumpInput;
+    //private bool canJump;
+    private bool canDoubleJump;
     private bool onMoving; //pirate is on a surface that moves
     private bool onRotating; //pirate is on a surface that rotates
     private Vector3 movingPlatformVel = Vector3.zero; // the velocity of the moving platform that the pirate is on
@@ -150,9 +152,9 @@ public class CaptainPirate: MonoBehaviour
 	// Update is called once per frame
     private void Update()
     {
-        if (!isJumping && grounded && pirateActive && !stunned)
+        if (!jumpInput && pirateActive && !stunned)
         {
-            isJumping = Input.GetButtonDown(inputManager.JUMP_AXIS);
+            jumpInput = Input.GetButtonDown(inputManager.JUMP_AXIS);
         }
     }
 
@@ -231,7 +233,10 @@ public class CaptainPirate: MonoBehaviour
         }
         else
         {
+            //call Jump for double jump
+            Jump();
             //use Air movement method
+
         }
 
         //send input and other animation state parameters to the animator
@@ -239,13 +244,22 @@ public class CaptainPirate: MonoBehaviour
 
     private void Jump()
     {
-        if(grounded && isJumping)
+        if(grounded && jumpInput)
         {
             pirateAnim.Play("Jump");
             rBody.velocity = new Vector3(rBody.velocity.x, jumpForce, rBody.velocity.z);
             grounded = false;
             pirateAnim.SetBool("Grounded", false);
-            isJumping = false;
+            jumpInput = false;
+            canDoubleJump = true;
+        }
+        else if(!grounded && canDoubleJump &&jumpInput)
+        {
+            pirateAnim.Play("Double Jump");
+            rBody.velocity = new Vector3(rBody.velocity.x, jumpForce, rBody.velocity.z);
+            grounded = false;
+            jumpInput = false;
+            canDoubleJump = false;
         }
     }
 
@@ -279,6 +293,7 @@ public class CaptainPirate: MonoBehaviour
             groundPlaneNormal = rayHit.normal; //set the ground plan normal to the raycast hit normal
             grounded = true; //set the pirate to grounded
             pirateAnim.SetBool("Grounded", true);
+            canDoubleJump = false;
 
             if(rayHit.collider.gameObject.tag == "MovingPlatform")
             {
