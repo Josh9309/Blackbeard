@@ -34,6 +34,7 @@ public class CaptainPirate: MonoBehaviour
     private bool grounded;
     private bool isJumping;
     private bool onMoving; //pirate is on a surface that moves
+    private bool onRotating; //pirate is on a surface that rotates
     private Vector3 movingPlatformVel = Vector3.zero; // the velocity of the moving platform that the pirate is on
 
     //input attributes
@@ -290,12 +291,29 @@ public class CaptainPirate: MonoBehaviour
                 onMoving = false;
                 movingPlatformVel = Vector3.zero;
             }
+
+            if(rayHit.collider.gameObject.tag == "RotatingPlatform")
+            {
+                onRotating = true;
+                transform.parent = rayHit.collider.gameObject.transform.parent;
+            }
+            else
+            {
+                onRotating = false;
+                transform.parent = null;
+            }
         }
         else //raycast did not hit ground
         {
             grounded = false;
             pirateAnim.SetBool("Grounded", false);
             groundPlaneNormal = Vector3.up;
+
+            onRotating = false;
+            transform.parent = null;
+
+            onMoving = false;
+            movingPlatformVel = Vector3.zero;
         }
     }    
     #endregion
