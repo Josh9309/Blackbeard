@@ -97,6 +97,7 @@ public class MovingPlatform : MonoBehaviour {
         return ultimatePathFollowForce;
     }
 
+
     protected Vector3 Seek(Vector3 targetPosition)
     {
         Vector3 desired = targetPosition - transform.position;

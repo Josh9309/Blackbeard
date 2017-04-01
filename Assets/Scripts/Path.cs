@@ -22,26 +22,10 @@ public class Path : MonoBehaviour {
     // Use this for initialization
     void Start () 
     {
-        GameObject[] nodes = GameObject.FindGameObjectsWithTag("platformNode");
-        pathWayPoints = new WayPoint[nodes.Length];
-
-        for (int i = 0; i < nodes.Length; i++)
-        {
-            pathWayPoints[i] = nodes[i].GetComponent<WayPoint>();
-        }
-
-        //get the wayPoints and set the start node in the path
-        //for (int i = 0; i < pathWayPoints.Length; i++)
-        //{
-        //    WayPoint point = pathWayPoints[i];
-        //    Debug.Log(point.WayPointNum);
-        //    if (point.StartPoint == true)
-        //    {
-        //        Debug.Log(PathName + " Start point is: " + point.WayPointNum);
-        //        startNode = pathWayPoints[i];
-        //    }
-        //}
- 
+        //gets waypoint nodes under the path gameobject
+        pathWayPoints = GetComponentsInChildren<WayPoint>();
+        
+        
         //*DEBUG CHECK WHICH POINTS ARE IN PATHWAYPOINTS ARRAY
         
 	}
