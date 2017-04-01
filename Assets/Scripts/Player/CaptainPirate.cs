@@ -37,6 +37,7 @@ public class CaptainPirate: MonoBehaviour
     private bool grounded;
     private bool jumpInput;
     private bool canDoubleJump;
+    private bool airControl = true;
     private bool onMoving; //pirate is on a surface that moves
     private bool onRotating; //pirate is on a surface that rotates
     private Vector3 movingPlatformVel = Vector3.zero; // the velocity of the moving platform that the pirate is on
@@ -175,16 +176,25 @@ public class CaptainPirate: MonoBehaviour
         }
 	}
 
+    private void OnCollisionEnter(Collision collisionInfo)
+    {
+        //turn off control of player in the air if they are in contact with something
+        airControl = false;
+    }
+
     private void OnCollisionExit(Collision collisionInfo)
     {
-        if (collisionInfo.gameObject.tag == "IslandPlatform")
+        //turn on control of player in the air
+        airControl = true;
+
+        if (collisionInfo.gameObject.tag == "IslandPlatform" && grounded)
         {
             //set the respawn point to be the previous islands center point
             GameObject prevIsland = collisionInfo.gameObject;
             Vector3 islandLoc = new Vector3(prevIsland.transform.position.x, (prevIsland.GetComponent<Collider>().bounds.size.y / 2)+ prevIsland.transform.position.y, prevIsland.transform.position.z);
             respawnLocation = islandLoc;
         }
-        else if (collisionInfo.gameObject.tag == "Terrain")
+        else if (collisionInfo.gameObject.tag == "Terrain" && grounded)
         {
             respawnLocation = transform.position - (transform.forward.normalized *3);
         }
@@ -264,8 +274,11 @@ public class CaptainPirate: MonoBehaviour
         else
         {
             //use Air movement method
-            //changes rigidbody's velocity horizontal speed and direction affecting vertical velocity
-            rBody.velocity = new Vector3((transform.forward * forwardAmount * speed).x, rBody.velocity.y, (transform.forward * forwardAmount * speed).z);
+            if (airControl)
+            {
+                //changes rigidbody's velocity horizontal speed and direction affecting vertical velocity
+                rBody.velocity = new Vector3((transform.forward * forwardAmount * speed).x, rBody.velocity.y, (transform.forward * forwardAmount * speed).z);
+            }
 
             //Allows the pirate to be affected by extra gravitational pull while in the air
             Vector3 extraGravityForce = (Physics.gravity * gravityMultiplyer) - Physics.gravity;
