@@ -22,6 +22,22 @@ public class Parrot : MonoBehaviour
     //Item pickup
     private ItemPickup pickupScript;
 
+    // Utility items & managment
+    private GameObject itemSlot;
+    [SerializeField]
+    private List<GameObject> utilityItems;
+    [SerializeField]
+    private int numLanterns;
+    private GameObject currentUtility;
+    private int currentUtilityID = 0;
+    private bool canDrop = true;
+    private bool canSwitch = true;
+    private float switchCooldown = 0.5f;
+    [SerializeField]
+    private float dropCooldown;
+    private bool switchButtonDown = false;
+    private bool dropButtonDown = false;
+
     //Trap interaction
     private TrapInteraction trapScript;
 
@@ -58,11 +74,13 @@ public class Parrot : MonoBehaviour
         {
             case 1:
                 captain = gm.GetComponent<GameManager>().PirateP1.gameObject;
+                itemSlot = GameObject.FindGameObjectWithTag("ItemSlot1");
                 inputManager = gm.P1Input;
                 break;
 
             case 2:
                 captain = gm.GetComponent<GameManager>().PirateP2.gameObject;
+                itemSlot = GameObject.FindGameObjectWithTag("ItemSlot2");
                 inputManager = gm.P2Input;
                 break;
         }
@@ -81,6 +99,7 @@ public class Parrot : MonoBehaviour
     {
         pickupScript.Pickup(active); //Let the parrot pickup treasure
         trapScript.Interact(active); //Let the parrot interact with traps
+        SwitchUtility(); // allow parrot to switch current utility
     }
 
     //Physics updates
@@ -88,7 +107,7 @@ public class Parrot : MonoBehaviour
     {
         if (active)
         {
-            ParrotMove();
+            ParrotMove();           
         }
         else if (!active) //Stop the parrot if it is not active
         {
@@ -99,6 +118,46 @@ public class Parrot : MonoBehaviour
     #endregion
 
     #region HelperMethods
+
+    /// <summary>
+    /// This will handle updating the currentUtility based on player input
+    /// </summary>
+    private void SwitchUtility()
+    {
+        if (Input.GetButton(inputManager.UTILITY_SWITCH) && !switchButtonDown)
+        {
+            currentUtilityID++;
+            currentUtility = utilityItems[currentUtilityID % utilityItems.Count]; // wrap the utilities so that we don't go out of bounds
+            Debug.Log("current utility is " + currentUtility.name);
+            switchButtonDown = true;
+            //StartCoroutine(SwitchUtilityCooldown());
+        }
+
+        else if (Input.GetButtonUp(inputManager.UTILITY_SWITCH))
+        {
+            switchButtonDown = false;
+        }
+    }
+
+    /// <summary>
+    /// drops the currently selected utility
+    /// </summary>
+    private void DropUtility()
+    {
+        if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown)
+        {
+            //GameObject.Instantiate(currentUtility, itemSlot.transform.position, Quaternion.identity);
+            Debug.Log(currentUtility.name + " has been dropped!");
+            dropButtonDown = true;
+            StartCoroutine(UtilityCooldown());
+        }
+
+        else if (Input.GetButtonUp(inputManager.PARROT_PICKUP_AXIS))
+        {
+            dropButtonDown = false;
+        }
+    }
+
     /// <summary>
     /// The ParrotMove Method controls the parrot's flight and movement. It is what turns the bird, boosts, decellerates, what angles the parrot during flight.
     /// </summary>
@@ -225,6 +284,28 @@ public class Parrot : MonoBehaviour
     {
         transform.position = new Vector3(captain.transform.position.x, captain.transform.position.y + 2.5f, captain.transform.position.z);
         transform.rotation = captain.transform.rotation;
+    }
+
+    /// <summary>
+    /// prevents players from spamming utilities
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator UtilityCooldown()
+    {
+        canDrop = false;
+        yield return new WaitForSeconds(dropCooldown);
+        canDrop = true;
+    }
+
+    /// <summary>
+    /// prevents reading in multiple swtich inputs per second
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SwitchUtilityCooldown()
+    {
+        canSwitch = false;
+        yield return new WaitForSeconds(switchCooldown);
+        canSwitch = true;
     }
     #endregion
 }
