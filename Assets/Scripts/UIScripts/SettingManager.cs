@@ -25,10 +25,7 @@ public class SettingManager : MonoBehaviour
     GameSettings gameSettings;
     [SerializeField]
     Toggle splitScreen;
-    [SerializeField]
-    bool pauseMenu;
-    [SerializeField]
-    bool mainMenu;
+   
     SplitScreenCamera cam;
 
     #endregion
@@ -36,15 +33,8 @@ public class SettingManager : MonoBehaviour
     #endregion
 
     #region inBuiltMethods
-
-    public void Start()
-    {
-        mainMenu = true;
-        pauseMenu = !mainMenu;
-    }
     public void OnEnable()
     {
-        
         //initializing for null values
         gameSettings = new GameSettings();
         cam = GetComponent<SplitScreenCamera>();
@@ -96,10 +86,7 @@ public class SettingManager : MonoBehaviour
         splitScreen.onValueChanged.AddListener(delegate
         {
             splitScreenChange();
-        });
-
-        
-
+        });    
     }
     #endregion
 
