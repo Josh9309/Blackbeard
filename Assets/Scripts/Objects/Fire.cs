@@ -11,6 +11,9 @@ public class Fire : MonoBehaviour
     #region Attributes
     [SerializeField]
     private float duration;
+    [SerializeField]
+    private float stunTime;
+    private bool burntOut = false;
     #endregion
 
     // Use this for initialization
@@ -20,8 +23,15 @@ public class Fire : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (burntOut)
+            Destroy(gameObject);
 	}
+
+    private IEnumerator Burn()
+    {
+        yield return new WaitForSeconds(duration);
+        burntOut = true;
+    }
 
     /// <summary>
     /// Ignite should be called whenever a fire is spawned, it should
@@ -29,10 +39,26 @@ public class Fire : MonoBehaviour
     /// a child of
     /// </summary>
     /// <param name="platform">platform that the fire is on</param>
-    public void Ignite(GameObject platform, float y)
+    public void Ignite()
     {
-        // set parent
-        transform.parent = platform.transform;
-        transform.position = new Vector3(platform.transform.position.x, y, platform.transform.position.z);
+        // TODO: spawn many small fires in the future
+        StartCoroutine(Burn());
     }
+
+    public void OnTriggerEnter(Collider coll)
+    {
+        if (coll.tag == "Pirate")
+        {
+            Debug.Log("Pirate hits fire");
+            coll.GetComponent<CaptainPirate>().StartCoroutine(coll.GetComponent<CaptainPirate>().Stun(stunTime));
+        }
+    }
+
+    //public void OnTriggerStay(Collider coll)
+    //{
+    //    if (coll.tag == "Pirate")
+    //    {
+    //        coll.GetComponent<CaptainPirate>().Stun(stunTime);
+    //    }
+    //}
 }

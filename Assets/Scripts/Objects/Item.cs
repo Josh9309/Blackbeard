@@ -30,7 +30,14 @@ public class Item : MonoBehaviour
     #region InBuiltMethods
     void Start() //Use this for initialization
     {
-        active = false;
+        if (gameObject.name.Contains("Lantern"))
+        {
+            active = true;
+        }
+        else
+        {
+            active = false;
+        }
         explosionDamage = -1000;
 	}
 
@@ -57,6 +64,8 @@ public class Item : MonoBehaviour
             else if (gameObject.name.Contains("Lantern")) // if gameObject is lantern
             {
                 // TODO: add stuff for spawning fire on the main island
+                GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
+                fire.GetComponent<Fire>().Ignite();
                 Destroy(gameObject);
             }
             else //If this is any other object
@@ -93,7 +102,7 @@ public class Item : MonoBehaviour
             if (gameObject.name.Contains("Lantern"))
             {
                 GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
-                fire.GetComponent<Fire>().Ignite(coll.gameObject, transform.position.y);
+                fire.GetComponent<Fire>().Ignite();
                 Destroy(gameObject);
             }
         }

@@ -148,7 +148,8 @@ public class Parrot : MonoBehaviour
     {
         if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown)
         {
-            GameObject.Instantiate(currentUtility, itemSlot.transform.position, Quaternion.identity);
+            GameObject utility = GameObject.Instantiate(currentUtility, itemSlot.transform.position, Quaternion.identity);
+            //utility.GetComponent<Item>().Active = true;
             Debug.Log(currentUtility.name + " has been dropped!");
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
