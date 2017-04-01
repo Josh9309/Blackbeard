@@ -90,6 +90,7 @@ public class Parrot : MonoBehaviour
 
         pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
         trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
+        currentUtility = utilityItems[0]; // assign initial utility
 
         maxSpeed = speed * 3;
 	}
@@ -100,6 +101,7 @@ public class Parrot : MonoBehaviour
         pickupScript.Pickup(active); //Let the parrot pickup treasure
         trapScript.Interact(active); //Let the parrot interact with traps
         SwitchUtility(); // allow parrot to switch current utility
+        DropUtility(); // allows parrot to drop utility
     }
 
     //Physics updates
@@ -146,7 +148,7 @@ public class Parrot : MonoBehaviour
     {
         if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown)
         {
-            //GameObject.Instantiate(currentUtility, itemSlot.transform.position, Quaternion.identity);
+            GameObject.Instantiate(currentUtility, itemSlot.transform.position, Quaternion.identity);
             Debug.Log(currentUtility.name + " has been dropped!");
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
