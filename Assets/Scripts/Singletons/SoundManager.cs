@@ -30,7 +30,7 @@ public class SoundManager : Singleton<SoundManager>
 
         //loop background music
         musicSource.loop = true; //turn on looping
-        musicSource.clip = musicLibrary["backgroundMusic"]; //set default song
+        //musicSource.clip = musicLibrary["backgroundMusic"]; //set default song
         musicSource.Play(); //play music
 	}
 
