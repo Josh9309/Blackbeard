@@ -18,6 +18,8 @@ public class CaptainPirate: MonoBehaviour
     private float speed = 5.0f;
     private bool pirateActive; //The pirate will only recieve input if it is active
 
+    private Vector3 respawnLocation;
+
     //pirate animation attributes
     private Animator pirateAnim;
 
@@ -29,11 +31,11 @@ public class CaptainPirate: MonoBehaviour
     [SerializeField] private float idleTurnSpeed = 360;
     [SerializeField] private float movingTurnSpeed = 180;
     [SerializeField] private float jumpForce = 50;
+    [Range(1f, 4f)][SerializeField] private float gravityMultiplyer = 1.5f;
     private float turnAmount;
     private float forwardAmount;
     private bool grounded;
     private bool jumpInput;
-    //private bool canJump;
     private bool canDoubleJump;
     private bool onMoving; //pirate is on a surface that moves
     private bool onRotating; //pirate is on a surface that rotates
@@ -119,6 +121,9 @@ public class CaptainPirate: MonoBehaviour
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
 
+        //set intial respawnLoc
+        respawnLocation = transform.position;
+
         //make it so pirates and parrots can't collide
         Physics.IgnoreLayerCollision(10, 9);
 
@@ -169,6 +174,27 @@ public class CaptainPirate: MonoBehaviour
             PirateMove();
         }
 	}
+
+    private void OnCollisionExit(Collision collisionInfo)
+    {
+        if (collisionInfo.gameObject.tag == "IslandPlatform")
+        {
+            //set the respawn point to be the previous islands center point
+            GameObject prevIsland = collisionInfo.gameObject;
+            Vector3 islandLoc = new Vector3(prevIsland.transform.position.x, (prevIsland.GetComponent<Collider>().bounds.size.y / 2)+ prevIsland.transform.position.y, prevIsland.transform.position.z);
+            respawnLocation = islandLoc;
+        }
+        else if (collisionInfo.gameObject.tag == "Terrain")
+        {
+            respawnLocation = transform.position - (transform.forward.normalized *3);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(respawnLocation, .5f);
+    }
     #endregion
 
     #region Methods
@@ -210,6 +236,7 @@ public class CaptainPirate: MonoBehaviour
             //normalize the movement vector
             movement.Normalize();
         }
+
         movement = transform.InverseTransformDirection(movement); //transforms the movement vector from world space to local space
 
         //check if Pirate is grounded
@@ -236,10 +263,17 @@ public class CaptainPirate: MonoBehaviour
         }
         else
         {
+            //use Air movement method
+            //changes rigidbody's velocity horizontal speed and direction affecting vertical velocity
+            rBody.velocity = new Vector3((transform.forward * forwardAmount * speed).x, rBody.velocity.y, (transform.forward * forwardAmount * speed).z);
+
+            //Allows the pirate to be affected by extra gravitational pull while in the air
+            Vector3 extraGravityForce = (Physics.gravity * gravityMultiplyer) - Physics.gravity;
+            rBody.AddForce(extraGravityForce);
+
             //call Jump for double jump
             Jump();
-            //use Air movement method
-
+           
         }
 
         //send input and other animation state parameters to the animator
@@ -276,6 +310,11 @@ public class CaptainPirate: MonoBehaviour
         Debug.Log("unStunned!");
         pirateAnim.SetBool("isStunned", false);
         stunned = false;
+    }
+
+    public void Respawn()
+    {
+        transform.position = respawnLocation;
     }
 
     private void ApplyExtraTurnRotation()
