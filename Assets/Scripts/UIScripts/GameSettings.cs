@@ -9,6 +9,8 @@
     public float musicVolume;
     public float soundVolume;
     public bool splitscreen;
+    public bool mainMenu;
+    public bool pauseMenu;
     #endregion
    
 }
