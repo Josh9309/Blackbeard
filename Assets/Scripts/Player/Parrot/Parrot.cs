@@ -98,10 +98,13 @@ public class Parrot : MonoBehaviour
     //Update is called once per frame
     private void Update() 
     {
-        pickupScript.Pickup(active); //Let the parrot pickup treasure
-        trapScript.Interact(active); //Let the parrot interact with traps
-        SwitchUtility(); // allow parrot to switch current utility
-        DropUtility(); // allows parrot to drop utility
+        if (active)
+        {
+            pickupScript.Pickup(active); //Let the parrot pickup treasure
+            trapScript.Interact(active); //Let the parrot interact with traps
+            SwitchUtility(); // allow parrot to switch current utility
+            DropUtility(); // allows parrot to drop utility
+        }
     }
 
     //Physics updates
