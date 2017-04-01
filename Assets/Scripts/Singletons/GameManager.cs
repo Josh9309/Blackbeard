@@ -24,6 +24,8 @@ public class PlayerInput
     string boost;
     string possess;
     string parrot_pickup;
+    string utility_switch;
+    string trap_activate;
 
     //Pirate Axes
     string jump;
@@ -103,6 +105,16 @@ public class PlayerInput
     {
         get { return submit; }
     }
+
+    public string UTILITY_SWITCH
+    {
+        get { return utility_switch; }
+    }
+
+    public string PARROT_TRAP_AXIS
+    {
+        get { return trap_activate; }
+    }
     #endregion
 
     /// <summary>
@@ -130,6 +142,8 @@ public class PlayerInput
                 boost = "BoostFly_P1";
                 possess = "Possess_P1";
                 parrot_pickup = "ParrotPickup_P1";
+                utility_switch = "UtilitySwitch_P1";
+                trap_activate = "TrapActivate_P1";
 
                 //SET PIRATE AXES
                 jump = "Jump_P1";
@@ -153,6 +167,8 @@ public class PlayerInput
                 boost = "BoostFly_P2";
                 possess = "Possess_P2";
                 parrot_pickup = "ParrotPickup_P2";
+                utility_switch = "UtilitySwitch_P2";
+                trap_activate = "TrapActivate_P2";
 
                 //SET PIRATE AXES
                 jump = "Jump_P2";

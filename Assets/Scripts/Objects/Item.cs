@@ -9,6 +9,8 @@ public class Item : MonoBehaviour
     private CaptainPirate pirateScript;
     [SerializeField] private int damage;
     private int explosionDamage;
+    [SerializeField]
+    private GameObject firePrefab;
     #endregion
 
     #region Properties
@@ -52,6 +54,11 @@ public class Item : MonoBehaviour
 
                 StartCoroutine(ExplosionTimer(.017f));
             }
+            else if (gameObject.name.Contains("Lantern")) // if gameObject is lantern
+            {
+                // TODO: add stuff for spawning fire on the main island
+                Destroy(gameObject);
+            }
             else //If this is any other object
             {
                 Destroy(gameObject);
@@ -78,6 +85,15 @@ public class Item : MonoBehaviour
             {
                 pirateScript = coll.gameObject.GetComponent<CaptainPirate>();
 
+                Destroy(gameObject);
+            }
+        }
+        else if (active && (coll.gameObject.tag == "IslandPlatform" || coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform"))
+        {
+            if (gameObject.name.Contains("Lantern"))
+            {
+                GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
+                fire.GetComponent<Fire>().Ignite(coll.gameObject, transform.position.y);
                 Destroy(gameObject);
             }
         }

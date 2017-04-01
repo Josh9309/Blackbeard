@@ -64,7 +64,7 @@ public class TrapInteraction : MonoBehaviour
                 //TODO: update this with UI cues
                 if (direction.magnitude < 10f)
                 {
-                    if (Input.GetButton(parrot.InputManager.PARROT_PICKUP_AXIS))
+                    if (Input.GetButton(parrot.InputManager.PARROT_TRAP_AXIS))
                     {
                         //Activate or deactivate the trap
                         if (trapScripts[i].Activated)
