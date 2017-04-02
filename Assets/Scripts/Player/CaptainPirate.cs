@@ -19,6 +19,7 @@ public class CaptainPirate: MonoBehaviour
     private bool pirateActive; //The pirate will only recieve input if it is active
 
     private Vector3 respawnLocation;
+    private Vector3 backUpRespawn;
 
     //pirate animation attributes
     private Animator pirateAnim;
@@ -186,24 +187,15 @@ public class CaptainPirate: MonoBehaviour
     {
         //turn on control of player in the air
         airControl = true;
-
-        if (collisionInfo.gameObject.tag == "IslandPlatform" && grounded)
-        {
-            //set the respawn point to be the previous islands center point
-            GameObject prevIsland = collisionInfo.gameObject;
-            Vector3 islandLoc = new Vector3(prevIsland.transform.position.x, (prevIsland.GetComponent<Collider>().bounds.size.y / 2)+ prevIsland.transform.position.y, prevIsland.transform.position.z);
-            respawnLocation = islandLoc;
-        }
-        else if (collisionInfo.gameObject.tag == "Terrain" && grounded)
-        {
-            respawnLocation = transform.position - (transform.forward.normalized *3);
-        }
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(respawnLocation, .5f);
+
+       // Gizmos.color = Color.red;
+       // Gizmos.DrawSphere(backUpRespawn, .5f);
     }
     #endregion
 
@@ -353,6 +345,7 @@ public class CaptainPirate: MonoBehaviour
             pirateAnim.SetBool("Grounded", true);
             canDoubleJump = false;
 
+            
             if(rayHit.collider.gameObject.tag == "MovingPlatform")
             {
                 onMoving = true;
@@ -374,6 +367,21 @@ public class CaptainPirate: MonoBehaviour
             {
                 onRotating = false;
                 transform.parent = null;
+            }
+
+            //set respawn point
+            if (rayHit.collider.gameObject.tag == "IslandPlatform")
+            {
+                //set the respawn point to be the previous islands center point
+                GameObject prevIsland = rayHit.collider.gameObject;
+                Vector3 islandLoc = new Vector3(prevIsland.transform.position.x, (prevIsland.GetComponent<Collider>().bounds.size.y / 2) + prevIsland.transform.position.y, prevIsland.transform.position.z);
+                //check to make sure backup respawn is not current respawn
+                
+                respawnLocation = islandLoc;
+            }
+            else if (rayHit.collider.gameObject.tag == "Terrain")
+            {
+                respawnLocation = transform.position - (transform.forward.normalized * 1.5f);
             }
         }
         else //raycast did not hit ground
