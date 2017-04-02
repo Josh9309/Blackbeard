@@ -67,19 +67,19 @@ public class Parrot : MonoBehaviour
     {
         rBody = GetComponent<Rigidbody>();
 
-        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        gm = GameManager.Instance;
 
         //get input manager and captains
         switch (playerNum)
         {
             case 1:
-                captain = gm.GetComponent<GameManager>().PirateP1.gameObject;
+                captain = gm.PirateP1.gameObject;
                 itemSlot = GameObject.FindGameObjectWithTag("ItemSlot1");
                 inputManager = gm.P1Input;
                 break;
 
             case 2:
-                captain = gm.GetComponent<GameManager>().PirateP2.gameObject;
+                captain = gm.PirateP2.gameObject;
                 itemSlot = GameObject.FindGameObjectWithTag("ItemSlot2");
                 inputManager = gm.P2Input;
                 break;

@@ -82,7 +82,7 @@ public class SplitScreenCamera : MonoBehaviour
     void Start() //Use this for initialization
     {
         //Get the game manager
-        GameManager gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        GameManager gm = GameManager.Instance;
 
         //Get the player objects from the game manager
         captain1 = gm.PirateP1;

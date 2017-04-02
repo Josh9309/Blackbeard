@@ -129,7 +129,7 @@ public class CaptainPirate: MonoBehaviour
         Physics.IgnoreLayerCollision(10, 9);
 
         //Get stuff from the game manager
-        GameManager gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        GameManager gm = GameManager.Instance;
         SplitScreenCamera ssCamera = gm.GetComponent<SplitScreenCamera>();
 
         switch (playerNum)

@@ -133,7 +133,7 @@ public class PlayerInput
                 horizontal_axis = "Horizontal_P1";
                 vertical_axis = "Vertical_P1";
                 cam_horizontal = "Cam_Horizontal_P1";
-                cam_vertical = "CAM_Vertical_P1";
+                cam_vertical = "Cam_Vertical_P1";
                 r3 = "R3_P1";
 
                 //SET PARROT AXES
@@ -158,7 +158,7 @@ public class PlayerInput
                 horizontal_axis = "Horizontal_P2";
                 vertical_axis = "Vertical_P2";
                 cam_horizontal = "Cam_Horizontal_P2";
-                cam_vertical = "CAM_Vertical_P2";
+                cam_vertical = "Cam_Vertical_P2";
                 r3 = "R3_P2";
 
                 //SET PARROT AXES
