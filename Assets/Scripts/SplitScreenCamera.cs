@@ -6,7 +6,6 @@ public class SplitScreenCamera : MonoBehaviour
 {
     #region Attributes
     [SerializeField] private bool debug; //Single camera view for debug
-    [SerializeField] private bool vertical; //Camera split type
 
     //Player objects
     private CaptainPirate captain1;
@@ -22,17 +21,6 @@ public class SplitScreenCamera : MonoBehaviour
     #endregion
 
     #region Properties
-    public bool Vertical
-    {
-        get
-        {
-            return vertical;
-        }
-        set
-        {
-            vertical = value;
-        }
-    }
     public Camera CaptainCamera1
     {
         get
@@ -97,7 +85,7 @@ public class SplitScreenCamera : MonoBehaviour
         parrotCamera2 = GameObject.FindGameObjectWithTag("ParrotCamera2").GetComponent<Camera>();
 
         //Splitscreen type
-        if (vertical)
+        if (SettingManager.Instance.Vertical)
         {
             captainCamera1.rect = new Rect(0, 0, .5f, 1);
             captainCamera2.rect = new Rect(.5f, 0, .5f, 1);

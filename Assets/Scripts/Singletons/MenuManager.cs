@@ -12,13 +12,13 @@ public class MenuManager : Singleton<MenuManager>
 	//Screens
 	Dictionary<string, GameObject> screens = new Dictionary<string, GameObject>();
 	Stack<string> screenStack = new Stack<string>();
-	#endregion
+    #endregion
 
-	#region Properties
-	public Dictionary<string, GameObject> Screens { get { return screens; } }
+    #region Properties
+    public Dictionary<string, GameObject> Screens { get { return screens; } }
 	public string CurrentScreen { get { return screenStack.Peek(); } }
     #endregion
- 
+
     #region inBuiltMethods
     void Awake()
 	{

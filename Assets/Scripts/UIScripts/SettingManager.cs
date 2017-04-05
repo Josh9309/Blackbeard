@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingManager : MonoBehaviour
+public class SettingManager : Singleton<SettingManager>
 {
     #region Attributes
     [SerializeField]
@@ -25,19 +25,42 @@ public class SettingManager : MonoBehaviour
     GameSettings gameSettings;
     [SerializeField]
     Toggle splitScreen;
-   
-    SplitScreenCamera cam;
 
+    private bool vertical; //Camera split type
     #endregion
+
     #region Properties
+    public bool Vertical
+    {
+        get
+        {
+            return vertical;
+        }
+        set
+        {
+            vertical = value;
+        }
+    }
     #endregion
 
     #region inBuiltMethods
+    protected SettingManager() { }
+
+    private void Start()
+    {
+        splitScreenChange(); //Call this now so the toggle button works from start
+    }
+
+    void Awake()
+    {
+        //dont touch me when we load a new scene
+        DontDestroyOnLoad(this);
+    }
+
     public void OnEnable()
     {
         //initializing for null values
         gameSettings = new GameSettings();
-        cam = GetComponent<SplitScreenCamera>();
 
         //link the methods to the toggle button 
         fullscreenToggle.onValueChanged.AddListener(delegate
@@ -139,11 +162,11 @@ public class SettingManager : MonoBehaviour
         //originally at verticle, if unchecked then horizontal
         if(splitScreen.isOn)
         {
-            cam.Vertical = true;
+            vertical = true;
         }
         else
         {
-            cam.Vertical = false;
+            vertical = false;
         }
     }
     #endregion
