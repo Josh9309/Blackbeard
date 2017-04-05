@@ -6,9 +6,11 @@ public class Item : MonoBehaviour
 {
     #region Attributes
     private bool active; //If the item is active
-    private BasePirate basePirateScript;
+    private CaptainPirate pirateScript;
     [SerializeField] private int damage;
     private int explosionDamage;
+    [SerializeField]
+    private GameObject firePrefab;
     #endregion
 
     #region Properties
@@ -28,7 +30,14 @@ public class Item : MonoBehaviour
     #region InBuiltMethods
     void Start() //Use this for initialization
     {
-        active = false;
+        if (gameObject.name.Contains("Lantern"))
+        {
+            active = true;
+        }
+        else
+        {
+            active = false;
+        }
         explosionDamage = -1000;
 	}
 
@@ -46,11 +55,18 @@ public class Item : MonoBehaviour
                 {
                     if (c.gameObject.tag == "Pirate")
                     {
-                        basePirateScript = c.gameObject.GetComponent<BasePirate>();
+                        pirateScript = c.gameObject.GetComponent<CaptainPirate>();
                     }
                 }
 
                 StartCoroutine(ExplosionTimer(.017f));
+            }
+            else if (gameObject.name.Contains("Lantern")) // if gameObject is lantern
+            {
+                // TODO: add stuff for spawning fire on the main island
+                GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
+                fire.GetComponent<Fire>().Ignite();
+                Destroy(gameObject);
             }
             else //If this is any other object
             {
@@ -68,7 +84,7 @@ public class Item : MonoBehaviour
                 {
                     if (c.gameObject.tag == "Pirate")
                     {
-                        basePirateScript = c.gameObject.GetComponent<BasePirate>();
+                        pirateScript = c.gameObject.GetComponent<CaptainPirate>();
                     }
                 }
 
@@ -76,8 +92,17 @@ public class Item : MonoBehaviour
             }
             else //If this is any other object
             {
-                basePirateScript = coll.gameObject.GetComponent<BasePirate>();
+                pirateScript = coll.gameObject.GetComponent<CaptainPirate>();
 
+                Destroy(gameObject);
+            }
+        }
+        else if (active && (coll.gameObject.tag == "IslandPlatform" || coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform"))
+        {
+            if (gameObject.name.Contains("Lantern"))
+            {
+                GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
+                fire.GetComponent<Fire>().Ignite();
                 Destroy(gameObject);
             }
         }

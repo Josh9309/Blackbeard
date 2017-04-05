@@ -5,32 +5,60 @@ using UnityEngine;
 public class Parrot : MonoBehaviour
 {
     #region Attributes
-    //Health and flight
+    //parrot Stats
+    [SerializeField] private int playerNum = 1;
     [SerializeField] private float speed = 2.0f;
     private float maxSpeed;
     [SerializeField] private float turnSpeed = 2.0f;
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
     private float currentHeight;
-    private bool active; //If the parrot is active
+    public bool active; //If the parrot is active
     private Rigidbody rBody;
     private bool rotateParrot = false;
     private Vector3 parrotRotation; //parrot euler angle rotation
+    private GameObject captain; // object of the captain this pirate is tied to
 
     //Item pickup
     private ItemPickup pickupScript;
 
+    // Utility items & managment
+    private GameObject itemSlot;
+    [SerializeField]
+    private List<GameObject> utilityItems;
+    [SerializeField]
+    private int numLanterns;
+    private GameObject currentUtility;
+    private int currentUtilityID = 0;
+    private bool canDrop = true;
+    private bool canSwitch = true;
+    private float switchCooldown = 0.5f;
+    [SerializeField]
+    private float dropCooldown;
+    private bool switchButtonDown = false;
+    private bool dropButtonDown = false;
+
+    //Trap interaction
+    private TrapInteraction trapScript;
+
     //input stuff
+    private PlayerInput inputManager;
     private float inputDelay = 0.3f;
     private float horizontalInput = 0;
     private float verticalInput = 0;
     private float flyUpInput = 0;
     private float flyDownInput = 0;
 
-    //private PirateCamera cam;
+    //Game Manager
+    private GameManager gm;
+
     #endregion
 
     #region Properties
+    public PlayerInput InputManager
+    {
+        get { return inputManager; }
+    }
     #endregion
 
     #region InBuiltMethods
@@ -38,12 +66,31 @@ public class Parrot : MonoBehaviour
     void Start()
     {
         rBody = GetComponent<Rigidbody>();
-        //cam = FindObjectOfType<PirateCamera>();
-      
+
+        gm = GameManager.Instance;
+
+        //get input manager and captains
+        switch (playerNum)
+        {
+            case 1:
+                captain = gm.PirateP1.gameObject;
+                itemSlot = GameObject.FindGameObjectWithTag("ItemSlot1");
+                inputManager = gm.P1Input;
+                break;
+
+            case 2:
+                captain = gm.PirateP2.gameObject;
+                itemSlot = GameObject.FindGameObjectWithTag("ItemSlot2");
+                inputManager = gm.P2Input;
+                break;
+        }
+
         //The parrot is active
-        active = true;
+        active = false;
 
         pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
+        trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
+        currentUtility = utilityItems[0]; // assign initial utility
 
         maxSpeed = speed * 3;
 	}
@@ -51,8 +98,13 @@ public class Parrot : MonoBehaviour
     //Update is called once per frame
     private void Update() 
     {
-
-        pickupScript.Pickup(active); //Let the parrot pickup treasure
+        if (active)
+        {
+            pickupScript.Pickup(active); //Let the parrot pickup treasure
+            trapScript.Interact(active); //Let the parrot interact with traps
+            SwitchUtility(); // allow parrot to switch current utility
+            DropUtility(); // allows parrot to drop utility
+        }
     }
 
     //Physics updates
@@ -60,29 +112,72 @@ public class Parrot : MonoBehaviour
     {
         if (active)
         {
-            ParrotMove();
+            ParrotMove();           
         }
         else if (!active) //Stop the parrot if it is not active
         {
+            rBody.velocity = Vector3.zero;
+            StayWithCaptain();
         }
 	}
     #endregion
 
     #region HelperMethods
+
+    /// <summary>
+    /// This will handle updating the currentUtility based on player input
+    /// </summary>
+    private void SwitchUtility()
+    {
+        if (Input.GetButton(inputManager.UTILITY_SWITCH) && !switchButtonDown)
+        {
+            currentUtilityID++;
+            currentUtility = utilityItems[currentUtilityID % utilityItems.Count]; // wrap the utilities so that we don't go out of bounds
+            Debug.Log("current utility is " + currentUtility.name);
+            switchButtonDown = true;
+            //StartCoroutine(SwitchUtilityCooldown());
+        }
+
+        else if (Input.GetButtonUp(inputManager.UTILITY_SWITCH))
+        {
+            switchButtonDown = false;
+        }
+    }
+
+    /// <summary>
+    /// drops the currently selected utility
+    /// </summary>
+    private void DropUtility()
+    {
+        if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown)
+        {
+            GameObject utility = GameObject.Instantiate(currentUtility, itemSlot.transform.position, Quaternion.identity);
+            //utility.GetComponent<Item>().Active = true;
+            Debug.Log(currentUtility.name + " has been dropped!");
+            dropButtonDown = true;
+            StartCoroutine(UtilityCooldown());
+        }
+
+        else if (Input.GetButtonUp(inputManager.PARROT_PICKUP_AXIS))
+        {
+            dropButtonDown = false;
+        }
+    }
+
     /// <summary>
     /// The ParrotMove Method controls the parrot's flight and movement. It is what turns the bird, boosts, decellerates, what angles the parrot during flight.
     /// </summary>
     private void ParrotMove()
     {
         //Get inputs for Parrot movement
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        horizontalInput = Input.GetAxis(inputManager.HORIZONTAL_AXIS);
+        verticalInput = Input.GetAxis(inputManager.VERTICAL_AXIS);
         
-        flyUpInput = Input.GetAxis("FlyUp");
-        flyDownInput = Input.GetAxis("FlyDown");
+        flyUpInput = Input.GetAxis(inputManager.FLY_UP_AXIS);
+        flyDownInput = Input.GetAxis(inputManager.FLY_DOWN_AXIS);
 
-        float boostInput = Input.GetAxis("BoostFly");
-        bool boost = Input.GetButton("BoostFly");
+        float boostInput = Input.GetAxis(inputManager.BOOST_AXIS);
+        bool boost = Input.GetButton(inputManager.BOOST_AXIS);
 
         //zero velocity
         rBody.velocity = Vector3.zero;
@@ -133,14 +228,14 @@ public class Parrot : MonoBehaviour
                 //a upwards velocity is add to parrot's current speed
                 rBody.velocity += new Vector3(0, speed, 0);
                 //rotates parrot up
-                parrotRotation += new Vector3(-15, 0, 0); 
+                parrotRotation += new Vector3(-45, 0, 0); 
             }
             //if vertical input is pointing down and greater than min height
             else if (transform.position.y > minHeight)
             {
                 //a downwards velocity is added to parrot's current velocity
                 rBody.velocity += new Vector3(0, -speed, 0); 
-                parrotRotation += new Vector3(15, 0, 0);
+                parrotRotation += new Vector3(45, 0, 0);
             }
         }
         //code below does same thing as code above except using the triggers
@@ -181,6 +276,42 @@ public class Parrot : MonoBehaviour
 
         //update the parrot rotation
         transform.localEulerAngles = parrotRotation;
+    }
+
+    public void ReturnToCaptain(Transform captainTransform)
+    {
+        // TODO: for use when we have parrot
+    }
+
+    /// <summary>
+    /// code for parrot staying with the captain without parenting
+    /// </summary>
+    private void StayWithCaptain()
+    {
+        transform.position = new Vector3(captain.transform.position.x, captain.transform.position.y + 2.5f, captain.transform.position.z);
+        transform.rotation = captain.transform.rotation;
+    }
+
+    /// <summary>
+    /// prevents players from spamming utilities
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator UtilityCooldown()
+    {
+        canDrop = false;
+        yield return new WaitForSeconds(dropCooldown);
+        canDrop = true;
+    }
+
+    /// <summary>
+    /// prevents reading in multiple swtich inputs per second
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator SwitchUtilityCooldown()
+    {
+        canSwitch = false;
+        yield return new WaitForSeconds(switchCooldown);
+        canSwitch = true;
     }
     #endregion
 }

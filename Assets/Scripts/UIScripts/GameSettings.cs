@@ -8,6 +8,9 @@
     public int textureQuality;
     public float musicVolume;
     public float soundVolume;
+    public bool splitscreen;
+    public bool pause;
+
     #endregion
    
 }

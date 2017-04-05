@@ -17,7 +17,20 @@ public class StartWindow : BaseWindow
     #endregion
 
     #region inBuildMethods
-
+    void Start()
+    {
+        pause = false;
+        newGame = !pause;
+        if (pause)
+        {
+            startButton.gameObject.SetActive(false);
+        }
+        if (newGame)
+        {
+            pauseButton.gameObject.SetActive(false);
+        }
+      
+    }
 
 
     #endregion
@@ -29,22 +42,19 @@ public class StartWindow : BaseWindow
     {
         //to turn pause and new game on/off
         //if pause if off window is on and vise versa
-        pause = false;
-        newGame = !pause;  
+         //turn off pause
+        //pauseButton.gameObject.SetActive(pause);
+        //if (pauseButton.gameObject.activeSelf)
+        //{
+        //    firstSelected = startButton.gameObject;
+        //}
 
-        //turn off pause
-        pauseButton.gameObject.SetActive(pause);
-        if(pauseButton.gameObject.activeSelf)
-        {
-            firstSelected = pauseButton.gameObject;
-        }
-
-        //turn off start
-        startButton.gameObject.SetActive(newGame);
-        if (startButton.gameObject.activeSelf)
-        {
-            firstSelected = pauseButton.gameObject;
-        }
+        ////turn off start
+        //startButton.gameObject.SetActive(newGame);
+        //if (startButton.gameObject.activeSelf)
+        //{
+        //    firstSelected = pauseButton.gameObject;
+        //}
 
         base.Open();
     }
@@ -52,10 +62,17 @@ public class StartWindow : BaseWindow
     //method for new game button
     protected void NewGame()
     {
-        SceneManager.LoadScene("Test 1");
+        SceneManager.LoadScene("BlackFeather");
         //MenuManager.Instance.GoToScreen("GameHUD");
         Debug.Log("New Game Pressed");
     }   
+
+    protected void ResumeGame()
+    {
+        SceneManager.LoadScene("BlackFeather");
+        //MenuManager.Instance.GoToScreen("GameHUD");
+        Debug.Log(" Resume Pressed");
+    }
     //method for main menu
     public void MainMenu()
     {

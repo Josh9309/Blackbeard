@@ -23,8 +23,12 @@ public class SettingManager : MonoBehaviour
     Resolution[] resolutions;
     [SerializeField]
     GameSettings gameSettings;
-    #endregion
+    [SerializeField]
+    Toggle splitScreen;
+   
+    SplitScreenCamera cam;
 
+    #endregion
     #region Properties
     #endregion
 
@@ -33,6 +37,7 @@ public class SettingManager : MonoBehaviour
     {
         //initializing for null values
         gameSettings = new GameSettings();
+        cam = GetComponent<SplitScreenCamera>();
 
         //link the methods to the toggle button 
         fullscreenToggle.onValueChanged.AddListener(delegate
@@ -78,6 +83,10 @@ public class SettingManager : MonoBehaviour
             resolutionDropdown.options.Add(new Dropdown.OptionData(resolution.ToString()));
         }
 
+        splitScreen.onValueChanged.AddListener(delegate
+        {
+            splitScreenChange();
+        });    
     }
     #endregion
 
@@ -123,6 +132,19 @@ public class SettingManager : MonoBehaviour
     public void onSoundVolChange()
     {
 
+    }
+
+    public void splitScreenChange()
+    {
+        //originally at verticle, if unchecked then horizontal
+        if(splitScreen.isOn)
+        {
+            cam.Vertical = true;
+        }
+        else
+        {
+            cam.Vertical = false;
+        }
     }
     #endregion
 }
