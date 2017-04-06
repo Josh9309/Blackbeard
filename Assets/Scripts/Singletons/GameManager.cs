@@ -210,6 +210,12 @@ public class GameManager : Singleton<GameManager>
 
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
     private PlayerState currentPlayer2State = PlayerState.CAPTAIN;
+
+    //Cameras
+    PirateCam captainCamera1;
+    PirateCam captainCamera2;
+    ParrotCam parrotCamera1;
+    ParrotCam parrotCamera2;  
     #endregion
 
     #region Properties
@@ -287,6 +293,11 @@ public class GameManager : Singleton<GameManager>
         //parrotP1 = GameObject.FindGameObjectWithTag("Parrot1").GetComponent<Parrot>();
         //parrotP2 = GameObject.FindGameObjectWithTag("Parrot2").GetComponent<Parrot>();
 
+        captainCamera1 = GameObject.FindGameObjectWithTag("CaptainCamera1").GetComponent<PirateCam>();
+        captainCamera2 = GameObject.FindGameObjectWithTag("CaptainCamera2").GetComponent<PirateCam>();
+        parrotCamera1 = GameObject.FindGameObjectWithTag("ParrotCamera1").GetComponent<ParrotCam>();
+        parrotCamera2 = GameObject.FindGameObjectWithTag("ParrotCamera2").GetComponent<ParrotCam>();
+
         p1Input.ConfigureInput(1);
         p2Input.ConfigureInput(2);
 
@@ -303,6 +314,10 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void SwitchPiratePhase()
     {
+        //Recenter pirate Cam
+        captainCamera1.Recenter();
+        captainCamera2.Recenter();
+
         //set pirates to active
         pirateP1.PirateActive = true;
         pirateP2.PirateActive = true;
@@ -320,6 +335,10 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void SwitchParrotPhase()
     {
+        //Recenter parrot Camera
+        parrotCamera1.Recenter();
+        parrotCamera2.Recenter();
+
         //set pirates to inactive
         pirateP1.PirateActive = false;
         pirateP2.PirateActive = false;
