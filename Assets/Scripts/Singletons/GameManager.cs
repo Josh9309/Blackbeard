@@ -206,7 +206,8 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private CaptainPirate pirateP2;
     [SerializeField] private Parrot parrotP1;
     [SerializeField] private Parrot parrotP2;
-    
+    [SerializeField] private GameObject parrotSpawn;
+
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
     private PlayerState currentPlayer2State = PlayerState.CAPTAIN;
     #endregion
@@ -259,6 +260,10 @@ public class GameManager : Singleton<GameManager>
         {
             return parrotP2;
         }
+    }
+    public GameObject ParrotSpawn
+    {
+        get { return parrotSpawn; }
     }
     #endregion
 

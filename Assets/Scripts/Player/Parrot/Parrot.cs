@@ -117,7 +117,8 @@ public class Parrot : MonoBehaviour
         else if (!active) //Stop the parrot if it is not active
         {
             rBody.velocity = Vector3.zero;
-            StayWithCaptain();
+            ReturnToSpawn(gm.ParrotSpawn.transform.position);
+            //StayWithCaptain();
         }
 	}
     #endregion
@@ -278,9 +279,9 @@ public class Parrot : MonoBehaviour
         transform.localEulerAngles = parrotRotation;
     }
 
-    public void ReturnToCaptain(Transform captainTransform)
+    public void ReturnToSpawn(Vector3 spawnPosition)
     {
-        // TODO: for use when we have parrot
+        transform.position = spawnPosition;
     }
 
     /// <summary>
