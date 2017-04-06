@@ -55,28 +55,70 @@ public class ParrotCam : MonoBehaviour {
     }
 
 	void LateUpdate () {
-        if (target)
+        if (target) //make sure there is a target
         {
-            x += Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
-            y -= Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
 
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
-
-            Quaternion rotation = Quaternion.Euler(y, x, 0);
-
-            dist = Mathf.Clamp((dist - 1f) * 5, distanceMin, distanceMax);
-
-            RaycastHit hit;
-            if (Physics.Linecast(target.transform.position, transform.position, out hit))
+            if (Mathf.Abs(Input.GetAxis(pInput.HORIZONTAL_AXIS)) > 0.5 || Mathf.Abs(Input.GetAxis(pInput.VERTICAL_AXIS)) > 0.5)
             {
-                dist -= hit.distance;
+                Recenter();
             }
-            Vector3 negDistance = new Vector3(0.0f, 0.0f, -dist);
-            Vector3 position = rotation * negDistance + target.transform.position;
+            else
+            {
+                if (Input.GetButtonDown(pInput.R3_AXIS))
+                {
+                    Recenter();
+                }
+                x += Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
+                y -= Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
 
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation,postitionSpeed *Time.deltaTime);
-            transform.position = Vector3.Lerp(transform.position, position, rotationSpeed*Time.deltaTime);
+                y = ClampAngle(y, yMinLimit, yMaxLimit);
+
+                Quaternion rotation = Quaternion.Euler(y, x, 0);
+
+                dist = Mathf.Clamp((dist - 1f) * 5, distanceMin, distanceMax);
+
+                RaycastHit hit;
+                if (Physics.Linecast(target.transform.position, transform.position, out hit))
+                {
+                    dist -= hit.distance;
+                }
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -dist);
+                Vector3 position = rotation * negDistance + target.transform.position;
+
+                transform.rotation = rotation;
+                transform.position = position;
+
+                //transform.rotation = Quaternion.Lerp(transform.rotation, rotation,postitionSpeed *Time.deltaTime);
+                //transform.position = Vector3.Lerp(transform.position, position, rotationSpeed*Time.deltaTime);
+            }
         }
+    }
+
+    /// <summary>
+    /// This method will recenter the camera behind the player
+    /// </summary>
+    public void Recenter()
+    {
+
+        y = ClampAngle(y, yMinLimit, yMaxLimit);
+
+        Quaternion rotation = target.transform.rotation;
+
+        dist = Mathf.Clamp((dist - 1f) * 5, distanceMin, distanceMax);
+
+        RaycastHit hit;
+        if (Physics.Linecast(target.transform.position, transform.position, out hit))
+        {
+            dist -= hit.distance;
+        }
+        Vector3 negDistance = new Vector3(0.0f, 0.0f, -dist);
+        Vector3 position = rotation * negDistance + target.transform.position;
+
+        transform.rotation = rotation;
+        transform.position = position;
+
+        x = rotation.eulerAngles.y;
+        y = rotation.eulerAngles.z;
     }
 
     public static float ClampAngle(float angle, float min, float max)
