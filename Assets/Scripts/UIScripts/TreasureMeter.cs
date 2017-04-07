@@ -4,7 +4,7 @@ using UnityEngine;
 
 //TO BE RETOOLED
 public class TreasureMeter : MonoBehaviour
-{/*
+{
     [SerializeField]
     GameObject redBar;
     [SerializeField]
@@ -49,5 +49,5 @@ public class TreasureMeter : MonoBehaviour
             }
          }
     }
-    */
+    
 }
