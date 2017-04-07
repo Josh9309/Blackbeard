@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Attached to main canvas in scene. Menu manager holds references to all ui screens.
@@ -12,6 +13,7 @@ public class MenuManager : Singleton<MenuManager>
 	//Screens
 	Dictionary<string, GameObject> screens = new Dictionary<string, GameObject>();
 	Stack<string> screenStack = new Stack<string>();
+    [SerializeField] Canvas menu;
     #endregion
 
     #region Properties
@@ -27,12 +29,19 @@ public class MenuManager : Singleton<MenuManager>
 		{
 			screens.Add(gameObject.transform.GetChild(0).GetChild(i).name, gameObject.transform.GetChild(0).GetChild(i).gameObject);
 		}
+        DontDestroyOnLoad(this);
 	}
 
 	void Start()
 	{
 		GoToScreen("Start");
 	}
+
+    private void Update()
+    {
+        if (SceneManager.GetActiveScene().name == "BlackFeather")
+            menu.enabled = false;
+    }
     #endregion
 
     #region helperMethods
