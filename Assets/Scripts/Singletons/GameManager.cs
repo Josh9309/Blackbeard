@@ -271,6 +271,20 @@ public class GameManager : Singleton<GameManager>
     {
         get { return parrotSpawn; }
     }
+    public float ParrotPhaseTime
+    {
+        get
+        {
+            return parrotPhaseTime;
+        }
+    }
+    public float PiratePhaseTime
+    {
+        get
+        {
+            return piratePhaseTime;
+        }
+    }
     #endregion
 
     protected GameManager(){}
