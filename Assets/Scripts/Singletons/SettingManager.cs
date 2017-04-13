@@ -62,54 +62,54 @@ public class SettingManager : Singleton<SettingManager>
         //initializing for null values
         gameSettings = new GameSettings();
 
-        //link the methods to the toggle button 
-       // fullscreenToggle.onValueChanged.AddListener(delegate
-       // {
-       //     onFullScreenToggle();
-       // });
-       // //link the methods to the Resolution dropdown 
-       // resolutionDropdown.onValueChanged.AddListener(delegate
-       // {
-       //     onResolutionChange();
-       // });
-       // //link the methods to the texture Quality Dropdown
-       // textureQualityDropdown.onValueChanged.AddListener(delegate
-       // {
-       //     onTextureQualityChange();
-       // });
-       // //link the methods to the antialiasning dropdown 
-       // antialisingDropdown.onValueChanged.AddListener(delegate
-       // {
-       //     onAntialiasingChange();
-       // });
-       // //link the methods to the vsync dropdown
-       // vSyncDropdown.onValueChanged.AddListener(delegate
-       // {
-       //    onVsyncChange();
-       // });
-       // //link the methods to the music slider
-       // musicVolSlider.onValueChanged.AddListener(delegate
-       // {
-       //     onMusicVolChange();
-       // });
-       // //link the methods to the sound slider
-       // soundVolSlider.onValueChanged.AddListener(delegate
-       // {
-       //     onSoundVolChange();
-       // });
-       //
-       // resolutions = Screen.resolutions;
-       // //fill in options data
-       // foreach(Resolution resolution in resolutions)
-       // {
-       //     //add options
-       //     resolutionDropdown.options.Add(new Dropdown.OptionData(resolution.ToString()));
-       // }
-       //
-       // splitScreen.onValueChanged.AddListener(delegate
-       // {
-       //     splitScreenChange();
-       // });    
+        //link the methods to the toggle button
+        fullscreenToggle.onValueChanged.AddListener(delegate
+        {
+            onFullScreenToggle();
+        });
+        //link the methods to the Resolution dropdown 
+        resolutionDropdown.onValueChanged.AddListener(delegate
+        {
+            onResolutionChange();
+        });
+        //link the methods to the texture Quality Dropdown
+        textureQualityDropdown.onValueChanged.AddListener(delegate
+        {
+            onTextureQualityChange();
+        });
+        //link the methods to the antialiasning dropdown 
+        antialisingDropdown.onValueChanged.AddListener(delegate
+        {
+            onAntialiasingChange();
+        });
+        //link the methods to the vsync dropdown
+        vSyncDropdown.onValueChanged.AddListener(delegate
+        {
+            onVsyncChange();
+        });
+        //link the methods to the music slider
+        musicVolSlider.onValueChanged.AddListener(delegate
+        {
+            onMusicVolChange();
+        });
+        //link the methods to the sound slider
+        soundVolSlider.onValueChanged.AddListener(delegate
+        {
+            onSoundVolChange();
+        });
+
+        resolutions = Screen.resolutions;
+        //fill in options data
+        foreach (Resolution resolution in resolutions)
+        {
+            //add options
+            resolutionDropdown.options.Add(new Dropdown.OptionData(resolution.ToString()));
+        }
+
+        splitScreen.onValueChanged.AddListener(delegate
+        {
+            splitScreenChange();
+        });
     }
     #endregion
 
