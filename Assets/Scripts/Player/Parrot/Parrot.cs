@@ -285,6 +285,15 @@ public class Parrot : MonoBehaviour
     public void ReturnToSpawn(Vector3 spawnPosition)
     {
         transform.position = spawnPosition;
+        if(playerNum == 1)
+        {
+            transform.forward = gm.PirateP2.transform.position - transform.position;
+        }
+        else
+        {
+            transform.forward = gm.PirateP1.transform.position - transform.position;
+        }
+        
     }
 
     /// <summary>
