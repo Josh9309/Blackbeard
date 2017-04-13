@@ -103,8 +103,8 @@ public class PirateCam : MonoBehaviour {
                 transform.position = position;
 
                 //dampens movement over time
-                // transform.rotation = Quaternion.Lerp(transform.rotation, rotation,postitionSpeed *Time.deltaTime);
-                // transform.position = Vector3.Lerp(transform.position, position, rotationSpeed*Time.deltaTime);
+                // transform.rotation = Quaternion.Lerp(transform.rotation, rotation, postitionSpeed *Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, position, rotationSpeed*Time.deltaTime);
             }
             
         }
