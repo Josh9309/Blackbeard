@@ -20,11 +20,11 @@ public class Timer : MonoBehaviour {
 
         if( gm.CurrentPlayer1State == GameManager.PlayerState.CAPTAIN)
         {
-            timer.text = "Timer: " + gm.CurrentPirateTime;
+            timer.text = "Phase Switch: " + gm.CurrentPirateTime;
         }
         else
         {
-            timer.text = "Time: " + gm.CurrentParrotTime;
+            timer.text = "Phase Swtich: " + gm.CurrentParrotTime;
         }
 
 
