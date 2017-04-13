@@ -5,6 +5,13 @@ using UnityEngine;
 public class ParrotLookAtPoint : MonoBehaviour {
     [SerializeField]
     GameObject parrot;
+    [SerializeField]
+    private float forward;
+
+    public float Forward
+    {
+        set { forward = value; }
+    }
 	// Use this for initialization
 	void Start () {
 		
@@ -13,7 +20,9 @@ public class ParrotLookAtPoint : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = parrot.transform.position;
-        transform.forward = new Vector3(parrot.transform.forward.x, 0, parrot.transform.forward.z);
+        transform.forward = new Vector3(parrot.transform.forward.x, forward, parrot.transform.forward.z);
+
+        Debug.DrawLine(transform.position, transform.forward.normalized + transform.position, Color.blue);
        // Debug.Log(parrot.name + " Forward: " + parrot.transform.forward);
 	}
 }

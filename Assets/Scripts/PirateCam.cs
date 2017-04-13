@@ -17,6 +17,9 @@ public class PirateCam : MonoBehaviour {
     public float distanceMin = .5f;
     public float distanceMax = 15f;
 
+    public bool invertX = false;
+    public bool invertY = false;
+
     private Vector3 targetPos;
     private float x = 0.0f;
     private float y = 0.0f;
@@ -63,8 +66,24 @@ public class PirateCam : MonoBehaviour {
             }
             else
             {
-                x += Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
-                y -= Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
+                if (invertX)
+                {
+                    x += Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
+                }
+                else
+                {
+                    x -= Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
+                }
+                if (invertY)
+                {
+                    y += Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
+                }
+                else
+                {
+                    y -= Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
+                }
+                
+                
 
                 y = ClampAngle(y, yMinLimit, yMaxLimit);
 
