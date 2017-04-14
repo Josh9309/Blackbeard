@@ -8,6 +8,8 @@ public class ParrotLookAtPoint : MonoBehaviour {
     [SerializeField]
     private float forward;
 
+    [SerializeField] private float heightOffset = 0.192f;
+
     public float Forward
     {
         set { forward = value; }
@@ -19,7 +21,7 @@ public class ParrotLookAtPoint : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position = parrot.transform.position;
+        transform.position = new Vector3(parrot.transform.position.x, parrot.transform.position.y + heightOffset, parrot.transform.position.z);
         transform.forward = new Vector3(parrot.transform.forward.x, forward, parrot.transform.forward.z);
 
         Debug.DrawLine(transform.position, transform.forward.normalized + transform.position, Color.blue);

@@ -22,7 +22,7 @@ public class Parrot : MonoBehaviour
     
 
     //Item pickup
-    private ItemPickup pickupScript;
+    //private ItemPickup pickupScript;
 
     // Utility items & managment
     private GameObject itemSlot;
@@ -91,7 +91,7 @@ public class Parrot : MonoBehaviour
         //The parrot is active
         active = false;
 
-        pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
+        //pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
         trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
         currentUtility = utilityItems[0]; // assign initial utility
         SpawnUtility();
@@ -105,7 +105,7 @@ public class Parrot : MonoBehaviour
     {
         if (active)
         {
-            pickupScript.Pickup(active); //Let the parrot pickup treasure
+            //pickupScript.Pickup(active); //Let the parrot pickup treasure
             trapScript.Interact(active); //Let the parrot interact with traps
             SwitchUtility(); // allow parrot to switch current utility
             DropUtility(); // allows parrot to drop utility
@@ -130,7 +130,6 @@ public class Parrot : MonoBehaviour
     #endregion
 
     #region HelperMethods
-
     /// <summary>
     /// This will handle updating the currentUtility based on player input
     /// </summary>

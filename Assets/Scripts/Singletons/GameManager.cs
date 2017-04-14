@@ -204,8 +204,10 @@ public class GameManager : Singleton<GameManager>
     PlayerInput p2Input = new PlayerInput();
 
     //Phase Times
-    [SerializeField] private float piratePhaseTime;
-    [SerializeField] private float parrotPhaseTime;
+    [SerializeField] private int piratePhaseTime;
+    [SerializeField] private int parrotPhaseTime;
+    private int currentPirateTime;  //holds the current time left in pirate phase
+    private int currentParrotTime; //holds the current time left in parrot phase
     private Coroutine pirateTimerRoutine;
     private Coroutine parrotTimerRoutine;
 
@@ -230,7 +232,8 @@ public class GameManager : Singleton<GameManager>
     private bool signalOn = false; //tells if the signal beams are on 
     private ParticleSystem signal1;
     private ParticleSystem signal2;
-    private ParticleSystem treasureSignal;
+    [SerializeField] private ParticleSystem treasureSignal;
+
     #region Properties
     public PlayerState CurrentPlayer1State
     {
@@ -299,6 +302,16 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public int CurrentPirateTime
+    {
+        get { return currentPirateTime; }
+    }
+
+    public int CurrentParrotTime
+    {
+        get { return currentParrotTime; }
+    }
+
     public bool SignalOn
     {
         get { return signalOn; }
@@ -336,7 +349,7 @@ public class GameManager : Singleton<GameManager>
 
         signal1 = pirateP1.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
         signal2 = pirateP2.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
-        treasureSignal = GameObject.FindGameObjectWithTag("Treasure").transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
+        
 
         pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
 
@@ -398,7 +411,10 @@ public class GameManager : Singleton<GameManager>
     {
         SwitchPiratePhase();
         Debug.Log("Pirate Phase");
-        yield return new WaitForSeconds(piratePhaseTime);
+        for (currentPirateTime = piratePhaseTime; CurrentPirateTime > 0; currentPirateTime--)
+        {
+            yield return new WaitForSeconds(1);
+        }
 
         parrotTimerRoutine = StartCoroutine(ParrotPhaseTimer());
     }
@@ -407,8 +423,10 @@ public class GameManager : Singleton<GameManager>
     {
         SwitchParrotPhase();
         Debug.Log("Parrot Phase");
-
-        yield return new WaitForSeconds(parrotPhaseTime);
+        for (currentParrotTime = parrotPhaseTime; currentParrotTime > 0; currentParrotTime--)
+        {
+            yield return new WaitForSeconds(1);
+        }
 
         pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
     } 

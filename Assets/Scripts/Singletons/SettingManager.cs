@@ -48,7 +48,7 @@ public class SettingManager : Singleton<SettingManager>
 
     private void Start()
     {
-        splitScreenChange(); //Call this now so the toggle button works from start
+      //  splitScreenChange(); //Call this now so the toggle button works from start
     }
 
     void Awake()
@@ -57,12 +57,12 @@ public class SettingManager : Singleton<SettingManager>
         DontDestroyOnLoad(this);
     }
 
-    public void OnEnable()
+    /*public void OnEnable()
     {
         //initializing for null values
         gameSettings = new GameSettings();
 
-        //link the methods to the toggle button 
+        //link the methods to the toggle button
         fullscreenToggle.onValueChanged.AddListener(delegate
         {
             onFullScreenToggle();
@@ -85,7 +85,7 @@ public class SettingManager : Singleton<SettingManager>
         //link the methods to the vsync dropdown
         vSyncDropdown.onValueChanged.AddListener(delegate
         {
-           onVsyncChange();
+            onVsyncChange();
         });
         //link the methods to the music slider
         musicVolSlider.onValueChanged.AddListener(delegate
@@ -100,7 +100,7 @@ public class SettingManager : Singleton<SettingManager>
 
         resolutions = Screen.resolutions;
         //fill in options data
-        foreach(Resolution resolution in resolutions)
+        foreach (Resolution resolution in resolutions)
         {
             //add options
             resolutionDropdown.options.Add(new Dropdown.OptionData(resolution.ToString()));
@@ -109,8 +109,8 @@ public class SettingManager : Singleton<SettingManager>
         splitScreen.onValueChanged.AddListener(delegate
         {
             splitScreenChange();
-        });    
-    }
+        });
+    }*/
     #endregion
 
     #region helperMethods
