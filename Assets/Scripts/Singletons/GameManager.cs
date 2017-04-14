@@ -26,6 +26,7 @@ public class PlayerInput
     string parrot_pickup;
     string utility_switch;
     string trap_activate;
+    string signal;
 
     //Pirate Axes
     string jump;
@@ -91,6 +92,11 @@ public class PlayerInput
         get { return parrot_pickup; }
     }
 
+    public string SIGNAL_AXIS
+    {
+        get { return signal; }
+    }
+
     public string JUMP_AXIS
     {
         get { return jump; }
@@ -144,6 +150,7 @@ public class PlayerInput
                 parrot_pickup = "ParrotPickup_P1";
                 utility_switch = "UtilitySwitch_P1";
                 trap_activate = "TrapActivate_P1";
+                signal = "Signal_P1";
 
                 //SET PIRATE AXES
                 jump = "Jump_P1";
@@ -169,6 +176,7 @@ public class PlayerInput
                 parrot_pickup = "ParrotPickup_P2";
                 utility_switch = "UtilitySwitch_P2";
                 trap_activate = "TrapActivate_P2";
+                signal = "Signal_P2";
 
                 //SET PIRATE AXES
                 jump = "Jump_P2";
@@ -196,8 +204,10 @@ public class GameManager : Singleton<GameManager>
     PlayerInput p2Input = new PlayerInput();
 
     //Phase Times
-    [SerializeField] private float piratePhaseTime;
-    [SerializeField] private float parrotPhaseTime;
+    [SerializeField] private int piratePhaseTime;
+    [SerializeField] private int parrotPhaseTime;
+    private int currentPirateTime;  //holds the current time left in pirate phase
+    private int currentParrotTime; //holds the current time left in parrot phase
     private Coroutine pirateTimerRoutine;
     private Coroutine parrotTimerRoutine;
 
@@ -206,10 +216,23 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private CaptainPirate pirateP2;
     [SerializeField] private Parrot parrotP1;
     [SerializeField] private Parrot parrotP2;
-    
+    [SerializeField] private GameObject parrotSpawn;
+
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
     private PlayerState currentPlayer2State = PlayerState.CAPTAIN;
+
+    //Cameras
+    PirateCam captainCamera1;
+    PirateCam captainCamera2;
+    ParrotCam parrotCamera1;
+    ParrotCam parrotCamera2;
     #endregion
+
+    //Signals
+    private bool signalOn = false; //tells if the signal beams are on 
+    private ParticleSystem signal1;
+    private ParticleSystem signal2;
+    [SerializeField] private ParticleSystem treasureSignal;
 
     #region Properties
     public PlayerState CurrentPlayer1State
@@ -260,6 +283,40 @@ public class GameManager : Singleton<GameManager>
             return parrotP2;
         }
     }
+    public GameObject ParrotSpawn
+    {
+        get { return parrotSpawn; }
+    }
+    public float ParrotPhaseTime
+    {
+        get
+        {
+            return parrotPhaseTime;
+        }
+    }
+    public float PiratePhaseTime
+    {
+        get
+        {
+            return piratePhaseTime;
+        }
+    }
+
+    public int CurrentPirateTime
+    {
+        get { return currentPirateTime; }
+    }
+
+    public int CurrentParrotTime
+    {
+        get { return currentParrotTime; }
+    }
+
+    public bool SignalOn
+    {
+        get { return signalOn; }
+        set { signalOn = value; }
+    }
     #endregion
 
     protected GameManager(){}
@@ -282,10 +339,20 @@ public class GameManager : Singleton<GameManager>
         //parrotP1 = GameObject.FindGameObjectWithTag("Parrot1").GetComponent<Parrot>();
         //parrotP2 = GameObject.FindGameObjectWithTag("Parrot2").GetComponent<Parrot>();
 
+        captainCamera1 = GameObject.FindGameObjectWithTag("CaptainCamera1").GetComponent<PirateCam>();
+        captainCamera2 = GameObject.FindGameObjectWithTag("CaptainCamera2").GetComponent<PirateCam>();
+        parrotCamera1 = GameObject.FindGameObjectWithTag("ParrotCamera1").GetComponent<ParrotCam>();
+        parrotCamera2 = GameObject.FindGameObjectWithTag("ParrotCamera2").GetComponent<ParrotCam>();
+
         p1Input.ConfigureInput(1);
         p2Input.ConfigureInput(2);
 
+        signal1 = pirateP1.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
+        signal2 = pirateP2.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
+        
+
         pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
+
     }
 
     void Update()
@@ -298,6 +365,10 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void SwitchPiratePhase()
     {
+        //Recenter pirate Cam
+        captainCamera1.Recenter();
+        captainCamera2.Recenter();
+
         //set pirates to active
         pirateP1.PirateActive = true;
         pirateP2.PirateActive = true;
@@ -315,6 +386,10 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void SwitchParrotPhase()
     {
+        //Recenter parrot Camera
+        parrotCamera1.Recenter();
+        parrotCamera2.Recenter();
+
         //set pirates to inactive
         pirateP1.PirateActive = false;
         pirateP2.PirateActive = false;
@@ -325,13 +400,21 @@ public class GameManager : Singleton<GameManager>
 
         currentPlayer1State = PlayerState.PARROT;
         currentPlayer2State = PlayerState.PARROT;
+
+        //turn of signal beams
+        signal1.Stop();
+        signal2.Stop();
+        treasureSignal.Stop();
     }
 
     private IEnumerator PiratePhaseTimer()
     {
         SwitchPiratePhase();
         Debug.Log("Pirate Phase");
-        yield return new WaitForSeconds(piratePhaseTime);
+        for (currentPirateTime = piratePhaseTime; CurrentPirateTime > 0; currentPirateTime--)
+        {
+            yield return new WaitForSeconds(1);
+        }
 
         parrotTimerRoutine = StartCoroutine(ParrotPhaseTimer());
     }
@@ -340,12 +423,32 @@ public class GameManager : Singleton<GameManager>
     {
         SwitchParrotPhase();
         Debug.Log("Parrot Phase");
-
-        yield return new WaitForSeconds(parrotPhaseTime);
+        for (currentParrotTime = parrotPhaseTime; currentParrotTime > 0; currentParrotTime--)
+        {
+            yield return new WaitForSeconds(1);
+        }
 
         pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
     } 
 
+    public IEnumerator SignalBeam()
+    {
+        
+
+        //turn on signal beams
+        signalOn = true;
+        signal1.Play();
+        signal2.Play();
+        treasureSignal.Play();
+
+        yield return new WaitForSeconds(10);
+
+        //turn off signal Beams
+        signalOn = false;
+        signal1.Stop();
+        signal2.Stop();
+        treasureSignal.Stop();
+    }
     /// <summary>
     /// This Method is called when the game is over and should handle all task for ending the game.
     /// </summary>

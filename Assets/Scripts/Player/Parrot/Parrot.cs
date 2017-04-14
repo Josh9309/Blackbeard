@@ -18,6 +18,8 @@ public class Parrot : MonoBehaviour
     private bool rotateParrot = false;
     private Vector3 parrotRotation; //parrot euler angle rotation
     private GameObject captain; // object of the captain this pirate is tied to
+    private Coroutine signalCor; //coroutine that holds the signal 
+    
 
     //Item pickup
     private ItemPickup pickupScript;
@@ -104,6 +106,7 @@ public class Parrot : MonoBehaviour
             trapScript.Interact(active); //Let the parrot interact with traps
             SwitchUtility(); // allow parrot to switch current utility
             DropUtility(); // allows parrot to drop utility
+            Signal(); //turns on the signal beams for pirates
         }
     }
 
@@ -117,7 +120,8 @@ public class Parrot : MonoBehaviour
         else if (!active) //Stop the parrot if it is not active
         {
             rBody.velocity = Vector3.zero;
-            StayWithCaptain();
+            ReturnToSpawn(gm.ParrotSpawn.transform.position);
+            //StayWithCaptain();
         }
 	}
     #endregion
@@ -278,9 +282,18 @@ public class Parrot : MonoBehaviour
         transform.localEulerAngles = parrotRotation;
     }
 
-    public void ReturnToCaptain(Transform captainTransform)
+    public void ReturnToSpawn(Vector3 spawnPosition)
     {
-        // TODO: for use when we have parrot
+        transform.position = spawnPosition;
+        if(playerNum == 1)
+        {
+            transform.forward = gm.PirateP2.transform.position - transform.position;
+        }
+        else
+        {
+            transform.forward = gm.PirateP1.transform.position - transform.position;
+        }
+        
     }
 
     /// <summary>
@@ -312,6 +325,19 @@ public class Parrot : MonoBehaviour
         canSwitch = false;
         yield return new WaitForSeconds(switchCooldown);
         canSwitch = true;
+    }
+
+    private void Signal()
+    {
+        if(!gm.SignalOn && Input.GetButtonDown(inputManager.SIGNAL_AXIS))
+        {
+            signalCor = StartCoroutine(gm.SignalBeam());
+        }
+        else if (!active && gm.SignalOn)
+        {
+            gm.SignalOn = false;
+            StopCoroutine(signalCor);
+        }
     }
     #endregion
 }
