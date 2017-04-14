@@ -7,24 +7,24 @@ public class SpikeTrap : BaseTrap {
 
     //Attributes
     [SerializeField] private float stunTime = 2.0f;
-    private GameManager gm;
-    private ParticleSystem particle;
+    //private GameManager gm;
+    //private ParticleSystem particle;
 
 	// Use this for initialization
 	protected override void Start () {
         base.Start();
-        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        particle = GetComponentInChildren<ParticleSystem>();
-        particle.Pause();
+       // gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+       // particle = GetComponentInChildren<ParticleSystem>();
+       // particle.Pause();
 	}
 	
 	// Update is called once per frame
 	protected override void Update () {
         base.Update();
-        if (gm.CurrentPlayer1State == GameManager.PlayerState.PARROT && gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
-            particle.Play();
-        else
-            particle.Pause();
+        //if (gm.CurrentPlayer1State == GameManager.PlayerState.PARROT && gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
+        //    particle.Play();
+        //else
+        //    particle.Pause();
 	}
 
     public override void Activate()
