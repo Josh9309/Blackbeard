@@ -22,10 +22,11 @@ ModelImporter:
     3300000: Palm_Tree
     3300002: //RootNode
     4300000: Palm_Tree
+    4300002: Palm_tree
     9500000: //RootNode
   materials:
     importMaterials: 1
-    materialName: 0
+    materialName: 1
     materialSearch: 1
   animations:
     legacyGenerateAnimations: 4
