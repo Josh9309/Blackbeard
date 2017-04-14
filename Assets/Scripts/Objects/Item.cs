@@ -30,16 +30,18 @@ public class Item : MonoBehaviour
     #region InBuiltMethods
     void Start() //Use this for initialization
     {
-        if (gameObject.name.Contains("Lantern"))
-        {
-            active = true;
-        }
-        else
-        {
-            active = false;
-        }
+        //if (gameObject.name.Contains("Lantern"))
+        //{
+        //    active = true;
+        //}
+        //else
+        //{
+        //    active = false;
+        //}
+        active = true;
+
         explosionDamage = -1000;
-	}
+    }
 
     private void OnCollisionEnter(Collision coll)
     {
@@ -53,9 +55,10 @@ public class Item : MonoBehaviour
                 //For every object in the explosion radius apply damage
                 foreach (Collider c in hitColliders)
                 {
-                    if (c.gameObject.tag == "Pirate")
+                    if (c.gameObject.name.Contains("Captain"))
                     {
                         pirateScript = c.gameObject.GetComponent<CaptainPirate>();
+                        pirateScript.Stun(3);
                     }
                 }
 
@@ -73,7 +76,7 @@ public class Item : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        else if (active && coll.gameObject.name.Contains("Pirate")) //Colliding with a pirate
+        else if (active && coll.gameObject.name.Contains("Captain")) //Colliding with a pirate
         {
             if (gameObject.name.Contains("Bomb")) //If this is a bomb
             {
@@ -82,18 +85,24 @@ public class Item : MonoBehaviour
                 //For every object in the explosion radius apply damage
                 foreach (Collider c in hitColliders)
                 {
-                    if (c.gameObject.tag == "Pirate")
+                    if (c.gameObject.name.Contains("Captain"))
                     {
                         pirateScript = c.gameObject.GetComponent<CaptainPirate>();
+                        pirateScript.Stun(3);
                     }
                 }
 
                 StartCoroutine(ExplosionTimer(.017f));
             }
-            else //If this is any other object
+            else if (gameObject.name.Contains("Coconut"))
             {
                 pirateScript = coll.gameObject.GetComponent<CaptainPirate>();
+                pirateScript.Stun(2);
 
+                Destroy(gameObject);
+            }
+            else //If this is any other object
+            {
                 Destroy(gameObject);
             }
         }
@@ -103,6 +112,26 @@ public class Item : MonoBehaviour
             {
                 GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
                 fire.GetComponent<Fire>().Ignite();
+                Destroy(gameObject);
+            }
+            else if (gameObject.name.Contains("Bomb")) //If this is a bomb
+            {
+                Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4);
+
+                //For every object in the explosion radius apply damage
+                foreach (Collider c in hitColliders)
+                {
+                    if (c.gameObject.name.Contains("Captain"))
+                    {
+                        pirateScript = c.gameObject.GetComponent<CaptainPirate>();
+                        pirateScript.Stun(3);
+                    }
+                }
+
+                StartCoroutine(ExplosionTimer(.017f));
+            }
+            else //If this is any other object
+            {
                 Destroy(gameObject);
             }
         }

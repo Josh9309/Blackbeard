@@ -57,7 +57,7 @@ public class SettingManager : Singleton<SettingManager>
         DontDestroyOnLoad(this);
     }
 
-    public void OnEnable()
+    /*public void OnEnable()
     {
         //initializing for null values
         gameSettings = new GameSettings();
@@ -110,7 +110,7 @@ public class SettingManager : Singleton<SettingManager>
         {
             splitScreenChange();
         });
-    }
+    }*/
     #endregion
 
     #region helperMethods
