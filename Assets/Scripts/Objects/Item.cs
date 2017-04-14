@@ -58,7 +58,7 @@ public class Item : MonoBehaviour
                     if (c.gameObject.name.Contains("Captain"))
                     {
                         pirateScript = c.gameObject.GetComponent<CaptainPirate>();
-                        pirateScript.Stun(3);
+                        StartCoroutine(pirateScript.Stun(3));
                     }
                 }
 
@@ -88,7 +88,7 @@ public class Item : MonoBehaviour
                     if (c.gameObject.name.Contains("Captain"))
                     {
                         pirateScript = c.gameObject.GetComponent<CaptainPirate>();
-                        pirateScript.Stun(3);
+                        StartCoroutine(pirateScript.Stun(3));
                     }
                 }
 
@@ -97,9 +97,9 @@ public class Item : MonoBehaviour
             else if (gameObject.name.Contains("Coconut"))
             {
                 pirateScript = coll.gameObject.GetComponent<CaptainPirate>();
-                pirateScript.Stun(2);
+                StartCoroutine(pirateScript.Stun(2));
 
-                Destroy(gameObject);
+                StartCoroutine(ExplosionTimer(0));
             }
             else //If this is any other object
             {
@@ -124,7 +124,7 @@ public class Item : MonoBehaviour
                     if (c.gameObject.name.Contains("Captain"))
                     {
                         pirateScript = c.gameObject.GetComponent<CaptainPirate>();
-                        pirateScript.Stun(3);
+                        StartCoroutine(pirateScript.Stun(3));
                     }
                 }
 
@@ -141,6 +141,10 @@ public class Item : MonoBehaviour
     internal IEnumerator ExplosionTimer(float time)
     {
         yield return new WaitForSeconds(time);
+
+        transform.position = new Vector3(0, -1000, 0); //Move the object off screen, don't destroy it yet because it's still needed for reference
+
+        yield return new WaitForSeconds(3);
 
         Destroy(gameObject);
     }
