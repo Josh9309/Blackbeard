@@ -180,13 +180,13 @@ public class Parrot : MonoBehaviour
         {
             heldUtility.GetComponent<Rigidbody>().useGravity = true;
             heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-            heldUtility = null;
+            heldUtility.transform.parent = null;
             heldUtility.GetComponent<Item>().Active = true;
+            heldUtility = null;
             Debug.Log(currentUtility.name + " has been dropped!");
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
         }
-
         else if (Input.GetButtonUp(inputManager.PARROT_PICKUP_AXIS))
         {
             dropButtonDown = false;

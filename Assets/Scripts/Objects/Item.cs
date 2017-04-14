@@ -30,15 +30,7 @@ public class Item : MonoBehaviour
     #region InBuiltMethods
     void Start() //Use this for initialization
     {
-        //if (gameObject.name.Contains("Lantern"))
-        //{
-        //    active = true;
-        //}
-        //else
-        //{
-        //    active = false;
-        //}
-        active = true;
+        //active = true;
 
         explosionDamage = -1000;
     }
