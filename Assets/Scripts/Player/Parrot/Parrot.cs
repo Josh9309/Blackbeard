@@ -22,7 +22,7 @@ public class Parrot : MonoBehaviour
     
 
     //Item pickup
-    private ItemPickup pickupScript;
+    //private ItemPickup pickupScript;
 
     // Utility items & managment
     private GameObject itemSlot;
@@ -90,7 +90,7 @@ public class Parrot : MonoBehaviour
         //The parrot is active
         active = false;
 
-        pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
+        //pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
         trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
         currentUtility = utilityItems[0]; // assign initial utility
 
@@ -102,7 +102,7 @@ public class Parrot : MonoBehaviour
     {
         if (active)
         {
-            pickupScript.Pickup(active); //Let the parrot pickup treasure
+            //pickupScript.Pickup(active); //Let the parrot pickup treasure
             trapScript.Interact(active); //Let the parrot interact with traps
             SwitchUtility(); // allow parrot to switch current utility
             DropUtility(); // allows parrot to drop utility
@@ -127,7 +127,6 @@ public class Parrot : MonoBehaviour
     #endregion
 
     #region HelperMethods
-
     /// <summary>
     /// This will handle updating the currentUtility based on player input
     /// </summary>
@@ -155,7 +154,7 @@ public class Parrot : MonoBehaviour
     {
         if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown)
         {
-            GameObject utility = GameObject.Instantiate(currentUtility, itemSlot.transform.position, Quaternion.identity);
+            GameObject utility = GameObject.Instantiate(currentUtility, new Vector3(itemSlot.transform.position.x, itemSlot.transform.position.y - .25f, itemSlot.transform.position.z), Quaternion.identity);
             //utility.GetComponent<Item>().Active = true;
             Debug.Log(currentUtility.name + " has been dropped!");
             dropButtonDown = true;
