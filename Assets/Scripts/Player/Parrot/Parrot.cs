@@ -164,7 +164,7 @@ public class Parrot : MonoBehaviour
             itemSlot.transform.position.y, itemSlot.transform.position.z),
             Quaternion.identity);
         heldUtility.transform.position = new Vector3(itemSlot.transform.position.x,
-            itemSlot.transform.position.y - (heldUtility.GetComponent<BoxCollider>().bounds.size.y / 1.8f), itemSlot.transform.position.z);
+            itemSlot.transform.position.y - (heldUtility.GetComponent<Collider>().bounds.size.y / 1.8f), itemSlot.transform.position.z);
         heldUtility.transform.parent = this.gameObject.transform;
         heldUtility.GetComponent<Rigidbody>().useGravity = false;
         heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
