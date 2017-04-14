@@ -374,7 +374,7 @@ public class CaptainPirate: MonoBehaviour
             {
                 //set the respawn point to be the previous islands center point
                 GameObject prevIsland = rayHit.collider.gameObject;
-                Vector3 islandLoc = new Vector3(prevIsland.transform.position.x, (prevIsland.GetComponent<Collider>().bounds.size.y / 2) + prevIsland.transform.position.y, prevIsland.transform.position.z);
+                Vector3 islandLoc = new Vector3(prevIsland.transform.position.x, (prevIsland.GetComponent<MeshCollider>().bounds.size.y / 2) + prevIsland.transform.position.y, prevIsland.transform.position.z);
                 //check to make sure backup respawn is not current respawn
                 
                 respawnLocation = islandLoc;

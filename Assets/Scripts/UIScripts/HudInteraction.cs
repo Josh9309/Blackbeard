@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HudInteraction : MonoBehaviour {
-
+   
     [SerializeField] GameObject parrot1;
     [SerializeField] GameObject parrot2;
     [SerializeField] GameObject trap;
@@ -11,6 +11,7 @@ public class HudInteraction : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+   
         HUD.GetComponent<Canvas>().enabled = false;
 	}
 	
