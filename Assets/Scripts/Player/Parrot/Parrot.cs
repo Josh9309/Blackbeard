@@ -30,7 +30,8 @@ public class Parrot : MonoBehaviour
     private List<GameObject> utilityItems;
     [SerializeField]
     private int numLanterns;
-    private GameObject currentUtility;
+    private GameObject currentUtility; // represents the current utility NOT the one actually held
+    private GameObject heldUtility; // is the actual utility the parrot is holding
     private int currentUtilityID = 0;
     private bool canDrop = true;
     private bool canSwitch = true;
@@ -93,6 +94,8 @@ public class Parrot : MonoBehaviour
         pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
         trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
         currentUtility = utilityItems[0]; // assign initial utility
+        SpawnUtility();
+        Debug.Log((heldUtility.GetComponent<Collider>().bounds.size.y / 2));
 
         maxSpeed = speed * 3;
 	}
@@ -139,6 +142,10 @@ public class Parrot : MonoBehaviour
             currentUtility = utilityItems[currentUtilityID % utilityItems.Count]; // wrap the utilities so that we don't go out of bounds
             Debug.Log("current utility is " + currentUtility.name);
             switchButtonDown = true;
+            // destroy old utility
+            GameObject.Destroy(heldUtility);
+            if (heldUtility != null)
+                SpawnUtility();
             //StartCoroutine(SwitchUtilityCooldown());
         }
 
@@ -149,13 +156,31 @@ public class Parrot : MonoBehaviour
     }
 
     /// <summary>
+    /// will assign the currently selected utility to be held
+    /// </summary>
+    private void SpawnUtility()
+    {
+        heldUtility = GameObject.Instantiate(currentUtility, 
+            new Vector3(itemSlot.transform.position.x, 
+            itemSlot.transform.position.y, itemSlot.transform.position.z),
+            Quaternion.identity);
+        heldUtility.transform.position = new Vector3(itemSlot.transform.position.x,
+            itemSlot.transform.position.y - (heldUtility.GetComponent<BoxCollider>().bounds.size.y / 1.8f), itemSlot.transform.position.z);
+        heldUtility.transform.parent = this.gameObject.transform;
+        heldUtility.GetComponent<Rigidbody>().useGravity = false;
+        heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+    }
+
+    /// <summary>
     /// drops the currently selected utility
     /// </summary>
     private void DropUtility()
     {
         if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown)
         {
-            GameObject utility = GameObject.Instantiate(currentUtility, itemSlot.transform.position, Quaternion.identity);
+            heldUtility.GetComponent<Rigidbody>().useGravity = true;
+            heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            heldUtility = null;
             //utility.GetComponent<Item>().Active = true;
             Debug.Log(currentUtility.name + " has been dropped!");
             dropButtonDown = true;
@@ -313,6 +338,7 @@ public class Parrot : MonoBehaviour
     {
         canDrop = false;
         yield return new WaitForSeconds(dropCooldown);
+        SpawnUtility();
         canDrop = true;
     }
 
