@@ -166,6 +166,7 @@ public class Parrot : MonoBehaviour
         heldUtility.transform.position = new Vector3(itemSlot.transform.position.x,
             itemSlot.transform.position.y - (heldUtility.GetComponent<Collider>().bounds.size.y / 1.8f), itemSlot.transform.position.z);
         heldUtility.transform.parent = this.gameObject.transform;
+        heldUtility.GetComponent<Item>().Active = false;
         heldUtility.GetComponent<Rigidbody>().useGravity = false;
         heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
     }
@@ -180,7 +181,7 @@ public class Parrot : MonoBehaviour
             heldUtility.GetComponent<Rigidbody>().useGravity = true;
             heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
             heldUtility = null;
-            //utility.GetComponent<Item>().Active = true;
+            heldUtility.GetComponent<Item>().Active = true;
             Debug.Log(currentUtility.name + " has been dropped!");
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
