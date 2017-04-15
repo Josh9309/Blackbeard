@@ -11,8 +11,8 @@ public abstract class BaseTrap : MonoBehaviour {
     [SerializeField] protected float resetTime; //how long till the trap can reset 
 
     protected Animator trapAnim;
-    private GameManager gm;
-    private ParticleSystem particle;
+    protected GameManager gm;
+    protected ParticleSystem particle;
     #endregion
 
     #region Properties

@@ -169,6 +169,10 @@ public class Parrot : MonoBehaviour
         heldUtility.GetComponent<Item>().Active = false;
         heldUtility.GetComponent<Rigidbody>().useGravity = false;
         heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        if (heldUtility.name.Contains("Bear_Trap"))
+        {
+            heldUtility.GetComponent<BearTrap>().enabled = false;
+        }
     }
 
     /// <summary>
@@ -182,6 +186,10 @@ public class Parrot : MonoBehaviour
             heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
             heldUtility.transform.parent = null;
             heldUtility.GetComponent<Item>().Active = true;
+            if (heldUtility.name.Contains("Bear_Trap"))
+            {
+                //heldUtility.GetComponent<Item>().enabled = false;
+            }
             heldUtility = null;
             Debug.Log(currentUtility.name + " has been dropped!");
             dropButtonDown = true;

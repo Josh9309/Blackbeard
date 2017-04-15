@@ -33,6 +33,12 @@ public class Item : MonoBehaviour
         //active = true;
 
         explosionDamage = -1000;
+
+        if (gameObject.name.Contains("Bear_Trap"))
+        {
+            GetComponentInChildren<ParticleSystem>().Clear();
+            GetComponentInChildren<ParticleSystem>().Pause();
+        }
     }
 
     private void OnCollisionEnter(Collision coll)
@@ -62,6 +68,12 @@ public class Item : MonoBehaviour
                 GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
                 fire.GetComponent<Fire>().Ignite();
                 Destroy(gameObject);
+            }
+            else if (gameObject.name.Contains("Bear_Trap"))
+            {
+                Debug.Log(gameObject.name);
+                GetComponent<BearTrap>().enabled = true;
+                this.enabled = false;
             }
             else //If this is any other object
             {
@@ -121,6 +133,12 @@ public class Item : MonoBehaviour
                 }
 
                 StartCoroutine(ExplosionTimer(.017f));
+            }
+            else if (gameObject.name.Contains("Bear_Trap"))
+            {
+                Debug.Log(gameObject.name);
+                GetComponent<BearTrap>().enabled = true;
+                this.enabled = false;
             }
             else //If this is any other object
             {

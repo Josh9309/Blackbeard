@@ -14,6 +14,18 @@ public class BearTrap : BaseTrap {
     protected override void Start () {
         base.Start();
 	}
+
+    private void Awake()
+    {
+
+        trapAnim = gameObject.GetComponent<Animator>();
+
+        triggered = false;
+
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        particle = GetComponentInChildren<ParticleSystem>();
+        particle.Pause();
+    }
 	
 	// Update is called once per frame
 	protected override void Update () {
@@ -22,21 +34,22 @@ public class BearTrap : BaseTrap {
 
     public override void Activate()
     {
-        Debug.Log("Bear trap activated");
-        activated = true;       
+        //Debug.Log("Bear trap activated");
+        activated = true;
+        trapAnim.Play("Deactivate");
     }
 
     public override void Deactivate()
     {
         activated = false;
-        trapAnim.Play("Deactivate");
+        trapAnim.Play("Activate");
     }
 
     public override void Reset()
     {
         activated = false;
         triggered = false;
-        trapAnim.Play("Deactivate");
+        trapAnim.Play("Activate");
     }
 
     public override void Trigger(GameObject pirate)
@@ -45,5 +58,13 @@ public class BearTrap : BaseTrap {
         trapAnim.Play("Activate");
         Debug.Log("Bear trap triggered");
         StartCoroutine(pirate.GetComponent<CaptainPirate>().Stun(stunTime));
+    }
+
+    protected override void OnTriggerEnter(Collider coll)
+    {
+        base.OnTriggerEnter(coll);
+
+        if (coll.tag == "Terrain" || coll.tag == "IslandPlatform")
+            Activate();
     }
 }
