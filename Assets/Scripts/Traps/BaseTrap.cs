@@ -11,8 +11,8 @@ public abstract class BaseTrap : MonoBehaviour {
     [SerializeField] protected float resetTime; //how long till the trap can reset 
 
     protected Animator trapAnim;
-    //private GameManager gm;
-    //private ParticleSystem particle;
+    private GameManager gm;
+    private ParticleSystem particle;
     #endregion
 
     #region Properties
@@ -36,9 +36,9 @@ public abstract class BaseTrap : MonoBehaviour {
 
         triggered = false;
 
-       // gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-       // particle = GetComponentInChildren<ParticleSystem>();
-       // particle.Pause();
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        particle = GetComponentInChildren<ParticleSystem>();
+        particle.Pause();
     }
 	
 	// Update is called once per frame
@@ -48,10 +48,22 @@ public abstract class BaseTrap : MonoBehaviour {
             //starts the reset timer
             StartCoroutine(ResetTimer());
         }
-        //if (!triggered && gm.CurrentPlayer1State == GameManager.PlayerState.PARROT && gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
-        //    particle.Play();
-        //else
-        //    particle.Pause();
+        if (!activated && gm.CurrentPlayer1State == GameManager.PlayerState.PARROT && gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
+        {
+            particle.startColor = new Color32(244, 215, 50, 255);
+            particle.Play();
+        }
+        else if (activated && gm.CurrentPlayer1State == GameManager.PlayerState.PARROT && gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
+        {
+            particle.startColor = Color.red;
+            particle.Play();
+        }
+        else
+        {
+            particle.Clear();
+            particle.Pause();
+        }
+            
     }
 
     /// <summary>
