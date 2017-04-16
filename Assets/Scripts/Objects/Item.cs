@@ -6,11 +6,13 @@ public class Item : MonoBehaviour
 {
     #region Attributes
     private bool active; //If the item is active
+    private bool previousActive;
     private CaptainPirate pirateScript;
     [SerializeField] private int damage;
     private int explosionDamage;
     [SerializeField]
     private GameObject firePrefab;
+    private Rigidbody rBody;
     #endregion
 
     #region Properties
@@ -39,6 +41,9 @@ public class Item : MonoBehaviour
             GetComponentInChildren<ParticleSystem>().Clear();
             GetComponentInChildren<ParticleSystem>().Pause();
         }
+
+        rBody = GetComponent<Rigidbody>();
+        previousActive = false;
     }
 
     private void OnCollisionEnter(Collision coll)
@@ -138,11 +143,31 @@ public class Item : MonoBehaviour
             {
                 Debug.Log(gameObject.name);
                 GetComponent<BearTrap>().enabled = true;
-                this.enabled = false;
+                enabled = false;
             }
             else //If this is any other object
             {
                 Destroy(gameObject);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Heat seeking coconuts, will fail if time runs out
+    /// </summary>
+    /// <param name="coll"></param>
+    private void OnTriggerStay(Collider coll)
+    {
+        if (name.Contains("Coconut") && coll.name.Contains("Captain") && active)
+        {
+            Vector3 desired = new Vector3(coll.transform.position.x, coll.transform.position.y + 1.5f, coll.transform.position.z) - transform.position;
+            desired = desired.normalized * 3;
+            rBody.velocity = desired;
+
+            if (previousActive == false)
+            {
+                StartCoroutine(CoconutDecay(1f));
+                previousActive = true;
             }
         }
     }
@@ -155,6 +180,22 @@ public class Item : MonoBehaviour
         transform.position = new Vector3(0, -1000, 0); //Move the object off screen, don't destroy it yet because it's still needed for reference
 
         yield return new WaitForSeconds(3);
+
+        previousActive = false;
+
+        Destroy(gameObject);
+    }
+
+    //Make the coconut shrink
+    internal IEnumerator CoconutDecay(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        transform.position = new Vector3(0, -1000, 0); //Move the object off screen, don't destroy it yet because it's still needed for reference
+
+        yield return new WaitForSeconds(3);
+
+        previousActive = false;
 
         Destroy(gameObject);
     }
