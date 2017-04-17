@@ -35,18 +35,18 @@ public class TreasureMeter : MonoBehaviour
 
         if (treasure.transform.position != redTreasureLoc.transform.position)
         {
-            if (redBar.transform.localScale.x <= 1)
-            {
+           // if (redBar.transform.localScale.x <= 1.2)
+           // {
                 redBar.transform.localScale = new Vector3(currentdistRed / totalDistRed, redBar.transform.localScale.y, redBar.transform.localScale.z);
-            }
+            //}
         }
 
         if (treasure.transform.position != blueTreasureLoc.transform.position)
         {
-            if (blueBar.transform.localScale.x <= 1)
-            {
+          //  if (blueBar.transform.localScale.x <= 1.2)
+           // {
                 blueBar.transform.localScale = new Vector3(currentDistBlue / totalDistBlue, blueBar.transform.localScale.y, blueBar.transform.localScale.z);
-            }
+           // }
          }
     }
     
