@@ -404,7 +404,7 @@ public class GameManager : Singleton<GameManager>
         //turn of signal beams
         signal1.Stop();
         signal2.Stop();
-        treasureSignal.Stop();
+        //treasureSignal.Stop();
     }
 
     private IEnumerator PiratePhaseTimer()

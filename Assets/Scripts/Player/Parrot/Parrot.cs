@@ -189,6 +189,7 @@ public class Parrot : MonoBehaviour
             if (heldUtility.name.Contains("Bear_Trap"))
             {
                 //heldUtility.GetComponent<Item>().enabled = false;
+                heldUtility.GetComponent<BearTrap>().Activate();
             }
             heldUtility = null;
             Debug.Log(currentUtility.name + " has been dropped!");

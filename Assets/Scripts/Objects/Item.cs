@@ -46,6 +46,17 @@ public class Item : MonoBehaviour
         previousActive = false;
     }
 
+    private void OnTriggerEnter(Collider coll)
+    {
+        if (gameObject.name.Contains("Bear_Trap"))
+        {
+            Debug.Log(gameObject.name);
+            GetComponent<BearTrap>().enabled = true;
+            
+            this.enabled = false;
+        }
+    }
+
     private void OnCollisionEnter(Collision coll)
     {
         //Dropped items
@@ -110,6 +121,8 @@ public class Item : MonoBehaviour
 
                 StartCoroutine(ExplosionTimer(0));
             }
+            else if (gameObject.name.Contains("Bear_Trap"))
+            { }
             else //If this is any other object
             {
                 Destroy(gameObject);

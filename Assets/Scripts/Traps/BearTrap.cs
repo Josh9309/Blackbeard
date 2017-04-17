@@ -12,7 +12,7 @@ public class BearTrap : BaseTrap {
 
     // Use this for initialization
     protected override void Start () {
-        base.Start();
+        //base.Start();
 	}
 
     private void Awake()
@@ -49,7 +49,8 @@ public class BearTrap : BaseTrap {
     {
         activated = false;
         triggered = false;
-        trapAnim.Play("Activate");
+        Destroy(this.gameObject); // NOTE: not sure if this is the desired effect, talk it over with team once people wake up
+        //trapAnim.Play("Activate");
     }
 
     public override void Trigger(GameObject pirate)
@@ -58,6 +59,7 @@ public class BearTrap : BaseTrap {
         trapAnim.Play("Activate");
         Debug.Log("Bear trap triggered");
         StartCoroutine(pirate.GetComponent<CaptainPirate>().Stun(stunTime));
+        
     }
 
     protected override void OnTriggerEnter(Collider coll)
@@ -65,6 +67,8 @@ public class BearTrap : BaseTrap {
         base.OnTriggerEnter(coll);
 
         if (coll.tag == "Terrain" || coll.tag == "IslandPlatform")
-            Activate();
+        {
+            //GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        }
     }
 }
