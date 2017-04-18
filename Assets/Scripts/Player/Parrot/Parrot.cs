@@ -103,13 +103,13 @@ public class Parrot : MonoBehaviour
     //Update is called once per frame
     private void Update() 
     {
+        Signal(); //turns on the signal beams for pirates
         if (active)
         {
             //pickupScript.Pickup(active); //Let the parrot pickup treasure
             trapScript.Interact(active); //Let the parrot interact with traps
             SwitchUtility(); // allow parrot to switch current utility
             DropUtility(); // allows parrot to drop utility
-            Signal(); //turns on the signal beams for pirates
         }
     }
 
@@ -364,7 +364,7 @@ public class Parrot : MonoBehaviour
 
     private void Signal()
     {
-        if(!gm.SignalOn && Input.GetButtonDown(inputManager.SIGNAL_AXIS))
+        if(active && !gm.SignalOn && Input.GetButtonDown(inputManager.SIGNAL_AXIS))
         {
             signalCor = StartCoroutine(gm.SignalBeam());
         }
@@ -372,6 +372,7 @@ public class Parrot : MonoBehaviour
         {
             gm.SignalOn = false;
             StopCoroutine(signalCor);
+            GameManager.Instance.StopSignalBeam();
         }
     }
     #endregion

@@ -456,6 +456,29 @@ public class GameManager : Singleton<GameManager>
         signal2.Stop();
         treasureSignal.Stop();
     }
+
+    public IEnumerator TreasureSignalBeam()
+    {
+
+
+        //turn on signal beams
+        signalOn = true;
+        treasureSignal.Play();
+
+        yield return new WaitForSeconds(10);
+
+        //turn off signal Beams
+        signalOn = false;
+        treasureSignal.Stop();
+    }
+
+    public void StopSignalBeam()
+    {
+        signalOn = false;
+        treasureSignal.Stop();
+        signal1.Stop();
+        signal2.Stop();
+    }
     /// <summary>
     /// This Method is called when the game is over and should handle all task for ending the game.
     /// </summary>

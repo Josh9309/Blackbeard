@@ -58,6 +58,8 @@ public class CaptainPirate: MonoBehaviour
 
     //Camera access
     //SplitScreenCamera ssCamera;
+
+    private Coroutine signalCor; //coroutine that holds the signal 
     #endregion
 
     #region Properties
@@ -166,6 +168,7 @@ public class CaptainPirate: MonoBehaviour
         {
             jumpInput = Input.GetButtonDown(inputManager.JUMP_AXIS);
         }
+        Signal();
     }
 
 	private void FixedUpdate ()
@@ -396,6 +399,20 @@ public class CaptainPirate: MonoBehaviour
             onMoving = false;
             movingPlatformVel = Vector3.zero;
         }
-    }    
+    }
+
+    private void Signal()
+    {
+        if (pirateActive && !GameManager.Instance.SignalOn && Input.GetButtonDown(inputManager.SIGNAL_AXIS))
+        {
+            signalCor = StartCoroutine(GameManager.Instance.TreasureSignalBeam());
+        }
+        else if (!pirateActive && GameManager.Instance.SignalOn)
+        {
+            GameManager.Instance.SignalOn = false;
+            StopCoroutine(signalCor);
+            GameManager.Instance.StopSignalBeam();
+        }
+    }
     #endregion
 }
