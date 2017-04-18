@@ -373,6 +373,9 @@ public class GameManager : Singleton<GameManager>
         pirateP1.PirateActive = true;
         pirateP2.PirateActive = true;
 
+        pirateP1.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+        pirateP2.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+
         //set parrots to inactive
         parrotP1.active = false;
         parrotP2.active = false;
@@ -393,6 +396,10 @@ public class GameManager : Singleton<GameManager>
         //set pirates to inactive
         pirateP1.PirateActive = false;
         pirateP2.PirateActive = false;
+
+        //free pirates rigidbody
+        pirateP1.RBody.constraints = RigidbodyConstraints.FreezeAll;
+        pirateP2.RBody.constraints = RigidbodyConstraints.FreezeAll;
 
         //set parrots to active
         parrotP1.active = true;
