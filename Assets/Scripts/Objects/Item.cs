@@ -119,10 +119,12 @@ public class Item : MonoBehaviour
                 pirateScript = coll.gameObject.GetComponent<CaptainPirate>();
                 StartCoroutine(pirateScript.Stun(2));
 
-                StartCoroutine(ExplosionTimer(0));
+                transform.position = new Vector3(0, -1000, 0); //Move the object off screen, don't destroy it yet because it's still needed for reference
             }
             else if (gameObject.name.Contains("Bear_Trap"))
-            { }
+            {
+
+            }
             else //If this is any other object
             {
                 Destroy(gameObject);
@@ -195,7 +197,6 @@ public class Item : MonoBehaviour
         yield return new WaitForSeconds(3);
 
         previousActive = false;
-
         Destroy(gameObject);
     }
 
@@ -205,11 +206,10 @@ public class Item : MonoBehaviour
         yield return new WaitForSeconds(time);
 
         transform.position = new Vector3(0, -1000, 0); //Move the object off screen, don't destroy it yet because it's still needed for reference
-
-        yield return new WaitForSeconds(3);
+        Debug.Log("Here");
+        yield return new WaitForSeconds(GameManager.Instance.CurrentParrotTime + 3.5f);
 
         previousActive = false;
-
         Destroy(gameObject);
     }
     #endregion
