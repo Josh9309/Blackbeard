@@ -5,6 +5,7 @@ using UnityEngine;
 public class PirateCam : MonoBehaviour {
     [SerializeField] private GameObject target;
     [SerializeField] private float dist;
+    [SerializeField] private float distanceOffset;
     [SerializeField] private float heightOffset;
     [SerializeField] private int playerNum;
     [SerializeField] private float xSpeed = 120.0f;
@@ -96,7 +97,7 @@ public class PirateCam : MonoBehaviour {
                 {
                     dist -= hit.distance;
                 }
-                Vector3 negDistance = new Vector3(0.0f, 0.0f, -dist);
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distanceOffset);
                 Vector3 position = rotation * negDistance + target.transform.position;
 
                 transform.rotation = rotation;

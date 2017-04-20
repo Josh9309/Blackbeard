@@ -8,6 +8,7 @@ public class Wall : BaseTrap
     private float height; //The height of this object's collider
     private float originalYPosition; //The original Y position of this object
     private bool activatedAtLeastOnce; //If the trap has been activated at least once
+    [SerializeField] private bool invert;
 
     protected override void Start() //Use this for initialization
     {
@@ -22,7 +23,11 @@ public class Wall : BaseTrap
     {
         base.Update();
 
-        if (activated)
+        if (activated && invert)
+        {
+            transform.position = Vector3.Slerp(transform.position, new Vector3(transform.position.x, originalYPosition - height, transform.position.z), Time.deltaTime * 2);
+        }
+        else if (activated)
         {
             transform.position = Vector3.Slerp(transform.position, new Vector3(transform.position.x, originalYPosition + height, transform.position.z), Time.deltaTime * 2);
         }
