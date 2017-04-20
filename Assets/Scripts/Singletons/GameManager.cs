@@ -446,12 +446,13 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator PhaseTimer()
     {
-        SwitchPhase();
+        
         for (currentPhaseTime = phaseTime; CurrentPhaseTime > 0; currentPhaseTime--)
         {
             yield return new WaitForSeconds(1);
         }
 
+        SwitchPhase();
         phaseTimerRoutine = StartCoroutine(PhaseTimer());
     }
 

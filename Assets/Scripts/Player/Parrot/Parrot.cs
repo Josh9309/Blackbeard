@@ -94,7 +94,6 @@ public class Parrot : MonoBehaviour
         trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
         currentUtility = utilityItems[0]; // assign initial utility
         SpawnUtility();
-        Debug.Log((heldUtility.GetComponent<Collider>().bounds.size.y / 2));
 
         maxSpeed = speed * 3;
 	}
