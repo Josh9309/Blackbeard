@@ -15,27 +15,14 @@ public class Timer : MonoBehaviour {
 
 	void Update () {
 
-        if( gm.CurrentPlayer1State == GameManager.PlayerState.CAPTAIN)
+        timer.color = Color.gray;
+        timer.text = "Phase Time: " + gm.CurrentPhaseTime;
+        timer.fontSize = 60;
+        if(gm.CurrentPhaseTime <= 5 && gm.CurrentPhaseTime >= 0)
         {
-            timer.color = Color.white;
-            timer.text = "Pirate Phase: " + gm.CurrentPirateTime;
-            if(gm.CurrentPirateTime <= 5 && gm.CurrentPirateTime >=0)
-            {
-                timer.text = "Phase change in " + gm.CurrentPirateTime;
-                timer.color = Color.red;
-                timer.fontSize = 40;
-            }
-        }
-        else
-        {
-            timer.color = Color.white;
-            timer.text = "Parrot Phase: " + gm.CurrentParrotTime;
-            if (gm.CurrentParrotTime <= 5 && gm.CurrentParrotTime >= 0)
-            {
-                timer.text = "Phase change in " + gm.CurrentParrotTime;
-                timer.color = Color.red;
-                timer.fontSize = 40;
-            }
+            timer.text = "Phase change in " + gm.CurrentPhaseTime;
+            timer.color = Color.gray;
+            timer.fontSize = 80;
         }
     }
 }

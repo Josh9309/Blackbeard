@@ -100,9 +100,34 @@ public class SplitScreenCamera : MonoBehaviour
             parrotCamera2.rect = new Rect(0, .5f, 1, .5f);
         }
 
-        //Start as a pirate, disable parrot cameras
-        parrotCamera1.enabled = false;
-        parrotCamera2.enabled = false;
+        //Recenter all cameras intially
+        parrotCamera1.GetComponent<ParrotCam>().Recenter();
+        parrotCamera2.GetComponent<ParrotCam>().Recenter();
+        captainCamera1.GetComponent<PirateCam>().Recenter();
+        captainCamera2.GetComponent<PirateCam>().Recenter();
+
+        //Set inital cameras
+        if (gm.CurrentPlayer1State == GameManager.PlayerState.CAPTAIN)
+        {
+            parrotCamera1.enabled = false;
+            captainCamera1.enabled = true;
+        }
+        else
+        {
+            parrotCamera1.enabled = true;
+            captainCamera1.enabled = false;
+        }
+
+        if (gm.CurrentPlayer2State == GameManager.PlayerState.CAPTAIN)
+        {
+            parrotCamera2.enabled = false;
+            captainCamera2.enabled = true;
+        }
+        else
+        {
+            parrotCamera2.enabled = true;
+            captainCamera2.enabled = false;
+        }
 
         if (debug)
         {
@@ -114,6 +139,7 @@ public class SplitScreenCamera : MonoBehaviour
 
             //Deactivate other pirate camera
             captainCamera2.enabled = false;
+            parrotCamera2.enabled = false;
         }
     }
 	
@@ -127,19 +153,21 @@ public class SplitScreenCamera : MonoBehaviour
     /// </summary>
     private void SwitchCameras()
     {
-        if (captain1.PirateActive && captain2.PirateActive) //Pirate
+        switch (GameManager.Instance.CurrentPlayer1State)
         {
-            captainCamera1.enabled = true;
-            captainCamera2.enabled = true;
-            parrotCamera1.enabled = false;
-            parrotCamera2.enabled = false;
-        }
-        else if (parrot1.active && parrot2.active) //Parrot
-        {
-            captainCamera1.enabled = false;
-            captainCamera2.enabled = false;
-            parrotCamera1.enabled = true;
-            parrotCamera2.enabled = true;
+            case GameManager.PlayerState.CAPTAIN:
+                captainCamera1.enabled = true;
+                captainCamera2.enabled = false;
+                parrotCamera1.enabled = false;
+                parrotCamera2.enabled = true;
+                break;
+
+            case GameManager.PlayerState.PARROT:
+                captainCamera1.enabled = false;
+                captainCamera2.enabled = true;
+                parrotCamera1.enabled = true;
+                parrotCamera2.enabled = false;
+                break;
         }
     }
 }
