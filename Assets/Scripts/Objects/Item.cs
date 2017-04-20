@@ -207,7 +207,7 @@ public class Item : MonoBehaviour
 
         transform.position = new Vector3(0, -1000, 0); //Move the object off screen, don't destroy it yet because it's still needed for reference
         Debug.Log("Here");
-        yield return new WaitForSeconds(GameManager.Instance.CurrentParrotTime + 3.5f);
+        yield return new WaitForSeconds(GameManager.Instance.CurrentPhaseTime + 3.5f);
 
         previousActive = false;
         Destroy(gameObject);

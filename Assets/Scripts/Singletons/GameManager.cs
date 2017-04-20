@@ -204,12 +204,10 @@ public class GameManager : Singleton<GameManager>
     PlayerInput p2Input = new PlayerInput();
 
     //Phase Times
-    [SerializeField] private int piratePhaseTime;
-    [SerializeField] private int parrotPhaseTime;
-    private int currentPirateTime;  //holds the current time left in pirate phase
-    private int currentParrotTime; //holds the current time left in parrot phase
-    private Coroutine pirateTimerRoutine;
-    private Coroutine parrotTimerRoutine;
+    [SerializeField] private int phaseTime; //sets the amount of time a phase will take 
+    private int currentPhaseTime; //tracks how much time is left in a phase
+
+    private Coroutine phaseTimerRoutine;
 
     //holds the Parrot and Pirate gameObjects for both players
     [SerializeField] private CaptainPirate pirateP1;
@@ -219,7 +217,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private GameObject parrotSpawn;
 
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
-    private PlayerState currentPlayer2State = PlayerState.CAPTAIN;
+    private PlayerState currentPlayer2State = PlayerState.PARROT;
 
     //Cameras
     PirateCam captainCamera1;
@@ -287,29 +285,17 @@ public class GameManager : Singleton<GameManager>
     {
         get { return parrotSpawn; }
     }
-    public float ParrotPhaseTime
+    public float PhaseTime
     {
         get
         {
-            return parrotPhaseTime;
-        }
-    }
-    public float PiratePhaseTime
-    {
-        get
-        {
-            return piratePhaseTime;
+            return phaseTime;
         }
     }
 
-    public int CurrentPirateTime
+    public int CurrentPhaseTime
     {
-        get { return currentPirateTime; }
-    }
-
-    public int CurrentParrotTime
-    {
-        get { return currentParrotTime; }
+        get { return currentPhaseTime; }
     }
 
     public bool SignalOn
@@ -349,9 +335,17 @@ public class GameManager : Singleton<GameManager>
 
         signal1 = pirateP1.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
         signal2 = pirateP2.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
-        
 
-        pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
+        //set p1 to pirate and p2 to parrot
+        pirateP1.PirateActive = true;
+        parrotP1.active = false;
+        currentPlayer1State = PlayerState.CAPTAIN;
+
+        pirateP2.PirateActive = false;
+        parrotP2.active = true;
+        currentPlayer2State = PlayerState.PARROT;
+
+       phaseTimerRoutine = StartCoroutine(PhaseTimer());
 
     }
 
@@ -361,82 +355,106 @@ public class GameManager : Singleton<GameManager>
     }
 
     /// <summary>
-    /// Switch to Pirate phase
+    /// Swaps which state the players are in and resets phase timer
     /// </summary>
-    private void SwitchPiratePhase()
+    private void SwitchPhase()
     {
-        //Recenter pirate Cam
-        captainCamera1.Recenter();
-        captainCamera2.Recenter();
+        switch (currentPlayer1State)
+        {
+            //if current state is captain then switch to parrot
+            case PlayerState.CAPTAIN:
 
-        //set pirates to active
-        pirateP1.PirateActive = true;
-        pirateP2.PirateActive = true;
+                //Recenter parrot Camera
+                parrotCamera1.Recenter();
 
-        pirateP1.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
-        pirateP2.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+                //set pirate to inactive
+                pirateP1.PirateActive = false;
 
-        //set parrots to inactive
-        parrotP1.active = false;
-        parrotP2.active = false;
+                //freeze pirates rigidbody
+                pirateP1.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 
-        currentPlayer1State = PlayerState.CAPTAIN;
-        currentPlayer2State = PlayerState.CAPTAIN;
+                //set parrot to active
+                parrotP1.active = true;
+
+
+                currentPlayer1State = PlayerState.PARROT;
+
+                
+                break;
+
+            //If state is parrot swap to pirate state
+            case PlayerState.PARROT:
+                //Recenter pirate Cam
+                captainCamera1.Recenter();
+
+                //set pirate 1 to active
+                pirateP1.PirateActive = true;
+
+                //freeze the rigidbody rotation
+                pirateP1.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+
+                //set parrot 1 to inactive
+                parrotP1.active = false;
+
+                //set current state to pirate
+                currentPlayer1State = PlayerState.CAPTAIN;
+                break;
+        }
+
+        switch (currentPlayer2State)
+        {
+            case PlayerState.CAPTAIN:
+                //Recenter parrot Camera
+                parrotCamera2.Recenter();
+
+                //set pirate to inactive
+                pirateP2.PirateActive = false;
+
+                //freeze pirates rigidbody
+                pirateP2.RBody.constraints = RigidbodyConstraints.FreezeAll;
+
+                //set parrot to active
+                parrotP2.active = true;
+
+
+                currentPlayer2State = PlayerState.PARROT;
+                break;
+
+            case PlayerState.PARROT:
+                //Recenter pirate Cam
+                captainCamera2.Recenter();
+
+                //set pirate 2 to active
+                pirateP2.PirateActive = true;
+
+                //freeze the rigidbody rotation
+                pirateP2.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+
+                //set parrot 2 to inactive
+                parrotP2.active = false;
+
+                //set current state to pirate
+                currentPlayer2State = PlayerState.CAPTAIN;
+                break;
+        }
+
+        //turn off signal beams
+        StopSignalBeam();
+
     }
 
-    /// <summary>
-    /// Switches to parrot phase
-    /// </summary>
-    private void SwitchParrotPhase()
+
+    private IEnumerator PhaseTimer()
     {
-        //Recenter parrot Camera
-        parrotCamera1.Recenter();
-        parrotCamera2.Recenter();
-
-        //set pirates to inactive
-        pirateP1.PirateActive = false;
-        pirateP2.PirateActive = false;
-
-        //free pirates rigidbody
-        pirateP1.RBody.constraints = RigidbodyConstraints.FreezeAll;
-        pirateP2.RBody.constraints = RigidbodyConstraints.FreezeAll;
-
-        //set parrots to active
-        parrotP1.active = true;
-        parrotP2.active = true;
-
-        currentPlayer1State = PlayerState.PARROT;
-        currentPlayer2State = PlayerState.PARROT;
-
-        //turn of signal beams
-        signal1.Stop();
-        signal2.Stop();
-        //treasureSignal.Stop();
-    }
-
-    private IEnumerator PiratePhaseTimer()
-    {
-        SwitchPiratePhase();
-        Debug.Log("Pirate Phase");
-        for (currentPirateTime = piratePhaseTime; CurrentPirateTime > 0; currentPirateTime--)
+        
+        for (currentPhaseTime = phaseTime; CurrentPhaseTime > 0; currentPhaseTime--)
         {
             yield return new WaitForSeconds(1);
         }
 
-        parrotTimerRoutine = StartCoroutine(ParrotPhaseTimer());
+        SwitchPhase();
+        phaseTimerRoutine = StartCoroutine(PhaseTimer());
     }
-
-    private IEnumerator ParrotPhaseTimer()
-    {
-        SwitchParrotPhase();
-        Debug.Log("Parrot Phase");
-        for (currentParrotTime = parrotPhaseTime; currentParrotTime > 0; currentParrotTime--)
-        {
-            yield return new WaitForSeconds(1);
-        }
-
-        pirateTimerRoutine = StartCoroutine(PiratePhaseTimer());
-    } 
 
     public IEnumerator SignalBeam()
     {

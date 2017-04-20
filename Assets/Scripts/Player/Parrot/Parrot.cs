@@ -88,8 +88,7 @@ public class Parrot : MonoBehaviour
                 break;
         }
 
-        //The parrot is active
-        active = false;
+        ReturnToSpawn(gm.ParrotSpawn.transform.position);
 
         //pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
         trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script

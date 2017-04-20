@@ -42,13 +42,22 @@ public class MovingPlatform : MonoBehaviour {
 
         //add accel to velocity
         velocity += acceleration * Time.deltaTime;
-        velocity.y = 0; //keeps us on the same plane
+        //velocity.y = 0;
 
         //limit velocity to max speed
         velocity = Vector3.ClampMagnitude(velocity, platformSpeed);
 
-        transform.forward = velocity.normalized;
+        //transform.forward = velocity.normalized;
+        if (!canMoveVertical)
+        {
+            velocity.y = 0;
+        }
 
+        if (!canMoveHorizontal)
+        {
+            velocity.x = 0;
+            velocity.z = 0;
+        }
         rBody.velocity = velocity;
 
         acceleration = Vector3.zero;
@@ -103,16 +112,6 @@ public class MovingPlatform : MonoBehaviour {
         Vector3 desired = targetPosition - transform.position;
         desired = desired.normalized * platformSpeed;
         desired -= velocity;
-        if (!canMoveVertical)
-        {
-            desired.y = 0;
-        }
-
-        if (!canMoveHorizontal)
-        {
-            desired.x = 0;
-            desired.z = 0;
-        }
         return desired;
     }
 
@@ -135,7 +134,6 @@ public class MovingPlatform : MonoBehaviour {
         }
 
         desired -= velocity;
-        desired.y = 0;
         return desired;
     }
 

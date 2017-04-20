@@ -314,7 +314,7 @@ public class CaptainPirate: MonoBehaviour
         pirateAnim.Play("Stun");
         stunned = true;
         pirateAnim.SetBool("isStunned", true);
-        yield return new WaitForSeconds(stunTime + GameManager.Instance.CurrentParrotTime);
+        yield return new WaitForSeconds(stunTime + GameManager.Instance.CurrentPhaseTime);
         Debug.Log("unStunned!");
         pirateAnim.SetBool("isStunned", false);
         stunned = false;
