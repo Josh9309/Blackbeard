@@ -12,6 +12,7 @@ public class Parrot : MonoBehaviour
     [SerializeField] private float turnSpeed = 2.0f;
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
+    [SerializeField] private float accelRate = .5f;
     private float currentHeight;
     public bool active; //If the parrot is active
     private Rigidbody rBody;
@@ -230,7 +231,7 @@ public class Parrot : MonoBehaviour
             //rBody.velocity = transform.forward * (2 * speed); 
 
             //increase speed
-            speed += 0.1f;
+            speed += accelRate;
             if(speed > maxSpeed)
             {
                 speed = maxSpeed;
@@ -243,7 +244,7 @@ public class Parrot : MonoBehaviour
             //rBody.velocity = transform.forward * (0.5f * speed); 
 
             //decrease speed
-            speed -= 0.1f;
+            speed -= accelRate;
             if(speed < 0)
             {
                 speed = 0;
