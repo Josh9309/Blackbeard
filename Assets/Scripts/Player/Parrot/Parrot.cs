@@ -369,9 +369,12 @@ public class Parrot : MonoBehaviour
         }
         else if (!active && gm.SignalOn)
         {
-            gm.SignalOn = false;
-            StopCoroutine(signalCor);
-            GameManager.Instance.StopSignalBeam();
+            //gm.SignalOn = false;
+            if (signalCor != null)
+            {
+                StopCoroutine(signalCor);
+            }
+            //GameManager.Instance.StopSignalBeam();
         }
     }
     #endregion
