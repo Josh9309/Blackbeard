@@ -15,13 +15,13 @@ public class Timer : MonoBehaviour {
 
 	void Update () {
 
-        timer.color = Color.gray;
-        timer.text = "Phase Time: " + gm.CurrentPhaseTime;
+        timer.color = Color.white;
+        timer.text = "" + gm.CurrentPhaseTime;
         timer.fontSize = 60;
         if(gm.CurrentPhaseTime <= 5 && gm.CurrentPhaseTime >= 0)
         {
-            timer.text = "Phase change in " + gm.CurrentPhaseTime;
-            timer.color = Color.gray;
+            timer.text = " " + gm.CurrentPhaseTime;
+            timer.color = Color.red;
             timer.fontSize = 80;
         }
     }
