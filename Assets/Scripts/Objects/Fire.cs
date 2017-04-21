@@ -51,6 +51,9 @@ public class Fire : MonoBehaviour
         {
             Debug.Log("Pirate hits fire");
             coll.GetComponent<CaptainPirate>().StartCoroutine(coll.GetComponent<CaptainPirate>().Stun(stunTime));
+
+            //if (coll.GetComponent<CaptainPirate>().Grounded)
+            //    coll.GetComponent<Rigidbody>().AddForce(-350 * transform.forward); //Knockback to push the pirate out of the fire
         }
     }
 

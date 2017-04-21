@@ -258,7 +258,7 @@ public class CaptainPirate: MonoBehaviour
             
             //use grounded movement method
             rBody.velocity = transform.forward * forwardAmount * speed;
-
+            
             if (onMoving)
             {
                 rBody.velocity += movingPlatformVel;
