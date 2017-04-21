@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 public class StartWindow : BaseWindow
 {
     #region Attributes
+  
     [SerializeField] Button pauseButton;
     [SerializeField] Button startButton;
     private bool pause;
@@ -62,16 +63,17 @@ public class StartWindow : BaseWindow
     //method for new game button
     protected void NewGame()
     {
-        SceneManager.LoadScene("BlackFeather");
+        SceneManager.LoadScene("Poseidon");
         //MenuManager.Instance.GoToScreen("GameHUD");
         Debug.Log("New Game Pressed");
     }   
 
     protected void ResumeGame()
     {
-        SceneManager.LoadScene("BlackFeather");
+        SceneManager.LoadScene("Poseidon");
+        //MenuManager.Instance.enabled = false;   
         //MenuManager.Instance.GoToScreen("GameHUD");
-        Debug.Log(" Resume Pressed");
+       // Debug.Log(" Resume Pressed");
     }
     //method for main menu
     public void MainMenu()
