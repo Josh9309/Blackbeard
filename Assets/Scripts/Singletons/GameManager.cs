@@ -359,6 +359,10 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     private void SwitchPhase()
     {
+        //turn off signal beams
+        StopSignalBeam();
+        signalOn = false;
+
         switch (currentPlayer1State)
         {
             //if current state is captain then switch to parrot

@@ -13,6 +13,7 @@ public class Item : MonoBehaviour
     [SerializeField]
     private GameObject firePrefab;
     private Rigidbody rBody;
+    private Collider objectCollider;
     #endregion
 
     #region Properties
@@ -44,6 +45,7 @@ public class Item : MonoBehaviour
 
         rBody = GetComponent<Rigidbody>();
         previousActive = false;
+        objectCollider = GetComponent<Collider>();
     }
 
     private void OnTriggerEnter(Collider coll)
@@ -89,7 +91,7 @@ public class Item : MonoBehaviour
             {
                 Debug.Log(gameObject.name);
                 GetComponent<BearTrap>().enabled = true;
-                this.enabled = false;
+                enabled = false;
             }
             else //If this is any other object
             {
@@ -120,10 +122,6 @@ public class Item : MonoBehaviour
                 StartCoroutine(pirateScript.Stun(2));
 
                 transform.position = new Vector3(0, -1000, 0); //Move the object off screen, don't destroy it yet because it's still needed for reference
-            }
-            else if (gameObject.name.Contains("Bear_Trap"))
-            {
-
             }
             else //If this is any other object
             {
@@ -168,6 +166,21 @@ public class Item : MonoBehaviour
     }
 
     /// <summary>
+    /// Makes sure items clipping the ground when they are dropped won't just sit there
+    /// </summary>
+    /// <param name="coll"></param>
+    private void OnCollisionStay(Collision coll)
+    {
+        //Bear trap shouldn't need these
+        if (active && !name.Contains("Bear_Trap"))
+        {
+            //CHEESE IT
+            objectCollider.enabled = false;
+            objectCollider.enabled = true;
+        }
+    }
+
+    /// <summary>
     /// Heat seeking coconuts, will fail if time runs out
     /// </summary>
     /// <param name="coll"></param>
@@ -206,8 +219,8 @@ public class Item : MonoBehaviour
         yield return new WaitForSeconds(time);
 
         transform.position = new Vector3(0, -1000, 0); //Move the object off screen, don't destroy it yet because it's still needed for reference
-        Debug.Log("Here");
-        yield return new WaitForSeconds(GameManager.Instance.CurrentPhaseTime + 3.5f);
+
+        yield return new WaitForSeconds(3);
 
         previousActive = false;
         Destroy(gameObject);

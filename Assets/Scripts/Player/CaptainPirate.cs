@@ -409,9 +409,12 @@ public class CaptainPirate: MonoBehaviour
         }
         else if (!pirateActive && GameManager.Instance.SignalOn)
         {
-            GameManager.Instance.SignalOn = false;
-            StopCoroutine(signalCor);
-            GameManager.Instance.StopSignalBeam();
+            //GameManager.Instance.SignalOn = false;
+            if (signalCor != null)
+            {
+                StopCoroutine(signalCor);
+            }
+            //GameManager.Instance.StopSignalBeam();
         }
     }
     #endregion
