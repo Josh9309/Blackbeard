@@ -37,10 +37,14 @@ public class Parrot : MonoBehaviour
     private bool canDrop = true;
     private bool canSwitch = true;
     private float switchCooldown = 0.5f;
-    [SerializeField]
-    private float dropCooldown;
+    private float dropCooldown; // represents the current utility's dropCooldown
     private bool switchButtonDown = false;
     private bool dropButtonDown = false;
+
+    // cooldowns for utilities
+    // match the index in the utilityCooldowns list to that in the utility list
+    [SerializeField]
+    private List<float> utilityCooldowns;
 
     //Trap interaction
     private TrapInteraction trapScript;
@@ -94,6 +98,7 @@ public class Parrot : MonoBehaviour
         //pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
         trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
         currentUtility = utilityItems[0]; // assign initial utility
+        dropCooldown = utilityCooldowns[0]; // assign initial utility
         SpawnUtility();
 
         maxSpeed = speed * 3;
@@ -138,6 +143,7 @@ public class Parrot : MonoBehaviour
         {
             currentUtilityID++;
             currentUtility = utilityItems[currentUtilityID % utilityItems.Count]; // wrap the utilities so that we don't go out of bounds
+            dropCooldown = utilityCooldowns[currentUtilityID % utilityItems.Count];
             Debug.Log("current utility is " + currentUtility.name);
             switchButtonDown = true;
             // destroy old utility
