@@ -189,10 +189,29 @@ public class CaptainPirate: MonoBehaviour
         }
 	}
 
-    private void OnCollisionEnter(Collision collisionInfo)
+    private void OnCollisionEnter(Collision coll)
     {
         //turn off control of player in the air if they are in contact with something
         airControl = false;
+
+        //Get scripts from the object
+        Item itemScript = null;
+        if (coll.gameObject.tag == "Item")
+             itemScript = coll.gameObject.GetComponent<Item>();
+
+        //Items colliding with the pirate
+        //Fire and BearTrap handle the coroutine in their own respective classes
+        if (itemScript != null && itemScript.Active)
+        {
+            if (coll.gameObject.name.Contains("Coconut"))
+                StartCoroutine(Stun(2));
+
+            //Probably shouldn't do this
+            //else //If this is any other object
+            //{
+            //    Destroy(gameObject);
+            //}
+        }
     }
 
     private void OnCollisionExit(Collision collisionInfo)
