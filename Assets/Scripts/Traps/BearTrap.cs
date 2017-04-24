@@ -49,7 +49,7 @@ public class BearTrap : BaseTrap {
     {
         activated = false;
         triggered = false;
-        Destroy(this.gameObject); // NOTE: not sure if this is the desired effect, talk it over with team once people wake up
+        Destroy(gameObject); // NOTE: not sure if this is the desired effect, talk it over with team once people wake up
         //trapAnim.Play("Activate");
     }
 
@@ -58,8 +58,7 @@ public class BearTrap : BaseTrap {
         triggered = true;
         trapAnim.Play("Activate");
         Debug.Log("Bear trap triggered");
-        StartCoroutine(pirate.GetComponent<CaptainPirate>().Stun(stunTime));
-        
+        StartCoroutine(pirate.GetComponent<CaptainPirate>().Stun(stunTime)); 
     }
 
     protected override void OnTriggerEnter(Collider coll)

@@ -451,7 +451,6 @@ public class GameManager : Singleton<GameManager>
 
         //turn off signal beams
         StopSignalBeam();
-
     }
 
 
@@ -467,15 +466,14 @@ public class GameManager : Singleton<GameManager>
         phaseTimerRoutine = StartCoroutine(PhaseTimer());
     }
 
-    public IEnumerator SignalBeam()
+    public IEnumerator SignalBeam(string name)
     {
-        
-
         //turn on signal beams
         signalOn = true;
         signal1.Play();
         signal2.Play();
-        treasureSignal.Play();
+
+        //treasureSignal.Play(); //The parrot probably shouldn't do this
 
         yield return new WaitForSeconds(10);
 
@@ -483,13 +481,12 @@ public class GameManager : Singleton<GameManager>
         signalOn = false;
         signal1.Stop();
         signal2.Stop();
-        treasureSignal.Stop();
+
+        //treasureSignal.Stop();
     }
 
     public IEnumerator TreasureSignalBeam()
     {
-
-
         //turn on signal beams
         signalOn = true;
         treasureSignal.Play();

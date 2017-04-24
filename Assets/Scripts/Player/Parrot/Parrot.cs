@@ -382,7 +382,7 @@ public class Parrot : MonoBehaviour
     {
         if(active && !gm.SignalOn && Input.GetButtonDown(inputManager.SIGNAL_AXIS))
         {
-            signalCor = StartCoroutine(gm.SignalBeam());
+            signalCor = StartCoroutine(gm.SignalBeam(name));
         }
         else if (!active && gm.SignalOn)
         {
