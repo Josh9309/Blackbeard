@@ -63,6 +63,11 @@ public class Parrot : MonoBehaviour
     {
         get { return inputManager; }
     }
+
+    public float DropCoolDown
+    {
+        get { return dropCooldown; }
+    }
     #endregion
 
     #region InBuiltMethods
