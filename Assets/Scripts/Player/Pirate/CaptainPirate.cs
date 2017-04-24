@@ -164,10 +164,19 @@ public class CaptainPirate: MonoBehaviour
 	// Update is called once per frame
     private void Update()
     {
-        if (!jumpInput && (canDoubleJump || grounded) && pirateActive && !stunned)
+        if (pirateActive)
         {
-            jumpInput = Input.GetButtonDown(inputManager.JUMP_AXIS);
+            if (!jumpInput && (canDoubleJump || grounded) && !stunned)
+            {
+                jumpInput = Input.GetButtonDown(inputManager.JUMP_AXIS);
+            }
+
+            if (Input.GetButtonDown(inputManager.RESPAWN_AXIS))
+            {
+                Respawn();
+            }
         }
+        
         Signal();
     }
 

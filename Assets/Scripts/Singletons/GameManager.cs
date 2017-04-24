@@ -31,6 +31,7 @@ public class PlayerInput
     //Pirate Axes
     string jump;
     string pirate_pickup;
+    string respawn;
 
     //Menu Axes
     string submit;
@@ -107,6 +108,10 @@ public class PlayerInput
         get { return pirate_pickup; }
     }
 
+    public string RESPAWN_AXIS
+    {
+        get { return respawn; }
+    }
     public string SUBMIT_AXIS
     {
         get { return submit; }
@@ -155,6 +160,7 @@ public class PlayerInput
                 //SET PIRATE AXES
                 jump = "Jump_P1";
                 pirate_pickup = "Pickup/Move_P1";
+                respawn = "Respawn_P1";
 
                 //SET MENU AXES
                 submit = "Submit_P1";
@@ -181,6 +187,7 @@ public class PlayerInput
                 //SET PIRATE AXES
                 jump = "Jump_P2";
                 pirate_pickup = "Pickup/Move_P2";
+                respawn = "Respawn_P2";
 
                 //SET MENU AXES
                 submit = "Submit_P2";
