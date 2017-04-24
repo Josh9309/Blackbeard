@@ -72,6 +72,12 @@ public class Parrot : MonoBehaviour
     {
         get { return dropCooldown; }
     }
+
+	public bool CanDrop
+	{
+		get { return canDrop; }
+	}
+
     #endregion
 
     #region InBuiltMethods
