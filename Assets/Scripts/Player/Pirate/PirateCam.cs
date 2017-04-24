@@ -48,7 +48,12 @@ public class PirateCam : MonoBehaviour {
 	// Update is called once per frame
     void Update()
     {
-        if(Input.GetAxis(pInput.HORIZONTAL_AXIS) > 0.5f)
+        //check for inversion
+        invertX = SettingManager.Instance.InvertCam;
+        invertY = SettingManager.Instance.InvertCam;
+
+        //do stick stuff yea
+        if (Input.GetAxis(pInput.HORIZONTAL_AXIS) > 0.5f)
         {
             x += 3;
         }

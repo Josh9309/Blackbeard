@@ -9,6 +9,7 @@
     public float musicVolume;
     public float soundVolume;
     public bool splitscreen;
+    public bool invertCam;
     public bool pause;
 
     #endregion

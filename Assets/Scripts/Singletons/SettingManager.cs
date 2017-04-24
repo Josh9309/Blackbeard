@@ -25,8 +25,10 @@ public class SettingManager : Singleton<SettingManager>
     GameSettings gameSettings;
     [SerializeField]
     Toggle splitScreen;
+    [SerializeField] private Toggle invert;
 
     private bool vertical; //Camera split type
+    private bool invertCam; //invert cam controls or not 
     #endregion
 
     #region Properties
@@ -39,6 +41,15 @@ public class SettingManager : Singleton<SettingManager>
         set
         {
             vertical = value;
+        }
+    }
+
+    public bool InvertCam
+    {
+        get { return invertCam; }
+        set
+        {
+            invertCam = value;
         }
     }
     #endregion
@@ -168,6 +179,12 @@ public class SettingManager : Singleton<SettingManager>
         {
             vertical = false;
         }
+    }
+
+    private void invertCameraChange()
+    {
+        //invert if checked
+        invertCam = invert.isOn;
     }
     #endregion
 }
