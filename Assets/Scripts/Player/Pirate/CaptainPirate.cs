@@ -28,7 +28,7 @@ public class CaptainPirate: MonoBehaviour
     private Vector3 movement;
     private Vector3 camForwards;
     private Vector3 groundPlaneNormal;
-    private float groundedDist = 0.2f;
+    [SerializeField] private float groundedDist = 0.3f;
     [SerializeField] private float idleTurnSpeed = 360;
     [SerializeField] private float movingTurnSpeed = 180;
     [SerializeField] private float jumpForce = 50;
@@ -347,10 +347,39 @@ public class CaptainPirate: MonoBehaviour
 #if UNITY_EDITOR
         //VISUALIZE GROUND CHECK WHEN IN UNITY EDITOR   
         Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * groundedDist),Color.magenta);
+        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + transform.forward) * groundedDist), Color.magenta);
+        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + -transform.forward) * groundedDist), Color.magenta);
+        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + -transform.right) * groundedDist), Color.magenta);
+        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + transform.right) * groundedDist), Color.magenta);
 #endif
+        bool groundHit = false;
+        if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist))//if down returns nothing
+        {
+            //check forward raycast
+            if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f),(Vector3.down+transform.forward), out rayHit, groundedDist))
+            {
+                //check backward raycast
+                if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.forward), out rayHit, groundedDist))
+                {
+                    //check Left raycast
+                    if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.right), out rayHit, groundedDist))
+                    {
+                        //check Right raycast
+                        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + transform.right), out rayHit, groundedDist))
+                        {
+                            groundHit = true;
+                        }
+                    }
+                    else { groundHit = true; }
+                }
+                else { groundHit = true; }
+            }
+            else { groundHit = true; }
+        }
+        else { groundHit = true; }
         //0.1f is used to offest the raycast from the inside of the pirate model
         //The pirate transform should be at base of the pirate
-        if(Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist)) //if raycast hits something
+        if(groundHit) //if raycast hits something
         {
             groundPlaneNormal = rayHit.normal; //set the ground plan normal to the raycast hit normal
             grounded = true; //set the pirate to grounded
