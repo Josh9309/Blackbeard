@@ -56,6 +56,7 @@ public class SettingManager : Singleton<SettingManager>
     private void Start()
     {
       //  splitScreenChange(); //Call this now so the toggle button works from start
+        invertCam = true;
     }
 
     void Awake()
