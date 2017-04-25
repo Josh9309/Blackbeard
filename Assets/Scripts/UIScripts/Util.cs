@@ -6,17 +6,24 @@ using UnityEngine;
 public class Util : MonoBehaviour {
 
     //fields
+	#region fields
     private Image coolDownMeter;
-    [SerializeField] private GameObject ply;
+    [SerializeField] private GameObject ply; //parrot
 
 	private float time;
 	private float cooldown;
 	bool couldUseUtil;
 	bool canUseUtil;
 
+	//util icon fields
+	[SerializeField] private List<Sprite> utilImages;
+	[SerializeField] private Image currentUtil;
+	#endregion
+
+	#region inBuiltMethods
     // Use this for initialization
     void Start () {
-        //assign our image
+        //assign our image for cooldown
         coolDownMeter = this.gameObject.GetComponent<Image>();
 
 		//setup timer variables bc yall like your corutines too much
@@ -24,11 +31,14 @@ public class Util : MonoBehaviour {
 		couldUseUtil = ply.GetComponent<Parrot>().CanDrop;
 		canUseUtil = ply.GetComponent<Parrot>().CanDrop;
 		cooldown = ply.GetComponent<Parrot> ().DropCoolDown; //get cooldown time from parrot
+		currentUtil.sprite = utilImages[0]; //set inital utility
+
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
+		//set util images based on what the parrot is using
+		currentUtil.sprite = utilImages[ply.GetComponent<Parrot>().CurrentUtilityID];
 
         //run timer when a util is used
 		couldUseUtil = canUseUtil; //could we use a util last frome?
@@ -48,9 +58,8 @@ public class Util : MonoBehaviour {
 			coolDownMeter.fillAmount = time / cooldown;
 		} 
 	}
+	#endregion
 
-	void UpdateCoolDown()
-	{
-	}
-
+	#region helperMethods
+	#endregion
 }

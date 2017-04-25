@@ -78,6 +78,10 @@ public class Parrot : MonoBehaviour
 		get { return canDrop; }
 	}
 
+    public int CurrentUtilityID
+    {
+        get { return currentUtilityID; }
+    }
     #endregion
 
     #region InBuiltMethods
@@ -153,8 +157,9 @@ public class Parrot : MonoBehaviour
         if (Input.GetButton(inputManager.UTILITY_SWITCH) && !switchButtonDown)
         {
             currentUtilityID++;
-            currentUtility = utilityItems[currentUtilityID % utilityItems.Count]; // wrap the utilities so that we don't go out of bounds
-            dropCooldown = utilityCooldowns[currentUtilityID % utilityItems.Count];
+            currentUtilityID = currentUtilityID % utilityItems.Count; //wrap utils so we dont go out of bounds
+            currentUtility = utilityItems[currentUtilityID];
+            dropCooldown = utilityCooldowns[currentUtilityID];
             Debug.Log("current utility is " + currentUtility.name);
             switchButtonDown = true;
             // destroy old utility
