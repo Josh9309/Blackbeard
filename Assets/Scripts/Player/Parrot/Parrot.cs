@@ -20,7 +20,14 @@ public class Parrot : MonoBehaviour
     private Vector3 parrotRotation; //parrot euler angle rotation
     private GameObject captain; // object of the captain this pirate is tied to
     private Coroutine signalCor; //coroutine that holds the signal 
-    
+
+    // rotational attributes
+    // angles to rotate to
+    private float horizontalRot = 75.0f;
+    private float verticalRot = 60.0f;
+    // speed at which the parrot rotates between angles
+    [SerializeField]
+    private float rotRate = 1.5f;
 
     //Item pickup
     //private ItemPickup pickupScript;
@@ -96,7 +103,6 @@ public class Parrot : MonoBehaviour
         rBody = GetComponent<Rigidbody>();
 
         gm = GameManager.Instance;
-
         //get input manager and captains
         switch (playerNum)
         {
@@ -247,7 +253,8 @@ public class Parrot : MonoBehaviour
         rBody.velocity = Vector3.zero;
 
         //zero parrot rotation
-        parrotRotation = Vector3.zero;
+        Quaternion t = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+        transform.rotation = Quaternion.Slerp(transform.rotation, t, Time.deltaTime * rotRate);
 
         //parrot move forwards
         //if accelerate btn is pressed
@@ -291,15 +298,20 @@ public class Parrot : MonoBehaviour
             {
                 //a upwards velocity is add to parrot's current speed
                 rBody.velocity += new Vector3(0, speed, 0);
+
                 //rotates parrot up
-                parrotRotation += new Vector3(-45, 0, 0); 
+                Quaternion target = Quaternion.Euler(-verticalRot, transform.eulerAngles.y, 0);
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
             //if vertical input is pointing down and greater than min height
             else if (transform.position.y > minHeight)
             {
                 //a downwards velocity is added to parrot's current velocity
                 rBody.velocity += new Vector3(0, -speed, 0); 
-                parrotRotation += new Vector3(45, 0, 0);
+
+                //angle the parrot down
+                Quaternion target = Quaternion.Euler(verticalRot, transform.eulerAngles.y, 0);
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
         }
         //code below does same thing as code above except using the triggers
@@ -323,23 +335,22 @@ public class Parrot : MonoBehaviour
             {
                 //rotates the parrot left
                 transform.Rotate(new Vector3(0, turnSpeed, 0));
+
                 //angles parrot left
-                parrotRotation.z = -45; 
+                Quaternion target = Quaternion.Euler(0, transform.eulerAngles.y, -horizontalRot);
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
             //turns parrot right
             else if (horizontalInput < 0) 
             {
                 //rotates parrot right
                 transform.Rotate(new Vector3(0, -turnSpeed, 0));
+
                 //angles parrot right
-                parrotRotation.z = 45; 
+                Quaternion target = Quaternion.Euler(0, transform.eulerAngles.y, horizontalRot);
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
         }
-
-        parrotRotation.y = transform.localEulerAngles.y;
-
-        //update the parrot rotation
-        transform.localEulerAngles = parrotRotation;
     }
 
     public void ReturnToSpawn(Vector3 spawnPosition)
