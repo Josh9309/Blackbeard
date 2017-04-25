@@ -7,13 +7,19 @@ public class Util : MonoBehaviour {
 
     //fields
 	#region fields
-    private Image coolDownMeter;
-    [SerializeField] private GameObject ply; //parrot
+	[SerializeField] private GameObject ply; //parrot
 
+	//cooldown fields
+    private Image coolDownMeter;
 	private float time;
 	private float cooldown;
 	bool couldUseUtil;
 	bool canUseUtil;
+
+	//util num uses fields
+	private RectTransform fullScale;
+	private int totalLanterns;
+	private Color colorSave;
 
 	//util icon fields
 	[SerializeField] private List<Sprite> utilImages;
@@ -33,6 +39,11 @@ public class Util : MonoBehaviour {
 		cooldown = ply.GetComponent<Parrot> ().DropCoolDown; //get cooldown time from parrot
 		currentUtil.sprite = utilImages[0]; //set inital utility
 
+		//set fields for num of uses
+		fullScale = coolDownMeter.rectTransform; //original scale
+		totalLanterns = ply.GetComponent<Parrot>().NumLanterns; //total number of lanterns(whatever num they ahve at first)
+		colorSave = coolDownMeter.color; //original color
+
     }
 	
 	// Update is called once per frame
@@ -48,6 +59,30 @@ public class Util : MonoBehaviour {
 		{ //check if we just used a util(we could use it a second ago, but not now)
 			cooldown = ply.GetComponent<Parrot> ().DropCoolDown; //get cooldown time from parrot
 			time = 0; //reset values
+
+			//scale util cooldown based on numLantern
+			if (ply.GetComponent<Parrot>().CurrentUtilityID == 0) //lantern
+			{
+				//check if we dont have anymore lanterns
+				if (ply.GetComponent<Parrot>().NumLanterns > 0)
+				{
+					//scale
+					float scale = (float) ply.GetComponent<Parrot>().NumLanterns / totalLanterns;
+					coolDownMeter.rectTransform.sizeDelta = coolDownMeter.rectTransform.sizeDelta - new Vector2(10, 10);
+				}
+				else
+				{
+					//fullscale but transparent
+					coolDownMeter.rectTransform.sizeDelta = fullScale.sizeDelta;
+					coolDownMeter.color = new Color32(146, 146, 146, 225); //grey
+				}
+			}
+			else
+			{
+				//reset scale  and color bc we dont need it for the other utils
+				coolDownMeter.rectTransform.sizeDelta = fullScale.sizeDelta;
+				coolDownMeter.color = colorSave;
+			}
 		} 
 		else if (!canUseUtil) 
 		{

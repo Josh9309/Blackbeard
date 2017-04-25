@@ -82,6 +82,11 @@ public class Parrot : MonoBehaviour
     {
         get { return currentUtilityID; }
     }
+
+    public int NumLanterns
+    {
+        get { return numLanterns; }
+    }
     #endregion
 
     #region InBuiltMethods
@@ -213,9 +218,9 @@ public class Parrot : MonoBehaviour
                 heldUtility.GetComponent<BearTrap>().Activate();
             }
             heldUtility = null;
-            Debug.Log(currentUtility.name + " has been dropped!");
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
+            numLanterns--; //added for UI test, just changes num lantern no actual functionality
         }
         else if (Input.GetButtonUp(inputManager.PARROT_PICKUP_AXIS))
         {
