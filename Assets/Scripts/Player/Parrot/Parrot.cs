@@ -287,7 +287,7 @@ public class Parrot : MonoBehaviour
         //if neither the accelerate btn or decelerate btn is pressed 
         
         //parrot speed is added to velocity
-        rBody.velocity += transform.forward * speed; 
+        rBody.velocity += transform.forward * speed;
 
         //Parrot fly up
         //make sure input is greater than deadzone range
@@ -304,10 +304,10 @@ public class Parrot : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
             //if vertical input is pointing down and greater than min height
-            else if (transform.position.y > minHeight)
+            else if (verticalInput < 0 && transform.position.y > minHeight)
             {
                 //a downwards velocity is added to parrot's current velocity
-                rBody.velocity += new Vector3(0, -speed, 0); 
+                rBody.velocity += new Vector3(0, -speed, 0);
 
                 //angle the parrot down
                 Quaternion target = Quaternion.Euler(verticalRot, transform.eulerAngles.y, 0);
@@ -318,13 +318,21 @@ public class Parrot : MonoBehaviour
         else if(Mathf.Abs(flyUpInput) > inputDelay && transform.position.y < maxHeight)
         {
             rBody.velocity += new Vector3(0, speed, 0);
-            parrotRotation += new Vector3(-45, 0, 0);
+            //parrotRotation += new Vector3(-45, 0, 0);
+
+            //rotates parrot up
+            Quaternion target = Quaternion.Euler(-verticalRot, transform.eulerAngles.y, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
         }
         //parrot fly down
         else if (Mathf.Abs(flyDownInput) > inputDelay && transform.position.y > minHeight) 
         {
             rBody.velocity += new Vector3(0, -speed, 0);
-            parrotRotation += new Vector3(45, 0, 0);
+            //parrotRotation += new Vector3(45, 0, 0);
+
+            //angle the parrot down
+            Quaternion target = Quaternion.Euler(verticalRot, transform.eulerAngles.y, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
         }
 
         //controls parrot turning
