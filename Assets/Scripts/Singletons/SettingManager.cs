@@ -25,8 +25,10 @@ public class SettingManager : Singleton<SettingManager>
     GameSettings gameSettings;
     [SerializeField]
     Toggle splitScreen;
+    [SerializeField] private Toggle invert;
 
     private bool vertical; //Camera split type
+    private bool invertCam; //invert cam controls or not 
     #endregion
 
     #region Properties
@@ -41,6 +43,11 @@ public class SettingManager : Singleton<SettingManager>
             vertical = value;
         }
     }
+
+    public bool InvertCam
+    {
+        get { return invertCam; }
+    }
     #endregion
 
     #region inBuiltMethods
@@ -49,6 +56,7 @@ public class SettingManager : Singleton<SettingManager>
     private void Start()
     {
       //  splitScreenChange(); //Call this now so the toggle button works from start
+        invertCam = true;
     }
 
     void Awake()
@@ -57,60 +65,100 @@ public class SettingManager : Singleton<SettingManager>
         DontDestroyOnLoad(this);
     }
 
-    /*public void OnEnable()
+    public void OnEnable()
     {
         //initializing for null values
         gameSettings = new GameSettings();
 
-        //link the methods to the toggle button
-        fullscreenToggle.onValueChanged.AddListener(delegate
-        {
-            onFullScreenToggle();
-        });
-        //link the methods to the Resolution dropdown 
-        resolutionDropdown.onValueChanged.AddListener(delegate
-        {
-            onResolutionChange();
-        });
-        //link the methods to the texture Quality Dropdown
-        textureQualityDropdown.onValueChanged.AddListener(delegate
-        {
-            onTextureQualityChange();
-        });
-        //link the methods to the antialiasning dropdown 
-        antialisingDropdown.onValueChanged.AddListener(delegate
-        {
-            onAntialiasingChange();
-        });
-        //link the methods to the vsync dropdown
-        vSyncDropdown.onValueChanged.AddListener(delegate
-        {
-            onVsyncChange();
-        });
-        //link the methods to the music slider
-        musicVolSlider.onValueChanged.AddListener(delegate
-        {
-            onMusicVolChange();
-        });
-        //link the methods to the sound slider
-        soundVolSlider.onValueChanged.AddListener(delegate
-        {
-            onSoundVolChange();
-        });
+		//check if each option menu item has something linked up, if so hook up event listener for chnages to options
+		if (fullscreenToggle != null) 
+		{
+			//link the methods to the toggle button
+			fullscreenToggle.onValueChanged.AddListener(delegate
+				{
+					onFullScreenToggle();
+				});
+		}
+        
+		if (resolutionDropdown != null)
+		{
+			//link the methods to the Resolution dropdown 
+			resolutionDropdown.onValueChanged.AddListener(delegate
+				{
+					onResolutionChange();
+				});
 
-        resolutions = Screen.resolutions;
-        //fill in options data
-        foreach (Resolution resolution in resolutions)
-        {
-            //add options
-            resolutionDropdown.options.Add(new Dropdown.OptionData(resolution.ToString()));
-        }
 
-        splitScreen.onValueChanged.AddListener(delegate
-        {
-            splitScreenChange();
-        });
-    }*/
+			//fill in options data for resolution
+			resolutions = Screen.resolutions;
+			foreach (Resolution resolution in resolutions)
+			{
+				//add options
+				resolutionDropdown.options.Add(new Dropdown.OptionData(resolution.ToString()));
+			}
+		}
+
+		if (textureQualityDropdown != null)
+		{
+			//link the methods to the texture Quality Dropdown
+			textureQualityDropdown.onValueChanged.AddListener(delegate
+				{
+					onTextureQualityChange();
+				});
+		}
+
+		if (antialisingDropdown != null)
+		{
+			//link the methods to the antialiasning dropdown 
+			antialisingDropdown.onValueChanged.AddListener(delegate
+				{
+					onAntialiasingChange();
+				});
+		}
+
+		if (vSyncDropdown != null)
+		{
+			//link the methods to the vsync dropdown
+			vSyncDropdown.onValueChanged.AddListener(delegate
+				{
+					onVsyncChange();
+				});
+		}
+
+		if (musicVolSlider != null)
+		{
+			//link the methods to the music slider
+			musicVolSlider.onValueChanged.AddListener(delegate
+				{
+					onMusicVolChange();
+				});
+		}
+
+		if (soundVolSlider != null)
+		{
+			//link the methods to the sound slider
+			soundVolSlider.onValueChanged.AddListener(delegate
+				{
+					onSoundVolChange();
+				});
+		}
+
+		if (splitScreen != null)
+		{
+			splitScreen.onValueChanged.AddListener(delegate
+				{
+					splitScreenChange();
+				});
+		}
+
+		if (invert != null)
+		{
+			invert.onValueChanged.AddListener(delegate
+				{
+					invertCameraChange();
+				});
+		}
+    }
     #endregion
 
     #region helperMethods
@@ -168,6 +216,12 @@ public class SettingManager : Singleton<SettingManager>
         {
             vertical = false;
         }
+    }
+
+    private void invertCameraChange()
+    {
+        //invert if checked
+        invertCam = invert.isOn;
     }
     #endregion
 }

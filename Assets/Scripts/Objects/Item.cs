@@ -6,11 +6,14 @@ public class Item : MonoBehaviour
 {
     #region Attributes
     private bool active; //If the item is active
+    private bool previousActive;
     private CaptainPirate pirateScript;
     [SerializeField] private int damage;
     private int explosionDamage;
     [SerializeField]
     private GameObject firePrefab;
+    private Rigidbody rBody;
+    private Collider objectCollider;
     #endregion
 
     #region Properties
@@ -30,46 +33,48 @@ public class Item : MonoBehaviour
     #region InBuiltMethods
     void Start() //Use this for initialization
     {
-        //if (gameObject.name.Contains("Lantern"))
-        //{
-        //    active = true;
-        //}
-        //else
-        //{
-        //    active = false;
-        //}
-        active = true;
+        //active = true;
 
         explosionDamage = -1000;
+
+        if (gameObject.name.Contains("Bear_Trap"))
+        {
+            GetComponentInChildren<ParticleSystem>().Clear();
+            GetComponentInChildren<ParticleSystem>().Pause();
+        }
+
+        rBody = GetComponent<Rigidbody>();
+        previousActive = false;
+        objectCollider = GetComponent<Collider>();
+    }
+
+    private void OnTriggerEnter(Collider coll)
+    {
+        if (gameObject.name.Contains("Bear_Trap"))
+        {
+            Debug.Log(gameObject.name);
+            GetComponent<BearTrap>().enabled = true;
+            
+            this.enabled = false;
+        }
     }
 
     private void OnCollisionEnter(Collision coll)
     {
         //Dropped items
-        if (active && coll.gameObject.tag == "Terrain") //Colliding with the ground
+        if (active && (coll.gameObject.tag == "Terrain" || coll.gameObject.tag == "IslandPlatform" || coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform")) //Colliding with the ground
         {
-            if (gameObject.name.Contains("Bomb")) //If this is a bomb
-            {
-                Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4);
-
-                //For every object in the explosion radius apply damage
-                foreach (Collider c in hitColliders)
-                {
-                    if (c.gameObject.name.Contains("Captain"))
-                    {
-                        pirateScript = c.gameObject.GetComponent<CaptainPirate>();
-                        StartCoroutine(pirateScript.Stun(3));
-                    }
-                }
-
-                StartCoroutine(ExplosionTimer(.017f));
-            }
-            else if (gameObject.name.Contains("Lantern")) // if gameObject is lantern
+            if (gameObject.name.Contains("Lantern") && active == true) // if gameObject is lantern
             {
                 // TODO: add stuff for spawning fire on the main island
-                GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
+                GameObject fire = GameObject.Instantiate(firePrefab, transform.position, Quaternion.identity);
                 fire.GetComponent<Fire>().Ignite();
                 Destroy(gameObject);
+            }
+            else if (gameObject.name.Contains("Bear_Trap"))
+            {
+                GetComponent<BearTrap>().enabled = true;
+                enabled = false;
             }
             else //If this is any other object
             {
@@ -77,68 +82,47 @@ public class Item : MonoBehaviour
             }
         }
         else if (active && coll.gameObject.name.Contains("Captain")) //Colliding with a pirate
+            Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Makes sure items clipping the ground when they are dropped won't just sit there
+    /// </summary>
+    /// <param name="coll"></param>
+    private void OnCollisionStay(Collision coll)
+    {
+        //Bear trap shouldn't need these
+        if (active && !name.Contains("Bear_Trap"))
         {
-            if (gameObject.name.Contains("Bomb")) //If this is a bomb
-            {
-                Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4);
-
-                //For every object in the explosion radius apply damage
-                foreach (Collider c in hitColliders)
-                {
-                    if (c.gameObject.name.Contains("Captain"))
-                    {
-                        pirateScript = c.gameObject.GetComponent<CaptainPirate>();
-                        StartCoroutine(pirateScript.Stun(3));
-                    }
-                }
-
-                StartCoroutine(ExplosionTimer(.017f));
-            }
-            else if (gameObject.name.Contains("Coconut"))
-            {
-                pirateScript = coll.gameObject.GetComponent<CaptainPirate>();
-                StartCoroutine(pirateScript.Stun(2));
-
-                StartCoroutine(ExplosionTimer(0));
-            }
-            else //If this is any other object
-            {
-                Destroy(gameObject);
-            }
+            //CHEESE IT
+            objectCollider.enabled = false;
+            objectCollider.enabled = true;
         }
-        else if (active && (coll.gameObject.tag == "IslandPlatform" || coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform"))
+    }
+
+    /// <summary>
+    /// Heat seeking coconuts, will fail if time runs out
+    /// </summary>
+    /// <param name="coll"></param>
+    private void OnTriggerStay(Collider coll)
+    {
+        if (name.Contains("Coconut") && coll.name.Contains("Captain") && active)
         {
-            if (gameObject.name.Contains("Lantern"))
-            {
-                GameObject fire = GameObject.Instantiate(firePrefab, this.transform.position, Quaternion.identity);
-                fire.GetComponent<Fire>().Ignite();
-                Destroy(gameObject);
-            }
-            else if (gameObject.name.Contains("Bomb")) //If this is a bomb
-            {
-                Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4);
+            Vector3 desired = new Vector3(coll.transform.position.x, coll.transform.position.y + 1.5f, coll.transform.position.z) - transform.position;
+            desired = desired.normalized * 3;
+            rBody.velocity = desired;
 
-                //For every object in the explosion radius apply damage
-                foreach (Collider c in hitColliders)
-                {
-                    if (c.gameObject.name.Contains("Captain"))
-                    {
-                        pirateScript = c.gameObject.GetComponent<CaptainPirate>();
-                        StartCoroutine(pirateScript.Stun(3));
-                    }
-                }
-
-                StartCoroutine(ExplosionTimer(.017f));
-            }
-            else //If this is any other object
+            if (previousActive == false)
             {
-                Destroy(gameObject);
+                //StartCoroutine(CoconutDecay(1f)); //Remove this to buff coconuts
+                previousActive = true;
             }
         }
     }
 
-    //Make the bomb explode
-    internal IEnumerator ExplosionTimer(float time)
+
+    //Make the coconut shrink
+    internal IEnumerator CoconutDecay(float time)
     {
         yield return new WaitForSeconds(time);
 
@@ -146,6 +130,7 @@ public class Item : MonoBehaviour
 
         yield return new WaitForSeconds(3);
 
+        previousActive = false;
         Destroy(gameObject);
     }
     #endregion

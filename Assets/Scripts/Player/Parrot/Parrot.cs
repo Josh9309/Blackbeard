@@ -12,6 +12,7 @@ public class Parrot : MonoBehaviour
     [SerializeField] private float turnSpeed = 2.0f;
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
+    [SerializeField] private float accelRate = .5f;
     private float currentHeight;
     public bool active; //If the parrot is active
     private Rigidbody rBody;
@@ -19,7 +20,14 @@ public class Parrot : MonoBehaviour
     private Vector3 parrotRotation; //parrot euler angle rotation
     private GameObject captain; // object of the captain this pirate is tied to
     private Coroutine signalCor; //coroutine that holds the signal 
-    
+
+    // rotational attributes
+    // angles to rotate to
+    private float horizontalRot = 75.0f;
+    private float verticalRot = 60.0f;
+    // speed at which the parrot rotates between angles
+    [SerializeField]
+    private float rotRate = 1.5f;
 
     //Item pickup
     //private ItemPickup pickupScript;
@@ -30,15 +38,20 @@ public class Parrot : MonoBehaviour
     private List<GameObject> utilityItems;
     [SerializeField]
     private int numLanterns;
-    private GameObject currentUtility;
+    private GameObject currentUtility; // represents the current utility NOT the one actually held
+    private GameObject heldUtility; // is the actual utility the parrot is holding
     private int currentUtilityID = 0;
     private bool canDrop = true;
     private bool canSwitch = true;
     private float switchCooldown = 0.5f;
-    [SerializeField]
-    private float dropCooldown;
+    private float dropCooldown; // represents the current utility's dropCooldown
     private bool switchButtonDown = false;
     private bool dropButtonDown = false;
+
+    // cooldowns for utilities
+    // match the index in the utilityCooldowns list to that in the utility list
+    [SerializeField]
+    private List<float> utilityCooldowns;
 
     //Trap interaction
     private TrapInteraction trapScript;
@@ -61,6 +74,26 @@ public class Parrot : MonoBehaviour
     {
         get { return inputManager; }
     }
+
+    public float DropCoolDown
+    {
+        get { return dropCooldown; }
+    }
+
+	public bool CanDrop
+	{
+		get { return canDrop; }
+	}
+
+    public int CurrentUtilityID
+    {
+        get { return currentUtilityID; }
+    }
+
+    public int NumLanterns
+    {
+        get { return numLanterns; }
+    }
     #endregion
 
     #region InBuiltMethods
@@ -70,7 +103,6 @@ public class Parrot : MonoBehaviour
         rBody = GetComponent<Rigidbody>();
 
         gm = GameManager.Instance;
-
         //get input manager and captains
         switch (playerNum)
         {
@@ -87,12 +119,13 @@ public class Parrot : MonoBehaviour
                 break;
         }
 
-        //The parrot is active
-        active = false;
+        ReturnToSpawn(gm.ParrotSpawn.transform.position);
 
         //pickupScript = GetComponent<ItemPickup>(); //Get the item pickup script
         trapScript = GetComponent<TrapInteraction>(); //Get the trap interaction script
         currentUtility = utilityItems[0]; // assign initial utility
+        dropCooldown = utilityCooldowns[0]; // assign initial utility
+        SpawnUtility();
 
         maxSpeed = speed * 3;
 	}
@@ -100,13 +133,13 @@ public class Parrot : MonoBehaviour
     //Update is called once per frame
     private void Update() 
     {
+        Signal(); //turns on the signal beams for pirates
         if (active)
         {
             //pickupScript.Pickup(active); //Let the parrot pickup treasure
             trapScript.Interact(active); //Let the parrot interact with traps
             SwitchUtility(); // allow parrot to switch current utility
             DropUtility(); // allows parrot to drop utility
-            Signal(); //turns on the signal beams for pirates
         }
     }
 
@@ -135,9 +168,15 @@ public class Parrot : MonoBehaviour
         if (Input.GetButton(inputManager.UTILITY_SWITCH) && !switchButtonDown)
         {
             currentUtilityID++;
-            currentUtility = utilityItems[currentUtilityID % utilityItems.Count]; // wrap the utilities so that we don't go out of bounds
+            currentUtilityID = currentUtilityID % utilityItems.Count; //wrap utils so we dont go out of bounds
+            currentUtility = utilityItems[currentUtilityID];
+            dropCooldown = utilityCooldowns[currentUtilityID];
             Debug.Log("current utility is " + currentUtility.name);
             switchButtonDown = true;
+            // destroy old utility
+            GameObject.Destroy(heldUtility);
+            if (heldUtility != null)
+                SpawnUtility();
             //StartCoroutine(SwitchUtilityCooldown());
         }
 
@@ -148,19 +187,47 @@ public class Parrot : MonoBehaviour
     }
 
     /// <summary>
+    /// will assign the currently selected utility to be held
+    /// </summary>
+    private void SpawnUtility()
+    {
+        heldUtility = GameObject.Instantiate(currentUtility, 
+            new Vector3(itemSlot.transform.position.x, 
+            itemSlot.transform.position.y, itemSlot.transform.position.z),
+            Quaternion.identity);
+        heldUtility.transform.position = new Vector3(itemSlot.transform.position.x,
+            itemSlot.transform.position.y - (heldUtility.GetComponent<Collider>().bounds.size.y / 1.8f), itemSlot.transform.position.z);
+        heldUtility.transform.parent = this.gameObject.transform;
+        heldUtility.GetComponent<Item>().Active = false;
+        heldUtility.GetComponent<Rigidbody>().useGravity = false;
+        heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        if (heldUtility.name.Contains("Bear_Trap"))
+        {
+            heldUtility.GetComponent<BearTrap>().enabled = false;
+        }
+    }
+
+    /// <summary>
     /// drops the currently selected utility
     /// </summary>
     private void DropUtility()
     {
         if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown)
         {
-            GameObject utility = GameObject.Instantiate(currentUtility, new Vector3(itemSlot.transform.position.x, itemSlot.transform.position.y - .25f, itemSlot.transform.position.z), Quaternion.identity);
-            //utility.GetComponent<Item>().Active = true;
-            Debug.Log(currentUtility.name + " has been dropped!");
+            heldUtility.GetComponent<Rigidbody>().useGravity = true;
+            heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            heldUtility.transform.parent = null;
+            heldUtility.GetComponent<Item>().Active = true;
+            if (heldUtility.name.Contains("Bear_Trap"))
+            {
+                //heldUtility.GetComponent<Item>().enabled = false;
+                heldUtility.GetComponent<BearTrap>().Activate();
+            }
+            heldUtility = null;
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
+            numLanterns--; //added for UI test, just changes num lantern no actual functionality
         }
-
         else if (Input.GetButtonUp(inputManager.PARROT_PICKUP_AXIS))
         {
             dropButtonDown = false;
@@ -186,7 +253,8 @@ public class Parrot : MonoBehaviour
         rBody.velocity = Vector3.zero;
 
         //zero parrot rotation
-        parrotRotation = Vector3.zero;
+        Quaternion t = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+        transform.rotation = Quaternion.Slerp(transform.rotation, t, Time.deltaTime * rotRate);
 
         //parrot move forwards
         //if accelerate btn is pressed
@@ -197,7 +265,7 @@ public class Parrot : MonoBehaviour
             //rBody.velocity = transform.forward * (2 * speed); 
 
             //increase speed
-            speed += 0.1f;
+            speed += accelRate;
             if(speed > maxSpeed)
             {
                 speed = maxSpeed;
@@ -210,7 +278,7 @@ public class Parrot : MonoBehaviour
             //rBody.velocity = transform.forward * (0.5f * speed); 
 
             //decrease speed
-            speed -= 0.1f;
+            speed -= accelRate;
             if(speed < 0)
             {
                 speed = 0;
@@ -219,7 +287,7 @@ public class Parrot : MonoBehaviour
         //if neither the accelerate btn or decelerate btn is pressed 
         
         //parrot speed is added to velocity
-        rBody.velocity += transform.forward * speed; 
+        rBody.velocity += transform.forward * speed;
 
         //Parrot fly up
         //make sure input is greater than deadzone range
@@ -230,28 +298,41 @@ public class Parrot : MonoBehaviour
             {
                 //a upwards velocity is add to parrot's current speed
                 rBody.velocity += new Vector3(0, speed, 0);
+
                 //rotates parrot up
-                parrotRotation += new Vector3(-45, 0, 0); 
+                Quaternion target = Quaternion.Euler(-verticalRot, transform.eulerAngles.y, 0);
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
             //if vertical input is pointing down and greater than min height
-            else if (transform.position.y > minHeight)
+            else if (verticalInput < 0 && transform.position.y > minHeight)
             {
                 //a downwards velocity is added to parrot's current velocity
-                rBody.velocity += new Vector3(0, -speed, 0); 
-                parrotRotation += new Vector3(45, 0, 0);
+                rBody.velocity += new Vector3(0, -speed, 0);
+
+                //angle the parrot down
+                Quaternion target = Quaternion.Euler(verticalRot, transform.eulerAngles.y, 0);
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
         }
         //code below does same thing as code above except using the triggers
         else if(Mathf.Abs(flyUpInput) > inputDelay && transform.position.y < maxHeight)
         {
             rBody.velocity += new Vector3(0, speed, 0);
-            parrotRotation += new Vector3(-45, 0, 0);
+            //parrotRotation += new Vector3(-45, 0, 0);
+
+            //rotates parrot up
+            Quaternion target = Quaternion.Euler(-verticalRot, transform.eulerAngles.y, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
         }
         //parrot fly down
         else if (Mathf.Abs(flyDownInput) > inputDelay && transform.position.y > minHeight) 
         {
             rBody.velocity += new Vector3(0, -speed, 0);
-            parrotRotation += new Vector3(45, 0, 0);
+            //parrotRotation += new Vector3(45, 0, 0);
+
+            //angle the parrot down
+            Quaternion target = Quaternion.Euler(verticalRot, transform.eulerAngles.y, 0);
+            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
         }
 
         //controls parrot turning
@@ -262,23 +343,22 @@ public class Parrot : MonoBehaviour
             {
                 //rotates the parrot left
                 transform.Rotate(new Vector3(0, turnSpeed, 0));
+
                 //angles parrot left
-                parrotRotation.z = -45; 
+                Quaternion target = Quaternion.Euler(0, transform.eulerAngles.y, -horizontalRot);
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
             //turns parrot right
             else if (horizontalInput < 0) 
             {
                 //rotates parrot right
                 transform.Rotate(new Vector3(0, -turnSpeed, 0));
+
                 //angles parrot right
-                parrotRotation.z = 45; 
+                Quaternion target = Quaternion.Euler(0, transform.eulerAngles.y, horizontalRot);
+                transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
         }
-
-        parrotRotation.y = transform.localEulerAngles.y;
-
-        //update the parrot rotation
-        transform.localEulerAngles = parrotRotation;
     }
 
     public void ReturnToSpawn(Vector3 spawnPosition)
@@ -312,6 +392,7 @@ public class Parrot : MonoBehaviour
     {
         canDrop = false;
         yield return new WaitForSeconds(dropCooldown);
+        SpawnUtility();
         canDrop = true;
     }
 
@@ -328,14 +409,18 @@ public class Parrot : MonoBehaviour
 
     private void Signal()
     {
-        if(!gm.SignalOn && Input.GetButtonDown(inputManager.SIGNAL_AXIS))
+        if(active && !gm.SignalOn && Input.GetButtonDown(inputManager.SIGNAL_AXIS))
         {
-            signalCor = StartCoroutine(gm.SignalBeam());
+            signalCor = StartCoroutine(gm.SignalBeam(name));
         }
         else if (!active && gm.SignalOn)
         {
-            gm.SignalOn = false;
-            StopCoroutine(signalCor);
+            //gm.SignalOn = false;
+            if (signalCor != null)
+            {
+                StopCoroutine(signalCor);
+            }
+            //GameManager.Instance.StopSignalBeam();
         }
     }
     #endregion

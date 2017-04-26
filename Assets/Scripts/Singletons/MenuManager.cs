@@ -39,7 +39,7 @@ public class MenuManager : Singleton<MenuManager>
 
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name == "BlackFeather")
+        if (SceneManager.GetActiveScene().name == "Poseidon")
             menu.enabled = false;
     }
     #endregion

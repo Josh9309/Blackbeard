@@ -11,7 +11,8 @@ public abstract class BaseTrap : MonoBehaviour {
     [SerializeField] protected float resetTime; //how long till the trap can reset 
 
     protected Animator trapAnim;
-
+    protected GameManager gm;
+    protected ParticleSystem particle;
     #endregion
 
     #region Properties
@@ -34,7 +35,11 @@ public abstract class BaseTrap : MonoBehaviour {
         Deactivate();
 
         triggered = false;
-	}
+
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        particle = GetComponentInChildren<ParticleSystem>();
+        particle.Pause();
+    }
 	
 	// Update is called once per frame
 	protected virtual void Update () {
@@ -43,7 +48,23 @@ public abstract class BaseTrap : MonoBehaviour {
             //starts the reset timer
             StartCoroutine(ResetTimer());
         }
-	}
+        if (!activated && gm.CurrentPlayer1State == GameManager.PlayerState.PARROT || gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
+        {
+            particle.startColor = new Color32(244, 215, 50, 255);
+            particle.Play();
+        }
+        else if (activated && gm.CurrentPlayer1State == GameManager.PlayerState.PARROT || gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
+        {
+            particle.startColor = Color.red;
+            particle.Play();
+        }
+        else
+        {
+            particle.Clear();
+            particle.Pause();
+        }
+            
+    }
 
     /// <summary>
     /// Used to check if a gameobject has entered the trigger radius
