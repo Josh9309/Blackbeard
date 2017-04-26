@@ -7,8 +7,8 @@ public class Parrot : MonoBehaviour
     #region Attributes
     //parrot Stats
     [SerializeField] private int playerNum = 1;
-    [SerializeField] private float speed = 2.0f;
-    private float maxSpeed;
+    [SerializeField] private float baseSpeed = 10.0f;
+    private float currentSpeed;
     [SerializeField] private float turnSpeed = 2.0f;
     [SerializeField] private float minHeight = 0;
     [SerializeField] private float maxHeight = 15;
@@ -61,8 +61,8 @@ public class Parrot : MonoBehaviour
     private float inputDelay = 0.3f;
     private float horizontalInput = 0;
     private float verticalInput = 0;
-    private float flyUpInput = 0;
-    private float flyDownInput = 0;
+    private float boostInput = 0;
+    private float brakeInput = 0;
 
     //Game Manager
     private GameManager gm;
@@ -127,7 +127,7 @@ public class Parrot : MonoBehaviour
         dropCooldown = utilityCooldowns[0]; // assign initial utility
         SpawnUtility();
 
-        maxSpeed = speed * 3;
+        currentSpeed = baseSpeed;
 	}
 
     //Update is called once per frame
@@ -243,11 +243,12 @@ public class Parrot : MonoBehaviour
         horizontalInput = Input.GetAxis(inputManager.HORIZONTAL_AXIS);
         verticalInput = Input.GetAxis(inputManager.VERTICAL_AXIS);
         
-        flyUpInput = Input.GetAxis(inputManager.FLY_UP_AXIS);
-        flyDownInput = Input.GetAxis(inputManager.FLY_DOWN_AXIS);
+        boostInput = Input.GetAxis(inputManager.BOOST_AXIS);
+        brakeInput = Input.GetAxis(inputManager.BRAKE_AXIS);
 
-        float boostInput = Input.GetAxis(inputManager.BOOST_AXIS);
-        bool boost = Input.GetButton(inputManager.BOOST_AXIS);
+        float flyInput = Input.GetAxis(inputManager.FLY_AXIS);
+       // Debug.Log("BOOST:" + boostInput);
+        bool fly = Input.GetButton(inputManager.FLY_AXIS);
 
         //zero velocity
         rBody.velocity = Vector3.zero;
@@ -258,36 +259,36 @@ public class Parrot : MonoBehaviour
 
         //parrot move forwards
         //if accelerate btn is pressed
-        if (boost && boostInput > 0) 
+        if (Mathf.Abs(boostInput) > inputDelay) 
         {
-            //---old back up ----
             //parrot speed is doubled
-            //rBody.velocity = transform.forward * (2 * speed); 
-
-            //increase speed
-            speed += accelRate;
-            if(speed > maxSpeed)
+            currentSpeed += accelRate;
+            if(currentSpeed > baseSpeed * 3)
             {
-                speed = maxSpeed;
+                currentSpeed = baseSpeed * 3;
             }
         }
         //if Decelerate btn is pressed
-        else if (boost && boostInput < 0) 
+        else if (Mathf.Abs(brakeInput) > inputDelay) 
         {
             //parrot speed is halved
             //rBody.velocity = transform.forward * (0.5f * speed); 
 
             //decrease speed
-            speed -= accelRate;
-            if(speed < 0)
+            currentSpeed -= baseSpeed/8;
+            if(currentSpeed < 0)
             {
-                speed = 0;
+                currentSpeed = 0;
             }
+        }
+        else
+        {
+            currentSpeed = baseSpeed;
         }
         //if neither the accelerate btn or decelerate btn is pressed 
         
         //parrot speed is added to velocity
-        rBody.velocity += transform.forward * speed;
+        rBody.velocity += transform.forward * currentSpeed;
 
         //Parrot fly up
         //make sure input is greater than deadzone range
@@ -297,7 +298,7 @@ public class Parrot : MonoBehaviour
             if (verticalInput > 0 && transform.position.y < maxHeight) 
             {
                 //a upwards velocity is add to parrot's current speed
-                rBody.velocity += new Vector3(0, speed, 0);
+                rBody.velocity += new Vector3(0, currentSpeed, 0);
 
                 //rotates parrot up
                 Quaternion target = Quaternion.Euler(-verticalRot, transform.eulerAngles.y, 0);
@@ -307,7 +308,7 @@ public class Parrot : MonoBehaviour
             else if (verticalInput < 0 && transform.position.y > minHeight)
             {
                 //a downwards velocity is added to parrot's current velocity
-                rBody.velocity += new Vector3(0, -speed, 0);
+                rBody.velocity += new Vector3(0, -currentSpeed, 0);
 
                 //angle the parrot down
                 Quaternion target = Quaternion.Euler(verticalRot, transform.eulerAngles.y, 0);
@@ -315,9 +316,9 @@ public class Parrot : MonoBehaviour
             }
         }
         //code below does same thing as code above except using the triggers
-        else if(Mathf.Abs(flyUpInput) > inputDelay && transform.position.y < maxHeight)
+        else if(fly && flyInput > 0)
         {
-            rBody.velocity += new Vector3(0, speed, 0);
+            rBody.velocity += new Vector3(0, currentSpeed, 0);
             //parrotRotation += new Vector3(-45, 0, 0);
 
             //rotates parrot up
@@ -325,9 +326,9 @@ public class Parrot : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
         }
         //parrot fly down
-        else if (Mathf.Abs(flyDownInput) > inputDelay && transform.position.y > minHeight) 
+        else if (fly && flyInput < 0) 
         {
-            rBody.velocity += new Vector3(0, -speed, 0);
+            rBody.velocity += new Vector3(0, -currentSpeed, 0);
             //parrotRotation += new Vector3(45, 0, 0);
 
             //angle the parrot down

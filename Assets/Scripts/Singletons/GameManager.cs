@@ -19,8 +19,8 @@ public class PlayerInput
     string r3;
 
     //Parrot Axes
-    string fly_up;
-    string fly_down;
+    string fly;
+    string brake;
     string boost;
     string possess;
     string parrot_pickup;
@@ -68,14 +68,14 @@ public class PlayerInput
         get { return r3; }
     }
 
-    public string FLY_UP_AXIS
+    public string FLY_AXIS
     {
-        get { return fly_up; }
+        get { return fly; }
     }
 
-    public string FLY_DOWN_AXIS
+    public string BRAKE_AXIS
     {
-        get { return fly_down; }
+        get { return brake; }
     }
 
     public string BOOST_AXIS
@@ -131,7 +131,7 @@ public class PlayerInput
     /// <summary>
     /// Configure the input based on the player number
     /// </summary>
-    /// <param name="playerNum"></param>
+    /// <param name="playerNum"> the players number (1 index based)</param>
     public void ConfigureInput(int playerNum)
     {
         //set player id
@@ -148,8 +148,8 @@ public class PlayerInput
                 r3 = "R3_P1";
 
                 //SET PARROT AXES
-                fly_up = "FlyUp_P1";
-                fly_down = "FlyDown_P1";
+                fly = "Fly_P1";
+                brake = "Brake_P1";
                 boost = "BoostFly_P1";
                 possess = "Possess_P1";
                 parrot_pickup = "ParrotPickup_P1";
@@ -175,8 +175,8 @@ public class PlayerInput
                 r3 = "R3_P2";
 
                 //SET PARROT AXES
-                fly_up = "FlyUp_P2";
-                fly_down = "FlyDown_P2";
+                fly = "Fly_P2";
+                brake = "Brake_P2";
                 boost = "BoostFly_P2";
                 possess = "Possess_P2";
                 parrot_pickup = "ParrotPickup_P2";
