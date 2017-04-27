@@ -176,7 +176,15 @@ public class CaptainPirate: MonoBehaviour
                 Respawn();
             }
         }
-        
+        else //pirate is not active
+        {
+            CheckIfGrounded();
+            if (!grounded || onMoving) //if pirate is in air when not active 
+            {
+                //Respawn Pirate
+                Respawn();
+            }
+        }
         Signal();
     }
 
