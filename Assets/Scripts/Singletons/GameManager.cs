@@ -22,18 +22,17 @@ public class PlayerInput
     string fly;
     string boostBrake;
     string possess;
-    string parrot_pickup;
     string utility_switch;
-    string trap_activate;
+    string parrot_pickup;
     string signal;
 
     //Pirate Axes
     string jump;
-    string pirate_pickup;
     string respawn;
 
     //Menu Axes
     string submit;
+    string pause;
     #endregion
 
     #region Properties
@@ -82,6 +81,11 @@ public class PlayerInput
         get { return possess; }
     }
 
+    public string UTILITY_SWITCH
+    {
+        get { return utility_switch; }
+    }
+
     public string PARROT_PICKUP_AXIS
     {
         get { return parrot_pickup; }
@@ -97,11 +101,6 @@ public class PlayerInput
         get { return jump; }
     }
 
-    public string PICKUP_MOVE_AXIS
-    {
-        get { return pirate_pickup; }
-    }
-
     public string RESPAWN_AXIS
     {
         get { return respawn; }
@@ -110,16 +109,11 @@ public class PlayerInput
     {
         get { return submit; }
     }
-
-    public string UTILITY_SWITCH
+    public string PAUSE_AXIS
     {
-        get { return utility_switch; }
+        get { return pause; }
     }
 
-    public string PARROT_TRAP_AXIS
-    {
-        get { return trap_activate; }
-    }
     #endregion
 
     /// <summary>
@@ -147,16 +141,15 @@ public class PlayerInput
                 possess = "Possess_P1";
                 parrot_pickup = "ParrotPickup_P1";
                 utility_switch = "UtilitySwitch_P1";
-                trap_activate = "TrapActivate_P1";
                 signal = "Signal_P1";
 
                 //SET PIRATE AXES
                 jump = "Jump_P1";
-                pirate_pickup = "Pickup/Move_P1";
                 respawn = "Respawn_P1";
 
                 //SET MENU AXES
                 submit = "Submit_P1";
+                pause = "Pause_P1";
                 break;
 
             case 2:
@@ -173,16 +166,15 @@ public class PlayerInput
                 possess = "Possess_P2";
                 parrot_pickup = "ParrotPickup_P2";
                 utility_switch = "UtilitySwitch_P2";
-                trap_activate = "TrapActivate_P2";
                 signal = "Signal_P2";
 
                 //SET PIRATE AXES
                 jump = "Jump_P2";
-                pirate_pickup = "Pickup/Move_P2";
                 respawn = "Respawn_P2";
 
                 //SET MENU AXES
                 submit = "Submit_P2";
+                pause = "Pause_P2";
                 break;
         }
         

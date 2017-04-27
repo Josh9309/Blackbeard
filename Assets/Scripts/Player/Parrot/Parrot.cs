@@ -132,6 +132,7 @@ public class Parrot : MonoBehaviour
     //Update is called once per frame
     private void Update() 
     {
+        if(Input.GetButtonDown(inputManager.PAUSE_AXIS))Debug.Log(playerNum + "Pause: ");
         Signal(); //turns on the signal beams for pirates
         if (active)
         {
@@ -247,7 +248,7 @@ public class Parrot : MonoBehaviour
 
         float flyInput = Input.GetAxis(inputManager.FLY_AXIS);
         //Debug.Log("BOOST:" + boostInput + "Brake:" + brakeInput);
-        if(playerNum == 2) Debug.Log("Brake:" + boostBrakeInput);
+        
         bool fly = Input.GetButton(inputManager.FLY_AXIS);
 
         //zero velocity

@@ -67,7 +67,7 @@ public class TrapInteraction : MonoBehaviour
                 //TODO: update this with UI cues
                 if (direction.magnitude < 10f)
                 {
-                    if (Input.GetButton(parrot.InputManager.PARROT_TRAP_AXIS))
+                    if (Input.GetButton(parrot.InputManager.POSSESS_AXIS))
                     {
                         cutDownTraps.Add(traps[i]); //Add the trap to the list to cut down from
 
