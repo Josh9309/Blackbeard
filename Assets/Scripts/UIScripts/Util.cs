@@ -19,7 +19,7 @@ public class Util : MonoBehaviour {
 	//util num uses fields
 	private RectTransform fullScale;
 	private int totalLanterns;
-	private Color colorSave;
+	private Color32 colorSave;
 
 	//util icon fields
 	[SerializeField] private List<Sprite> utilImages;
@@ -67,8 +67,7 @@ public class Util : MonoBehaviour {
 				if (ply.GetComponent<Parrot>().NumLanterns > 0)
 				{
 					//scale
-					float scale = (float) ply.GetComponent<Parrot>().NumLanterns / totalLanterns;
-					coolDownMeter.rectTransform.sizeDelta = coolDownMeter.rectTransform.sizeDelta - new Vector2(10, 10);
+					coolDownMeter.rectTransform.sizeDelta = coolDownMeter.rectTransform.sizeDelta - new Vector2(15, 15);
 				}
 				else
 				{
