@@ -10,18 +10,23 @@ public class MovingPlatform : MonoBehaviour {
     [SerializeField] private WayPoint currentPoint;
     [SerializeField] private bool canMoveVertical = false;
     [SerializeField] private bool canMoveHorizontal = true;
+    [SerializeField] private bool waitForPlayer = false;
 
     private Rigidbody rBody;
 
     private Vector3 ultimateForce;
     private Vector3 velocity;
     private Vector3 acceleration;
+    private bool active = true;
     #endregion
 
     // Use this for initialization
     void Start () {
         rBody = GetComponent<Rigidbody>();
-
+        if (waitForPlayer)
+        {
+            active = false;
+        }
         Physics.IgnoreLayerCollision(8, 9); //ingnore collisions with the parrots
 	}
 	
@@ -63,27 +68,52 @@ public class MovingPlatform : MonoBehaviour {
         acceleration = Vector3.zero;
     }
 
+    private void OnCollisionStay(Collision col)
+    {
+        if(col.collider.tag == "Pirate" && waitForPlayer)
+        {
+            active = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision col)
+    {
+        if (waitForPlayer)
+        {
+            active = false;
+        }
+    }
+
     private void CheckCurrentPoint()
     {
-        //Check if Vehicle is within range of that point
-        Vector3 VecToCenter = currentPoint.transform.position - transform.position;
-        float dist = VecToCenter.magnitude;
-        if (dist < currentPoint.Range)
+        if (active) //if platform is active proceed as normal.
         {
-            //Get next Point To seek
-            for (int p = 0; p < platformPath.PathWayPoints.Length; p++)
+            //Check if Vehicle is within range of that point
+            Vector3 VecToCenter = currentPoint.transform.position - transform.position;
+            float dist = VecToCenter.magnitude;
+            if (dist < currentPoint.Range)
             {
-                WayPoint NextPoint = platformPath.PathWayPoints[p];
-                if (NextPoint.WayPointNum == currentPoint.NextPoint)
+                //Get next Point To seek
+                for (int p = 0; p < platformPath.PathWayPoints.Length; p++)
                 {
-                    currentPoint = platformPath.PathWayPoints[p];
-                    break;
+                    WayPoint NextPoint = platformPath.PathWayPoints[p];
+                    if (NextPoint.WayPointNum == currentPoint.NextPoint)
+                    {
+                        currentPoint = platformPath.PathWayPoints[p];
+                        break;
+                    }
                 }
             }
         }
-        else
+        else if(currentPoint.StartPoint != true)
         {
-            //Do Nothing
+            for(int i =0; i < platformPath.PathWayPoints.Length; i++)
+            {
+                if (platformPath.PathWayPoints[i].StartPoint)
+                {
+                    currentPoint = platformPath.PathWayPoints[i];
+                }
+            }
         }
     }
 
