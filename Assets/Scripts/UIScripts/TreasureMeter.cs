@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//TO BE RETOOLED
+// Joel @ Satch: learn to comment bud
 public class TreasureMeter : MonoBehaviour
 {
     [SerializeField]
@@ -12,9 +12,10 @@ public class TreasureMeter : MonoBehaviour
     [SerializeField]
     GameObject treasure;
     [SerializeField]
-    GameObject redTreasureLoc;
+    GameObject redPly;
     [SerializeField]
-    GameObject blueTreasureLoc;
+    GameObject bluePly;
+
     float currentdistRed;
     float totalDistRed;
     float currentDistBlue;
@@ -23,31 +24,31 @@ public class TreasureMeter : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        totalDistRed = Vector3.Distance(treasure.transform.position, redTreasureLoc.transform.position);
-        totalDistBlue = Vector3.Distance(treasure.transform.position, blueTreasureLoc.transform.position);
+        //get total distance between players and treasure
+        totalDistRed = Vector3.Distance(treasure.transform.position, redPly.transform.position);
+        totalDistBlue = Vector3.Distance(treasure.transform.position, bluePly.transform.position);
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        currentdistRed = Vector3.Distance(treasure.transform.position, redTreasureLoc.transform.position);
-        currentDistBlue = Vector3.Distance(treasure.transform.position, blueTreasureLoc.transform.position);
+        //get current distance between players and treasure
+        currentdistRed = Vector3.Distance(treasure.transform.position, redPly.transform.position);
+        currentDistBlue = Vector3.Distance(treasure.transform.position, bluePly.transform.position);
 
-        if (treasure.transform.position != redTreasureLoc.transform.position)
+        //check if we arent on the treasure itself fo red
+        if (treasure.transform.position != redPly.transform.position)
         {
-           // if (redBar.transform.localScale.x <= 1.2)
-           // {
-                redBar.transform.localScale = new Vector3(currentdistRed / totalDistRed, redBar.transform.localScale.y, redBar.transform.localScale.z);
-            //}
+            //update scale of red players bar
+               redBar.transform.localScale = new Vector3(currentdistRed / totalDistRed, redBar.transform.localScale.y, redBar.transform.localScale.z);
         }
 
-        if (treasure.transform.position != blueTreasureLoc.transform.position)
+        //check if we arent on the treasure itself for blue
+        if (treasure.transform.position != bluePly.transform.position)
         {
-          //  if (blueBar.transform.localScale.x <= 1.2)
-           // {
-                blueBar.transform.localScale = new Vector3(currentDistBlue / totalDistBlue, blueBar.transform.localScale.y, blueBar.transform.localScale.z);
-           // }
-         }
+            //update scale of blue players bar
+            blueBar.transform.localScale = new Vector3(currentDistBlue / totalDistBlue, blueBar.transform.localScale.y, blueBar.transform.localScale.z);
+        }
     }
     
 }

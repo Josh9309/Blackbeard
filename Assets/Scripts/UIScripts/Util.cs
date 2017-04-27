@@ -17,9 +17,9 @@ public class Util : MonoBehaviour {
 	bool canUseUtil;
 
 	//util num uses fields
-	private RectTransform fullScale;
+	private Vector2 fullScale;
 	private int totalLanterns;
-	private Color colorSave;
+	private Color32 colorSave;
 
 	//util icon fields
 	[SerializeField] private List<Sprite> utilImages;
@@ -40,7 +40,7 @@ public class Util : MonoBehaviour {
 		currentUtil.sprite = utilImages[0]; //set inital utility
 
 		//set fields for num of uses
-		fullScale = coolDownMeter.rectTransform; //original scale
+		fullScale = coolDownMeter.rectTransform.sizeDelta; //original scale
 		totalLanterns = ply.GetComponent<Parrot>().NumLanterns; //total number of lanterns(whatever num they ahve at first)
 		colorSave = coolDownMeter.color; //original color
 
@@ -59,30 +59,6 @@ public class Util : MonoBehaviour {
 		{ //check if we just used a util(we could use it a second ago, but not now)
 			cooldown = ply.GetComponent<Parrot> ().DropCoolDown; //get cooldown time from parrot
 			time = 0; //reset values
-
-			//scale util cooldown based on numLantern
-			if (ply.GetComponent<Parrot>().CurrentUtilityID == 0) //lantern
-			{
-				//check if we dont have anymore lanterns
-				if (ply.GetComponent<Parrot>().NumLanterns > 0)
-				{
-					//scale
-					float scale = (float) ply.GetComponent<Parrot>().NumLanterns / totalLanterns;
-					coolDownMeter.rectTransform.sizeDelta = coolDownMeter.rectTransform.sizeDelta - new Vector2(10, 10);
-				}
-				else
-				{
-					//fullscale but transparent
-					coolDownMeter.rectTransform.sizeDelta = fullScale.sizeDelta;
-					coolDownMeter.color = new Color32(146, 146, 146, 225); //grey
-				}
-			}
-			else
-			{
-				//reset scale  and color bc we dont need it for the other utils
-				coolDownMeter.rectTransform.sizeDelta = fullScale.sizeDelta;
-				coolDownMeter.color = colorSave;
-			}
 		} 
 		else if (!canUseUtil) 
 		{
@@ -92,6 +68,31 @@ public class Util : MonoBehaviour {
 			//fill cooldown meter bit by bit
 			coolDownMeter.fillAmount = time / cooldown;
 		} 
+
+        //scale util cooldown based on numLantern
+        if (ply.GetComponent<Parrot>().CurrentUtilityID < 1) //lantern
+        {
+            int dif = (totalLanterns - ply.GetComponent<Parrot>().NumLanterns); //difference bwteen total num lanterns and current num
+
+            //check if we dont have anymore lanterns
+            if (ply.GetComponent<Parrot>().NumLanterns > 0)
+            {
+                //scale
+                coolDownMeter.rectTransform.sizeDelta = fullScale - (new Vector2(15 * dif, 15 * dif));
+            }
+            else
+            {
+                //fullscale but transparent
+                coolDownMeter.rectTransform.sizeDelta = fullScale;
+                coolDownMeter.color = new Color32(146, 146, 146, 225); //grey
+            }
+        }
+        else
+        {
+            //reset scale  and color bc we dont need it for the other utils
+            coolDownMeter.rectTransform.sizeDelta = fullScale;
+            coolDownMeter.color = colorSave;
+        }
 	}
 	#endregion
 
