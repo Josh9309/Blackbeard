@@ -20,8 +20,7 @@ public class PlayerInput
 
     //Parrot Axes
     string fly;
-    string brake;
-    string boost;
+    string boostBrake;
     string possess;
     string parrot_pickup;
     string utility_switch;
@@ -73,14 +72,9 @@ public class PlayerInput
         get { return fly; }
     }
 
-    public string BRAKE_AXIS
+    public string BOOST_BRAKE_AXIS
     {
-        get { return brake; }
-    }
-
-    public string BOOST_AXIS
-    {
-        get { return boost; }
+        get { return boostBrake; }
     }
 
     public string POSSESS_AXIS
@@ -149,8 +143,7 @@ public class PlayerInput
 
                 //SET PARROT AXES
                 fly = "Fly_P1";
-                brake = "Brake_P1";
-                boost = "BoostFly_P1";
+                boostBrake = "Boost_Brake_P1";
                 possess = "Possess_P1";
                 parrot_pickup = "ParrotPickup_P1";
                 utility_switch = "UtilitySwitch_P1";
@@ -176,8 +169,7 @@ public class PlayerInput
 
                 //SET PARROT AXES
                 fly = "Fly_P2";
-                brake = "Brake_P2";
-                boost = "BoostFly_P2";
+                boostBrake = "Boost_Brake_P2";
                 possess = "Possess_P2";
                 parrot_pickup = "ParrotPickup_P2";
                 utility_switch = "UtilitySwitch_P2";

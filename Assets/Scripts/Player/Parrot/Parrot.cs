@@ -61,8 +61,7 @@ public class Parrot : MonoBehaviour
     private float inputDelay = 0.3f;
     private float horizontalInput = 0;
     private float verticalInput = 0;
-    private float boostInput = 0;
-    private float brakeInput = 0;
+    private float boostBrakeInput = 0;
 
     //Game Manager
     private GameManager gm;
@@ -243,11 +242,12 @@ public class Parrot : MonoBehaviour
         horizontalInput = Input.GetAxis(inputManager.HORIZONTAL_AXIS);
         verticalInput = Input.GetAxis(inputManager.VERTICAL_AXIS);
         
-        boostInput = Input.GetAxis(inputManager.BOOST_AXIS);
-        brakeInput = Input.GetAxis(inputManager.BRAKE_AXIS);
+        boostBrakeInput = Input.GetAxis(inputManager.BOOST_BRAKE_AXIS);
+        //brakeInput = Input.GetAxis(inputManager.BRAKE_AXIS);
 
         float flyInput = Input.GetAxis(inputManager.FLY_AXIS);
-       // Debug.Log("BOOST:" + boostInput);
+        //Debug.Log("BOOST:" + boostInput + "Brake:" + brakeInput);
+        if(playerNum == 2) Debug.Log("Brake:" + boostBrakeInput);
         bool fly = Input.GetButton(inputManager.FLY_AXIS);
 
         //zero velocity
@@ -259,7 +259,7 @@ public class Parrot : MonoBehaviour
 
         //parrot move forwards
         //if accelerate btn is pressed
-        if (Mathf.Abs(boostInput) > inputDelay) 
+        if (boostBrakeInput < 0) 
         {
             //parrot speed is doubled
             currentSpeed += accelRate;
@@ -269,7 +269,7 @@ public class Parrot : MonoBehaviour
             }
         }
         //if Decelerate btn is pressed
-        else if (Mathf.Abs(brakeInput) > inputDelay) 
+        else if (boostBrakeInput > 0) 
         {
             //parrot speed is halved
             //rBody.velocity = transform.forward * (0.5f * speed); 
