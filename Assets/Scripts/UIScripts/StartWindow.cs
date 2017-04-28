@@ -20,19 +20,26 @@ public class StartWindow : BaseWindow
     #region inBuildMethods
     void Start()
     {
-        pause = false;
-        newGame = !pause;
-        if (pause)
+        //only have start button if we are on mainmenu
+        if (SceneManager.GetActiveScene().name != "MainMenu")
         {
             startButton.gameObject.SetActive(false);
+            pauseButton.gameObject.SetActive(true);
         }
-        if (newGame)
+        else
         {
+            startButton.gameObject.SetActive(true);
             pauseButton.gameObject.SetActive(false);
         }
-      
+
+        Open();
     }
 
+    void Awake()
+    {
+        Debug.Log("find menu");
+
+    }
 
     #endregion
 
@@ -41,21 +48,16 @@ public class StartWindow : BaseWindow
     //opens the Main Menu 
     protected override void Open()
     {
-        //to turn pause and new game on/off
-        //if pause if off window is on and vise versa
-         //turn off pause
-        //pauseButton.gameObject.SetActive(pause);
-        //if (pauseButton.gameObject.activeSelf)
-        //{
-        //    firstSelected = startButton.gameObject;
-        //}
-
-        ////turn off start
-        //startButton.gameObject.SetActive(newGame);
-        //if (startButton.gameObject.activeSelf)
-        //{
-        //    firstSelected = pauseButton.gameObject;
-        //}
+        //base.Open();
+        //set correct first start based on what scene we are in
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            firstSelected = pauseButton.gameObject;
+        }
+        else
+        {
+            firstSelected = startButton.gameObject;
+        }
 
         base.Open();
     }
@@ -70,10 +72,11 @@ public class StartWindow : BaseWindow
 
     protected void ResumeGame()
     {
-        SceneManager.LoadScene("Poseidon");
-        //MenuManager.Instance.enabled = false;   
-        //MenuManager.Instance.GoToScreen("GameHUD");
-       // Debug.Log(" Resume Pressed");
+        MenuManager.Instance.GoToScreen("Start"); //reset start screen
+        MenuManager.Instance.MenuEnabled = !MenuManager.Instance.MenuEnabled;
+        GameManager.Instance.HUD.GetComponent<Canvas>().enabled = (!GameManager.Instance.HUD.GetComponent<Canvas>().enabled);
+        //turn on HUD
+        Debug.Log(" Resume Pressed");
     }
     //method for main menu
     public void MainMenu()

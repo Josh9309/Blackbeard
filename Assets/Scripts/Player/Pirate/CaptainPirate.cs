@@ -186,6 +186,13 @@ public class CaptainPirate: MonoBehaviour
             }
         }
         Signal();
+
+        if (Input.GetButtonDown(inputManager.PAUSE_AXIS))
+        {
+            //turn on/off the menu and the HUD
+            MenuManager.Instance.MenuEnabled = !MenuManager.Instance.MenuEnabled;
+            GameManager.Instance.HUD.GetComponent<Canvas>().enabled = (!GameManager.Instance.HUD.GetComponent<Canvas>().enabled);
+        }
     }
 
 	private void FixedUpdate ()

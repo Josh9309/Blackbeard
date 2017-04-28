@@ -21,7 +21,7 @@ public class OptionsMenu: BaseWindow
     #region inBuildMethods
     void Start()
     {
-       
+        Open();
 
     }
 

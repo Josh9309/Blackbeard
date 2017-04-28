@@ -14,11 +14,33 @@ public class MenuManager : Singleton<MenuManager>
 	Dictionary<string, GameObject> screens = new Dictionary<string, GameObject>();
 	Stack<string> screenStack = new Stack<string>();
     [SerializeField] Canvas menu;
+
+    //pauseing
+    private bool pause;
+ 
     #endregion
 
     #region Properties
     public Dictionary<string, GameObject> Screens { get { return screens; } }
 	public string CurrentScreen { get { return screenStack.Peek(); } }
+
+    public bool MenuEnabled
+    {
+        get { return menu.enabled; }
+        set
+        {
+            menu.enabled = value;
+        }
+    }
+
+    public bool Pause
+    {
+        get { return pause; }
+        set
+        {
+            pause = value;
+        }
+    }
     #endregion
 
     #region inBuiltMethods
@@ -29,18 +51,36 @@ public class MenuManager : Singleton<MenuManager>
 		{
 			screens.Add(gameObject.transform.GetChild(0).GetChild(i).name, gameObject.transform.GetChild(0).GetChild(i).gameObject);
 		}
+
+        //make menu only initally there on main menu
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            menu.enabled = false;
+        }
+
+        //keep this when we change scenes
         DontDestroyOnLoad(this);
 	}
 
 	void Start()
 	{
-		GoToScreen("Start");
+		GoToScreen("Start"); //goto the main menu start screen
+        pause = false; //we def arent in the pause menu rn
+
+        //make menu only initally there on main menu
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            menu.enabled = false;
+        }
+        else
+        {
+            menu.enabled = true;
+        }
 	}
 
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name == "Poseidon")
-            menu.enabled = false;
+        
     }
     #endregion
 

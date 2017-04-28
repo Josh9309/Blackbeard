@@ -206,6 +206,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private Parrot parrotP1;
     [SerializeField] private Parrot parrotP2;
     [SerializeField] private GameObject parrotSpawn;
+    [SerializeField] private GameObject hud;
 
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
     private PlayerState currentPlayer2State = PlayerState.PARROT;
@@ -215,6 +216,9 @@ public class GameManager : Singleton<GameManager>
     PirateCam captainCamera2;
     ParrotCam parrotCamera1;
     ParrotCam parrotCamera2;
+
+    //HUD
+
     #endregion
 
     //Signals
@@ -293,6 +297,15 @@ public class GameManager : Singleton<GameManager>
     {
         get { return signalOn; }
         set { signalOn = value; }
+    }
+
+    public GameObject HUD
+    {
+        get { return hud; }
+        set
+        {
+            hud = value;
+        }
     }
     #endregion
 
