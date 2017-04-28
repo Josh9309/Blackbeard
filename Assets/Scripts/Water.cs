@@ -20,6 +20,16 @@ public class Water : MonoBehaviour {
         if(col.gameObject.tag == "Pirate")
         {
             col.gameObject.GetComponent<CaptainPirate>().Respawn();
+
+
+            if (Random.Range(0, 100) > 80)
+            {
+                SoundManager.Instance.PlaySfx("drowning");
+            }
+            else
+            {
+                SoundManager.Instance.PlaySfx("splash");
+            }
         }
     }
 }

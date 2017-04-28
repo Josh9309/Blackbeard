@@ -26,11 +26,48 @@ public class SoundManager : Singleton<SoundManager>
         musicSource = gameObject.AddComponent<AudioSource>();
 
         //add sounds to the lib
-        //musicLibrary.Add("backgroundMusic", Resources.Load("Sfx/backgroundMusic") as AudioClip);
+        musicLibrary.Add("ambientWaves", Resources.Load("sfx/ambientWaves") as AudioClip);
+
+        sfxLibrary.Add("BoatMortgage", Resources.Load("sfx/BoatMortage") as AudioClip);
+        sfxLibrary.Add("FineBooty", Resources.Load("sfx/FineBootyAtTheEndOfThisCourse") as AudioClip);
+        sfxLibrary.Add("BootyPlunder", Resources.Load("sfx/meBootiesBeenPlundered") as AudioClip);
+        sfxLibrary.Add("ShiverMeTimbers", Resources.Load("sfx/meTimbersHaveBeenShivered") as AudioClip);
+        sfxLibrary.Add("BottleOfRoum", Resources.Load("sfx/standAroundAllDay_BottleOfRum") as AudioClip);
+        sfxLibrary.Add("WhatYaStoppinForLad", Resources.Load("sfx/whatYaStoppingForLad") as AudioClip);
+        sfxLibrary.Add("WhatYaStoppinForLad_BoatMortgage", Resources.Load("sfx/whatYaStoppingForLad_BoatMortage") as AudioClip);
+
+        sfxLibrary.Add("hurt1", Resources.Load("sfx/hurt1") as AudioClip);
+        sfxLibrary.Add("hurt2", Resources.Load("sfx/hurt2") as AudioClip);
+        sfxLibrary.Add("hurt3", Resources.Load("sfx/hurt3") as AudioClip); //best
+        sfxLibrary.Add("hurt4", Resources.Load("sfx/hurt4") as AudioClip);
+
+        sfxLibrary.Add("drowning", Resources.Load("sfx/drowning1") as AudioClip); //kevs im drowning quote
+        sfxLibrary.Add("splash", Resources.Load("sfx/splash") as AudioClip);
+
+        sfxLibrary.Add("jump1", Resources.Load("sfx/jump1") as AudioClip);
+        sfxLibrary.Add("jump2", Resources.Load("sfx/jump2") as AudioClip);
+
+        sfxLibrary.Add("step", Resources.Load("sfx/step1") as AudioClip); //one step in a walk
+        sfxLibrary.Add("stride", Resources.Load("sfx/stride") as AudioClip); //a full slow stride
+
+        sfxLibrary.Add("squack1", Resources.Load("sfx/squack1") as AudioClip);
+        sfxLibrary.Add("squack2", Resources.Load("sfx/squack2") as AudioClip);
+        sfxLibrary.Add("squack3", Resources.Load("sfx/squack3") as AudioClip);
+        sfxLibrary.Add("squack_extended", Resources.Load("sfx/squack_extended") as AudioClip);
+
+        sfxLibrary.Add("chirpping", Resources.Load("sfx/chirpping") as AudioClip); //for the concussion birbs
+
+        sfxLibrary.Add("wings1", Resources.Load("sfx/wings1") as AudioClip);
+        sfxLibrary.Add("wings2", Resources.Load("sfx/wings2") as AudioClip);
+        sfxLibrary.Add("wings3", Resources.Load("sfx/wings3") as AudioClip);
+        sfxLibrary.Add("wings4", Resources.Load("sfx/wings4") as AudioClip);
+
+        sfxLibrary.Add("chestOpening", Resources.Load("sfx/chestOpening") as AudioClip);
 
         //loop background music
         musicSource.loop = true; //turn on looping
-        //musicSource.clip = musicLibrary["backgroundMusic"]; //set default song
+        musicSource.clip = musicLibrary["ambientWaves"]; //set default song
+        ChangeMusicVolume(20);
         musicSource.Play(); //play music
 	}
 
@@ -74,7 +111,7 @@ public class SoundManager : Singleton<SoundManager>
     public void ChangeSfxVolume(int volume)
     {
         //chnage volume into a float for the actual volume- and set to sfxVolume
-        sfxSource.volume = (volume / 100);
+        sfxSource.volume = (float)(volume / 100.00);
     }
 
     /// <summary>
@@ -84,6 +121,6 @@ public class SoundManager : Singleton<SoundManager>
     public void ChangeMusicVolume(int volume)
     {
         //chnage volume into a float for the actual volume- and set to sfxVolume
-        musicSource.volume = (volume / 100);
+        musicSource.volume = (float)(volume / 100.00);
     }
 }

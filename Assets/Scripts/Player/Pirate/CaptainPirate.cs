@@ -219,7 +219,10 @@ public class CaptainPirate: MonoBehaviour
         if (itemScript != null && itemScript.Active)
         {
             if (coll.gameObject.name.Contains("Coconut"))
+            {
                 StartCoroutine(Stun(2));
+                SoundManager.Instance.PlaySfx("hurt2");
+            }
 
             //Probably shouldn't do this
             //else //If this is any other object
@@ -340,6 +343,7 @@ public class CaptainPirate: MonoBehaviour
             pirateAnim.SetBool("Grounded", false);
             jumpInput = false;
             canDoubleJump = true;
+            SoundManager.Instance.PlaySfx("jump1");
         }
         else if(!grounded && canDoubleJump &&jumpInput)
         {
@@ -348,6 +352,7 @@ public class CaptainPirate: MonoBehaviour
             grounded = false;
             jumpInput = false;
             canDoubleJump = false;
+            SoundManager.Instance.PlaySfx("jump2");
         }
     }
 
@@ -357,6 +362,7 @@ public class CaptainPirate: MonoBehaviour
         pirateAnim.Play("Stun");
         stunned = true;
         pirateAnim.SetBool("isStunned", true);
+        SoundManager.Instance.PlaySfx("chirpping");
         yield return new WaitForSeconds(stunTime);
         Debug.Log("unStunned!");
         pirateAnim.SetBool("isStunned", false);

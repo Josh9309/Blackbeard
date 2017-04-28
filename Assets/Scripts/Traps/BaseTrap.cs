@@ -77,6 +77,9 @@ public abstract class BaseTrap : MonoBehaviour {
         {
             //call the trigger Method for the trap
             Trigger(col.gameObject);
+
+            //play hurt sound
+            SoundManager.Instance.PlaySfx("hurt3");
         }
         
     }
