@@ -209,19 +209,16 @@ public class SettingManager : Singleton<SettingManager>
     {
         Debug.Log("SPLIT SPLAT WHAT IS THAT??");
         //originally at verticle, if unchecked then horizontal
-        if(splitScreen.isOn)
+        if (splitScreen.isOn)
         {
             vertical = true;
 
-            //place hud in middle of screen
-            GameManager.Instance.HUD.transform.position = new Vector3(GameManager.Instance.HUD.transform.position.x, Screen.height / 2, GameManager.Instance.HUD.transform.position.z);
+
         }
         else
         {
             vertical = false;
 
-            //place hud at the bottom of the screen
-            GameManager.Instance.HUD.transform.position = new Vector3(GameManager.Instance.HUD.transform.position.x, (Screen.height - 30), GameManager.Instance.HUD.transform.position.z);
         }
     }
 

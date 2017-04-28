@@ -87,17 +87,25 @@ public class SplitScreenCamera : MonoBehaviour
         //Splitscreen type
         if (SettingManager.Instance.Vertical)
         {
+            //set camera
             captainCamera1.rect = new Rect(0, 0, .5f, 1);
             captainCamera2.rect = new Rect(.5f, 0, .5f, 1);
             parrotCamera1.rect = new Rect(0, 0, .5f, 1);
             parrotCamera2.rect = new Rect(.5f, 0, .5f, 1);
+
+            //place hud in middle of screen
+            GameManager.Instance.HUD.transform.position = new Vector3(GameManager.Instance.HUD.transform.position.x, Screen.height / 2, GameManager.Instance.HUD.transform.position.z);
         }
         else
         {
+            //set camera
             captainCamera1.rect = new Rect(0, 0, 1, .5f);
             captainCamera2.rect = new Rect(0, .5f, 1, .5f);
             parrotCamera1.rect = new Rect(0, 0, 1, .5f);
             parrotCamera2.rect = new Rect(0, .5f, 1, .5f);
+
+            //place hud at the bottom of the screen
+            GameManager.Instance.HUD.transform.position = new Vector3(GameManager.Instance.HUD.transform.position.x, (Screen.height - 30), GameManager.Instance.HUD.transform.position.z);
         }
 
         //Recenter all cameras intially
