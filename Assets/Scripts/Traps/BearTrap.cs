@@ -17,14 +17,11 @@ public class BearTrap : BaseTrap {
 
     private void Awake()
     {
-
         trapAnim = gameObject.GetComponent<Animator>();
 
         triggered = false;
 
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        particle = GetComponentInChildren<ParticleSystem>();
-        particle.Pause();
     }
 	
 	// Update is called once per frame
@@ -49,7 +46,6 @@ public class BearTrap : BaseTrap {
     {
         activated = false;
         triggered = false;
-        Destroy(gameObject); // NOTE: not sure if this is the desired effect, talk it over with team once people wake up
         //trapAnim.Play("Activate");
     }
 
@@ -58,7 +54,8 @@ public class BearTrap : BaseTrap {
         triggered = true;
         trapAnim.Play("Activate");
         Debug.Log("Bear trap triggered");
-        StartCoroutine(pirate.GetComponent<CaptainPirate>().Stun(stunTime)); 
+        StartCoroutine(pirate.GetComponent<CaptainPirate>().Stun(stunTime));
+        StartCoroutine(DestroyAfterStun(stunTime + 1));
     }
 
     protected override void OnTriggerEnter(Collider coll)
@@ -69,5 +66,16 @@ public class BearTrap : BaseTrap {
         {
             //GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
         }
+    }
+
+    //Move the bear trap off screen and wait to destroy it
+    //References are needed for coroutines outside of this object
+    public IEnumerator DestroyAfterStun(float destroyTime)
+    {
+        transform.position = new Vector3(0, -1000, 0); //Move object off screen
+
+        yield return new WaitForSeconds(stunTime);
+
+        Destroy(gameObject); //Destroy object
     }
 }

@@ -37,12 +37,6 @@ public class Item : MonoBehaviour
 
         explosionDamage = -1000;
 
-        if (gameObject.name.Contains("Bear_Trap"))
-        {
-            GetComponentInChildren<ParticleSystem>().Clear();
-            GetComponentInChildren<ParticleSystem>().Pause();
-        }
-
         rBody = GetComponent<Rigidbody>();
         previousActive = false;
         objectCollider = GetComponent<Collider>();
@@ -52,10 +46,9 @@ public class Item : MonoBehaviour
     {
         if (gameObject.name.Contains("Bear_Trap"))
         {
-            Debug.Log(gameObject.name);
             GetComponent<BearTrap>().enabled = true;
             
-            this.enabled = false;
+            enabled = false;
         }
     }
 
