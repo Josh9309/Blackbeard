@@ -467,8 +467,11 @@ public class GameManager : Singleton<GameManager>
     {
         //turn on signal beams
         signalOn = true;
-        signal1.Play();
-        signal2.Play();
+
+        if (pirateP1.PirateActive)
+            signal1.Play();
+        else if (pirateP2.PirateActive)
+            signal2.Play();
 
         //treasureSignal.Play(); //The parrot probably shouldn't do this
 
@@ -476,8 +479,11 @@ public class GameManager : Singleton<GameManager>
 
         //turn off signal Beams
         signalOn = false;
-        signal1.Stop();
-        signal2.Stop();
+
+        if (pirateP1.PirateActive)
+            signal1.Stop();
+        else if (pirateP2.PirateActive)
+            signal2.Stop();
 
         //treasureSignal.Stop();
     }
