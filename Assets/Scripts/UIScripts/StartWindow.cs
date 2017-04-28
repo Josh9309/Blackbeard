@@ -65,8 +65,8 @@ public class StartWindow : BaseWindow
     //method for new game button
     protected void NewGame()
     {
+        MenuManager.Instance.MenuEnabled = !MenuManager.Instance.MenuEnabled;
         SceneManager.LoadScene("Poseidon");
-        //MenuManager.Instance.GoToScreen("GameHUD");
         Debug.Log("New Game Pressed");
     }   
 
