@@ -53,7 +53,7 @@ public class BaseWindow : MonoBehaviour
     }
 
     //to Open UI/Button
-    protected virtual void Open()
+    public virtual void Open()
     {
         Display(true);
         OnFocus();

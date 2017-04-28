@@ -20,7 +20,7 @@ public class StartWindow : BaseWindow
     #region inBuildMethods
     void Start()
     {
-        //only have start button if we are on mainmenu
+        /*only have start button if we are on mainmenu
         if (SceneManager.GetActiveScene().name != "MainMenu")
         {
             startButton.gameObject.SetActive(false);
@@ -30,7 +30,7 @@ public class StartWindow : BaseWindow
         {
             startButton.gameObject.SetActive(true);
             pauseButton.gameObject.SetActive(false);
-        }
+        }*/
 
         Open();
     }
@@ -38,7 +38,7 @@ public class StartWindow : BaseWindow
     void Awake()
     {
         Debug.Log("find menu");
-
+        Open();
     }
 
     #endregion
@@ -46,10 +46,10 @@ public class StartWindow : BaseWindow
     #region helperMethods
 
     //opens the Main Menu 
-    protected override void Open()
+    public override void Open()
     {
         //base.Open();
-        //set correct first start based on what scene we are in
+        /*set correct first start based on what scene we are in
         if (SceneManager.GetActiveScene().name != "MainMenu")
         {
             firstSelected = pauseButton.gameObject;
@@ -57,7 +57,7 @@ public class StartWindow : BaseWindow
         else
         {
             firstSelected = startButton.gameObject;
-        }
+        }*/
 
         base.Open();
     }

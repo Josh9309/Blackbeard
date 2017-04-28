@@ -21,17 +21,16 @@ public class OptionsMenu: BaseWindow
     #region inBuildMethods
     void Start()
     {
-        Open();
+       
 
     }
-
 
     #endregion
 
     #region helperMethods
 
     //opens the Main Menu 
-    protected override void Open()
+    public override void Open()
     {
         //to turn pause and new game on/off
         //if pause if off window is on and vise versa

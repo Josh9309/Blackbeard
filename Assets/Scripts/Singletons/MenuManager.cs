@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Attached to main canvas in scene. Menu manager holds references to all ui screens.
@@ -17,7 +18,7 @@ public class MenuManager : Singleton<MenuManager>
 
     //pauseing
     private bool pause;
- 
+    [SerializeField] private GameObject eventSystem;
     #endregion
 
     #region Properties
@@ -30,6 +31,12 @@ public class MenuManager : Singleton<MenuManager>
         set
         {
             menu.enabled = value;
+            eventSystem.SetActive(value);
+            if (value)
+            {
+                GoToScreen("Start"); //goto start menu
+            }
+
         }
     }
 
@@ -97,6 +104,7 @@ public class MenuManager : Singleton<MenuManager>
 		}
 		screenStack.Push(name);
 		screens[name].SetActive(true);
+        screens[name].GetComponent<BaseWindow>().Open();
 	}
 
 	public void Back()
