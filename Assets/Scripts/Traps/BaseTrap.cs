@@ -48,17 +48,17 @@ public abstract class BaseTrap : MonoBehaviour {
             //starts the reset timer
             StartCoroutine(ResetTimer());
         }
-        if (!activated && gm.CurrentPlayer1State == GameManager.PlayerState.PARROT || gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
+        if (!activated && (gm.CurrentPlayer1State == GameManager.PlayerState.PARROT || gm.CurrentPlayer2State == GameManager.PlayerState.PARROT) && !(this is BearTrap))
         {
             particle.startColor = new Color32(244, 215, 50, 255);
             particle.Play();
         }
-        else if (activated && gm.CurrentPlayer1State == GameManager.PlayerState.PARROT || gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
+        else if (activated && (gm.CurrentPlayer1State == GameManager.PlayerState.PARROT || gm.CurrentPlayer2State == GameManager.PlayerState.PARROT) && !(this is BearTrap))
         {
             particle.startColor = Color.red;
             particle.Play();
         }
-        else
+        else if (!(this is BearTrap))
         {
             particle.Clear();
             particle.Pause();
