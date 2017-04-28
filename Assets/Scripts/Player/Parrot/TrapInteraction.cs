@@ -64,9 +64,9 @@ public class TrapInteraction : MonoBehaviour
                 //Raycast to pick up the treasure
                 Physics.Raycast(transform.position, direction, out hit);
 
-                //TODO: update this with UI cues
                 if (direction.magnitude < 10f)
                 {
+                    Debug.Log(direction.magnitude);
                     if (Input.GetButton(parrot.InputManager.POSSESS_AXIS))
                     {
                         cutDownTraps.Add(traps[i]); //Add the trap to the list to cut down from
