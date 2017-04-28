@@ -47,6 +47,7 @@ public class Parrot : MonoBehaviour
     private float dropCooldown; // represents the current utility's dropCooldown
     private bool switchButtonDown = false;
     private bool dropButtonDown = false;
+    private int buttonHeldOnEntry;
 
     // cooldowns for utilities
     // match the index in the utilityCooldowns list to that in the utility list
@@ -126,6 +127,8 @@ public class Parrot : MonoBehaviour
         dropCooldown = utilityCooldowns[0]; // assign initial utility
         SpawnUtility();
 
+        buttonHeldOnEntry = 0;
+
         currentSpeed = baseSpeed;
 	}
 
@@ -133,6 +136,7 @@ public class Parrot : MonoBehaviour
     private void Update() 
     {
         Signal(); //turns on the signal beams for pirates
+
         if (active)
         {
             //pickupScript.Pickup(active); //Let the parrot pickup treasure
@@ -140,6 +144,8 @@ public class Parrot : MonoBehaviour
             SwitchUtility(); // allow parrot to switch current utility
             DropUtility(); // allows parrot to drop utility
         }
+        else
+            buttonHeldOnEntry = 0; //Reset to check held buttons again
     }
 
     //Physics updates
@@ -190,7 +196,7 @@ public class Parrot : MonoBehaviour
     /// </summary>
     private void SpawnUtility()
     {
-        heldUtility = GameObject.Instantiate(currentUtility, 
+        heldUtility = Instantiate(currentUtility, 
             new Vector3(itemSlot.transform.position.x, 
             itemSlot.transform.position.y, itemSlot.transform.position.z),
             Quaternion.identity);
@@ -211,8 +217,18 @@ public class Parrot : MonoBehaviour
     /// </summary>
     private void DropUtility()
     {
-        if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown)
+        if (buttonHeldOnEntry == 0)
         {
+            //Check if the jump button from the pirate was pressed
+            if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS))
+                buttonHeldOnEntry = 1;
+            else
+                buttonHeldOnEntry = 2;
+        }
+
+        if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown && buttonHeldOnEntry == 2)
+        {
+            Debug.Log(Input.GetButton(inputManager.PARROT_PICKUP_AXIS) + "\n" + canDrop + "\n" + dropButtonDown + "\n" + buttonHeldOnEntry);
             heldUtility.GetComponent<Rigidbody>().useGravity = true;
             heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
             heldUtility.transform.parent = null;
@@ -230,6 +246,7 @@ public class Parrot : MonoBehaviour
         else if (Input.GetButtonUp(inputManager.PARROT_PICKUP_AXIS))
         {
             dropButtonDown = false;
+            buttonHeldOnEntry = 2;
         }
     }
 
