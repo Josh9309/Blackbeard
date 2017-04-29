@@ -36,6 +36,7 @@ public class CaptainPirate: MonoBehaviour
     private float turnAmount;
     private float forwardAmount;
     private bool grounded;
+    public  LayerMask groundMask;
     private bool jumpInput;
     private bool canDoubleJump;
     private bool airControl = true;
@@ -393,19 +394,19 @@ public class CaptainPirate: MonoBehaviour
         Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + transform.right) * groundedDist), Color.magenta);
 #endif
         bool groundHit = false;
-        if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist))//if down returns nothing
+        if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist, groundMask))//if down returns nothing
         {
             //check forward raycast
-            if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f),(Vector3.down+transform.forward), out rayHit, groundedDist))
+            if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f),(Vector3.down+transform.forward), out rayHit, groundedDist, groundMask))
             {
                 //check backward raycast
-                if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.forward), out rayHit, groundedDist))
+                if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.forward), out rayHit, groundedDist, groundMask))
                 {
                     //check Left raycast
-                    if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.right), out rayHit, groundedDist))
+                    if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.right), out rayHit, groundedDist, groundMask))
                     {
                         //check Right raycast
-                        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + transform.right), out rayHit, groundedDist))
+                        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + transform.right), out rayHit, groundedDist, groundMask))
                         {
                             groundHit = true;
                         }
