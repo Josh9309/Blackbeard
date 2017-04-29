@@ -292,10 +292,10 @@ public class Parrot : MonoBehaviour
             //rBody.velocity = transform.forward * (0.5f * speed); 
 
             //decrease speed
-            currentSpeed -= baseSpeed/8;
-            if(currentSpeed < 0)
+            currentSpeed -= baseSpeed/16;
+            if(currentSpeed < baseSpeed/2)
             {
-                currentSpeed = 0;
+                currentSpeed = baseSpeed/2;
             }
         }
         else
