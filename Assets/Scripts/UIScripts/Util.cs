@@ -49,7 +49,7 @@ public class Util : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		//set util images based on what the parrot is using
-		currentUtil.sprite = utilImages[ply.GetComponent<Parrot>().CurrentUtilityID];
+		currentUtil.sprite = utilImages[ply.GetComponent<Parrot>().CurrentUtilityID]; //current
 
         //run timer when a util is used
 		couldUseUtil = canUseUtil; //could we use a util last frome?
@@ -69,7 +69,7 @@ public class Util : MonoBehaviour {
 			coolDownMeter.fillAmount = time / cooldown;
 		} 
 
-        //scale util cooldown based on numLantern
+        /*scale util cooldown based on numLantern
         if (ply.GetComponent<Parrot>().CurrentUtilityID < 1) //lantern
         {
             int dif = (totalLanterns - ply.GetComponent<Parrot>().NumLanterns); //difference bwteen total num lanterns and current num
@@ -92,7 +92,7 @@ public class Util : MonoBehaviour {
             //reset scale  and color bc we dont need it for the other utils
             coolDownMeter.rectTransform.sizeDelta = fullScale;
             coolDownMeter.color = colorSave;
-        }
+        }*/
 	}
 	#endregion
 

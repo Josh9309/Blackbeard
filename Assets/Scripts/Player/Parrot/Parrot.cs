@@ -40,7 +40,7 @@ public class Parrot : MonoBehaviour
     private int numLanterns;
     private GameObject currentUtility; // represents the current utility NOT the one actually held
     private GameObject heldUtility; // is the actual utility the parrot is holding
-    private int currentUtilityID = 0;
+    private int currentUtilityID = 1;
     private bool canDrop = true;
     private bool canSwitch = true;
     private float switchCooldown = 0.5f;
