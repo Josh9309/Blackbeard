@@ -33,6 +33,8 @@ public class PlayerInput
     //Menu Axes
     string submit;
     string pause;
+
+
     #endregion
 
     #region Properties
@@ -208,6 +210,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private GameObject parrotSpawn;
     [SerializeField] private GameObject hud;
 
+
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
     private PlayerState currentPlayer2State = PlayerState.PARROT;
 
@@ -216,6 +219,10 @@ public class GameManager : Singleton<GameManager>
     PirateCam captainCamera2;
     ParrotCam parrotCamera1;
     ParrotCam parrotCamera2;
+
+    // debugging bools
+    [SerializeField]
+    private bool parrotDebug;
 
     //HUD
 
@@ -341,13 +348,27 @@ public class GameManager : Singleton<GameManager>
         signal2 = pirateP2.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
 
         //set p1 to pirate and p2 to parrot
-        pirateP1.PirateActive = true;
-        parrotP1.active = false;
-        currentPlayer1State = PlayerState.CAPTAIN;
+        if (!parrotDebug)
+        {
+            pirateP1.PirateActive = true;
+            parrotP1.active = false;
+            currentPlayer1State = PlayerState.CAPTAIN;
 
-        pirateP2.PirateActive = false;
-        parrotP2.active = true;
-        currentPlayer2State = PlayerState.PARROT;
+            pirateP2.PirateActive = false;
+            parrotP2.active = true;
+            currentPlayer2State = PlayerState.PARROT;
+        }
+        else
+        {
+            phaseTime = 500;
+            pirateP1.PirateActive = false;
+            parrotP1.active = true;
+            currentPlayer1State = PlayerState.PARROT;
+
+            pirateP2.PirateActive = true;
+            parrotP2.active = false;
+            currentPlayer2State = PlayerState.CAPTAIN;
+        }
 
        phaseTimerRoutine = StartCoroutine(PhaseTimer());
 
