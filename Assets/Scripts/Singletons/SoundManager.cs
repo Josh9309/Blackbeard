@@ -67,9 +67,56 @@ public class SoundManager : Singleton<SoundManager>
         //loop background music
         musicSource.loop = true; //turn on looping
         musicSource.clip = musicLibrary["ambientWaves"]; //set default song
-        ChangeMusicVolume(20);
+        ChangeMusicVolume(0);
         musicSource.Play(); //play music
 	}
+
+    /// <summary>
+    /// Plays random walk sound once
+    /// </summary>
+    public void PlayWalkSound()
+    {
+        
+    }
+
+    /// <summary>
+    /// Plays random wing sound once
+    /// </summary>
+    public void PlayWingSound()
+    {//chose wing sound
+        switch (Random.Range(0, 3))
+        {
+            case 1:
+                PlaySfxOnce("wings1", 100);
+                break;
+            case 2:
+                Instance.PlaySfxOnce("wings2", 100);
+                break;
+            case 3:
+                Instance.PlaySfxOnce("wings3", 100);
+                break;
+            case 4:
+                Instance.PlaySfxOnce("wings4", 100);
+                break;
+        }   
+
+    }
+
+    /// <summary>
+    /// Plays sfx once so it doesnt overlap itself
+    /// </summary>
+    /// <param name="name">Name of sound in dictionary</param>
+    /// <param name="volume">Volume of sound</param>
+    public void PlaySfxOnce(string name, int volume)
+    {
+        //PlaySfxAt(name, this.gameObject.transform.position, volume);
+        //check if its currently playing
+        if (!GameObject.Find("One shot audio"))
+        {
+            //play sound again
+            PlaySfxAt(name, this.gameObject.transform.position, volume);
+        }
+    }
 
     /// <summary>
     /// chnage the background music
@@ -84,13 +131,20 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
-    /// Plays sound
+    /// Plays sound at volume
     /// </summary>
     /// <param name="name">key for sound to be played</param>
-	public void PlaySfx(string name)
+    /// /// <param name="volume">volume of this sound</param> 
+    public void PlaySfx(string name, int volume)
     { 
+        //convert volume into percentage
+        float vol = (float)(volume / 100.00);
+
+        //scale volume by sourceVolume
+        vol *= sfxSource.volume;
+
         //play sound from lib once
-		sfxSource.PlayOneShot(sfxLibrary[name], sfxSource.volume);
+		sfxSource.PlayOneShot(sfxLibrary[name], vol);
 	}
 
     /// <summary>
@@ -98,10 +152,17 @@ public class SoundManager : Singleton<SoundManager>
     /// </summary>
     /// <param name="name">key for sound to be played</param>
     /// <param name="position">world cordinates to be played from</param>
-    public void PlaySfxAt(string name, Vector3 position)
+    /// <param name="volume">volume of this sound</param> 
+    public void PlaySfxAt(string name, Vector3 position, int volume)
     {
+        //convert volume into percentage
+        float vol = (float)(volume / 100.00);
+
+        //scale volume by sourceVolume
+        vol *= sfxSource.volume;
+
         //doesnt use source bc it creates its own for this
-        AudioSource.PlayClipAtPoint(sfxLibrary[name], position, sfxSource.volume);
+        AudioSource.PlayClipAtPoint(sfxLibrary[name], position, vol);
     }
 
     /// <summary>

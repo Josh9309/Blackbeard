@@ -222,7 +222,7 @@ public class CaptainPirate: MonoBehaviour
             if (coll.gameObject.name.Contains("Coconut"))
             {
                 StartCoroutine(Stun(2));
-                SoundManager.Instance.PlaySfx("hurt2");
+                SoundManager.Instance.PlaySfx("hurt2", 100);
             }
 
             //Probably shouldn't do this
@@ -311,6 +311,12 @@ public class CaptainPirate: MonoBehaviour
                 rBody.velocity += movingPlatformVel;
             }
 
+            //check we are moving by acessing the anim
+            if(pirateAnim.GetBool("IsMoving"))
+            {
+                //SoundManager.Instance.PlaySfxOnce("stride", 100); //play sound
+            }
+
             Jump();
         }
         else
@@ -344,7 +350,7 @@ public class CaptainPirate: MonoBehaviour
             pirateAnim.SetBool("Grounded", false);
             jumpInput = false;
             canDoubleJump = true;
-            SoundManager.Instance.PlaySfx("jump1");
+            SoundManager.Instance.PlaySfx("jump1", 100);
         }
         else if(!grounded && canDoubleJump &&jumpInput)
         {
@@ -353,7 +359,7 @@ public class CaptainPirate: MonoBehaviour
             grounded = false;
             jumpInput = false;
             canDoubleJump = false;
-            SoundManager.Instance.PlaySfx("jump2");
+            SoundManager.Instance.PlaySfx("jump2", 100);
         }
     }
 
@@ -363,7 +369,7 @@ public class CaptainPirate: MonoBehaviour
         pirateAnim.Play("Stun");
         stunned = true;
         pirateAnim.SetBool("isStunned", true);
-        SoundManager.Instance.PlaySfx("chirpping");
+        SoundManager.Instance.PlaySfx("chirpping", 50);
         yield return new WaitForSeconds(stunTime);
         Debug.Log("unStunned!");
         pirateAnim.SetBool("isStunned", false);

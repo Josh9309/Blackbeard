@@ -255,6 +255,8 @@ public class Parrot : MonoBehaviour
     /// </summary>
     private void ParrotMove()
     {
+        
+
         //Get inputs for Parrot movement
         horizontalInput = Input.GetAxis(inputManager.HORIZONTAL_AXIS);
         verticalInput = Input.GetAxis(inputManager.VERTICAL_AXIS);

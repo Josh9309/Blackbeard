@@ -24,11 +24,11 @@ public class Water : MonoBehaviour {
 
             if (Random.Range(0, 100) > 80)
             {
-                SoundManager.Instance.PlaySfx("drowning");
+                SoundManager.Instance.PlaySfx("drowning", 100);
             }
             else
             {
-                SoundManager.Instance.PlaySfx("splash");
+                SoundManager.Instance.PlaySfx("splash", 25);
             }
         }
     }
