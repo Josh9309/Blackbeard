@@ -59,8 +59,12 @@ public class Item : MonoBehaviour
         {
             if (gameObject.name.Contains("Lantern") && active == true) // if gameObject is lantern
             {
+                GameObject fire;
                 // TODO: add stuff for spawning fire on the main island
-                GameObject fire = GameObject.Instantiate(firePrefab, transform.position, Quaternion.identity);
+                if (coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform")
+                    fire = GameObject.Instantiate(firePrefab, transform.position, Quaternion.identity, coll.transform);
+                else
+                    fire = GameObject.Instantiate(firePrefab, transform.position, Quaternion.identity);
                 fire.GetComponent<Fire>().Ignite();
                 Destroy(gameObject);
             }
