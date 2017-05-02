@@ -46,8 +46,18 @@ public class SoundManager : Singleton<SoundManager>
 
         sfxLibrary.Add("jump1", Resources.Load("sfx/jump1") as AudioClip);
         sfxLibrary.Add("jump2", Resources.Load("sfx/jump2") as AudioClip);
+        sfxLibrary.Add("jump3", Resources.Load("sfx/jump3") as AudioClip);
+        sfxLibrary.Add("jump4", Resources.Load("sfx/jump4") as AudioClip);
+        sfxLibrary.Add("jump5", Resources.Load("sfx/jump5") as AudioClip);
+        sfxLibrary.Add("jump6", Resources.Load("sfx/jump6") as AudioClip);
 
-        sfxLibrary.Add("step", Resources.Load("sfx/step1") as AudioClip); //one step in a walk
+        sfxLibrary.Add("step1", Resources.Load("sfx/step1") as AudioClip); //one step in a walk
+        sfxLibrary.Add("step2", Resources.Load("sfx/step2") as AudioClip);
+        sfxLibrary.Add("step3", Resources.Load("sfx/step3") as AudioClip);
+        sfxLibrary.Add("step4", Resources.Load("sfx/step4") as AudioClip);
+        sfxLibrary.Add("step5", Resources.Load("sfx/step5") as AudioClip);
+        sfxLibrary.Add("step6", Resources.Load("sfx/step6") as AudioClip);
+        sfxLibrary.Add("step7", Resources.Load("sfx/step7") as AudioClip);
         sfxLibrary.Add("stride", Resources.Load("sfx/stride") as AudioClip); //a full slow stride
 
         sfxLibrary.Add("squack1", Resources.Load("sfx/squack1") as AudioClip);
@@ -61,13 +71,17 @@ public class SoundManager : Singleton<SoundManager>
         sfxLibrary.Add("wings2", Resources.Load("sfx/wings2") as AudioClip);
         sfxLibrary.Add("wings3", Resources.Load("sfx/wings3") as AudioClip);
         sfxLibrary.Add("wings4", Resources.Load("sfx/wings4") as AudioClip);
+        sfxLibrary.Add("wings5", Resources.Load("sfx/wings5") as AudioClip);
+        sfxLibrary.Add("wings6", Resources.Load("sfx/wings6") as AudioClip);
+        sfxLibrary.Add("wings7", Resources.Load("sfx/wings7") as AudioClip);
+        sfxLibrary.Add("wings8", Resources.Load("sfx/wings8") as AudioClip);
 
         sfxLibrary.Add("chestOpening", Resources.Load("sfx/chestOpening") as AudioClip);
 
         //loop background music
         musicSource.loop = true; //turn on looping
         musicSource.clip = musicLibrary["ambientWaves"]; //set default song
-        ChangeMusicVolume(0);
+        ChangeMusicVolume(20); //set inital volume
         musicSource.Play(); //play music
 	}
 
@@ -76,7 +90,9 @@ public class SoundManager : Singleton<SoundManager>
     /// </summary>
     public void PlayWalkSound()
     {
-        
+        string num = UnityEngine.Random.Range(1, 7).ToString();
+        string soundName = "step" + num;
+        PlaySfxOnce(soundName, 8); 
     }
 
     /// <summary>
@@ -84,21 +100,8 @@ public class SoundManager : Singleton<SoundManager>
     /// </summary>
     public void PlayWingSound()
     {//chose wing sound
-        switch (Random.Range(0, 3))
-        {
-            case 1:
-                PlaySfxOnce("wings1", 100);
-                break;
-            case 2:
-                Instance.PlaySfxOnce("wings2", 100);
-                break;
-            case 3:
-                Instance.PlaySfxOnce("wings3", 100);
-                break;
-            case 4:
-                Instance.PlaySfxOnce("wings4", 100);
-                break;
-        }   
+        string num = UnityEngine.Random.Range(1, 8).ToString();
+        PlaySfxOnce("wings" + num, 25);  
 
     }
 

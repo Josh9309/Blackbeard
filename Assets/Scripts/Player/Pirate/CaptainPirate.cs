@@ -314,7 +314,7 @@ public class CaptainPirate: MonoBehaviour
             //check we are moving by acessing the anim
             if(pirateAnim.GetBool("IsMoving"))
             {
-                //SoundManager.Instance.PlaySfxOnce("stride", 100); //play sound
+                SoundManager.Instance.PlayWalkSound(); //play one of our lovely walk sounds
             }
 
             Jump();
@@ -350,7 +350,15 @@ public class CaptainPirate: MonoBehaviour
             pirateAnim.SetBool("Grounded", false);
             jumpInput = false;
             canDoubleJump = true;
-            SoundManager.Instance.PlaySfx("jump1", 100);
+
+            //play random jump sound
+            string num = UnityEngine.Random.Range(2, 6).ToString(); //staring from 2 bc screw jump1
+            int vol = 80;
+            if (num == "1" || num == "2") //turn down the volume for kevs sounds
+            {
+                vol = 25;
+            }
+            SoundManager.Instance.PlaySfx("jump" + num, vol);
         }
         else if(!grounded && canDoubleJump &&jumpInput)
         {
@@ -359,7 +367,15 @@ public class CaptainPirate: MonoBehaviour
             grounded = false;
             jumpInput = false;
             canDoubleJump = false;
-            SoundManager.Instance.PlaySfx("jump2", 100);
+
+            //play random jump sound
+            string num = UnityEngine.Random.Range(2, 6).ToString();
+            int vol = 80;
+            if (num == "1" || num == "2") //turn down the volume for kevs sounds
+            {
+                vol = 25;
+            }
+            SoundManager.Instance.PlaySfx("jump" + num, vol);
         }
     }
 
