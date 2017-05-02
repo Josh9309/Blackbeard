@@ -200,12 +200,21 @@ public class Parrot : MonoBehaviour
             new Vector3(itemSlot.transform.position.x, 
             itemSlot.transform.position.y, itemSlot.transform.position.z),
             Quaternion.identity);
+
+        Collider[] heldItemColliders = heldUtility.GetComponents<Collider>(); //Get the item's colliders
+
         heldUtility.transform.position = new Vector3(itemSlot.transform.position.x,
-            itemSlot.transform.position.y - (heldUtility.GetComponent<Collider>().bounds.size.y / 1.8f), itemSlot.transform.position.z);
-        heldUtility.transform.parent = this.gameObject.transform;
+            itemSlot.transform.position.y - (heldItemColliders[0].bounds.size.y / 1.8f), itemSlot.transform.position.z);
+
+        foreach (Collider c in heldItemColliders)
+            c.enabled = false; //Disable the colliders so they don't hit pirates
+
+        heldUtility.transform.parent = gameObject.transform;
         heldUtility.GetComponent<Item>().Active = false;
-        heldUtility.GetComponent<Rigidbody>().useGravity = false;
-        heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+
+        Rigidbody heldUtilityRBody = heldUtility.GetComponent<Rigidbody>(); //Get the item's rigidbody
+        heldUtilityRBody.useGravity = false;
+        heldUtilityRBody.constraints = RigidbodyConstraints.FreezeAll;
         if (heldUtility.name.Contains("Bear_Trap"))
         {
             heldUtility.GetComponent<BearTrap>().enabled = false;
@@ -229,6 +238,11 @@ public class Parrot : MonoBehaviour
         if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown && buttonHeldOnEntry == 2)
         {
             Debug.Log(Input.GetButton(inputManager.PARROT_PICKUP_AXIS) + "\n" + canDrop + "\n" + dropButtonDown + "\n" + buttonHeldOnEntry);
+
+            Collider[] heldItemColliders = heldUtility.GetComponents<Collider>(); //Get the item's colliders
+            foreach (Collider c in heldItemColliders)
+                c.enabled = true; //Reenable the item's colliders
+
             Rigidbody heldUtilityRBody = heldUtility.GetComponent<Rigidbody>(); //Get the item's rigidbody
             heldUtilityRBody.useGravity = true;
             heldUtilityRBody.constraints = RigidbodyConstraints.None;

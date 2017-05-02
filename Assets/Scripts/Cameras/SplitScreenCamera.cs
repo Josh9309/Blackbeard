@@ -78,7 +78,6 @@ public class SplitScreenCamera : MonoBehaviour
         //set the hud elements
         HUD = GameManager.Instance.HUD.GetComponentsInChildren<Transform>();
 
-
         //Get the player objects from the game manager
         captain1 = gm.PirateP1;
         captain2 = gm.PirateP2;
@@ -91,33 +90,32 @@ public class SplitScreenCamera : MonoBehaviour
         parrotCamera1 = GameObject.FindGameObjectWithTag("ParrotCamera1").GetComponent<Camera>();
         parrotCamera2 = GameObject.FindGameObjectWithTag("ParrotCamera2").GetComponent<Camera>();
 
-        //Splitscreen type
-        if (SettingManager.Instance.Vertical)
-        {
-            //set camera
-            captainCamera1.rect = new Rect(0, 0, .5f, 1);
-            captainCamera2.rect = new Rect(.5f, 0, .5f, 1);
-            parrotCamera1.rect = new Rect(0, 0, .5f, 1);
-            parrotCamera2.rect = new Rect(.5f, 0, .5f, 1);
-
-            //place hud at the bottom of the screen
-            //HUD[0].localPosition = new Vector3(HUD[0].position.x, (Screen.height - 30), HUD[0].position.z);
-            //HUD[1].localPosition = new Vector3(HUD[1].position.x, (Screen.height - 30), HUD[1].position.z);
-
-        }
-        else
-        {
-            //set camera
-            captainCamera1.rect = new Rect(0, 0, 1, .5f);
-            captainCamera2.rect = new Rect(0, .5f, 1, .5f);
-            parrotCamera1.rect = new Rect(0, 0, 1, .5f);
-            parrotCamera2.rect = new Rect(0, .5f, 1, .5f);
-
-            //place hud in middle of screen
-            //HUD[0].localPosition = new Vector3(HUD[0].position.x, (Screen.height / 2), HUD[0].position.z);
-            //HUD[1].localPosition = new Vector3(HUD[1].position.x, (Screen.height / 2), HUD[1].position.z);
-
-        }
+        ////Splitscreen type
+        //if (SettingManager.Instance.Vertical)
+        //{
+        //    //set camera
+        //    captainCamera1.rect = new Rect(0, 0, .5f, 1);
+        //    captainCamera2.rect = new Rect(.5f, 0, .5f, 1);
+        //    parrotCamera1.rect = new Rect(0, 0, .5f, 1);
+        //    parrotCamera2.rect = new Rect(.5f, 0, .5f, 1);
+        //
+        //    //place hud at the bottom of the screen
+        //    //HUD[0].localPosition = new Vector3(HUD[0].position.x, (Screen.height - 30), HUD[0].position.z);
+        //    //HUD[1].localPosition = new Vector3(HUD[1].position.x, (Screen.height - 30), HUD[1].position.z);
+        //}
+        //else
+        //{
+        //    //set camera
+        //    captainCamera1.rect = new Rect(0, .5f, 1, .5f);
+        //    captainCamera2.rect = new Rect(0, 0, 1, .5f);
+        //    parrotCamera1.rect = new Rect(0, .5f, 1, .5f);
+        //    parrotCamera2.rect = new Rect(0, 0, 1, .5f);
+        //
+        //    //place hud in middle of screen
+        //    //HUD[0].localPosition = new Vector3(HUD[0].position.x, (Screen.height / 2), HUD[0].position.z);
+        //    //HUD[1].localPosition = new Vector3(HUD[1].position.x, (Screen.height / 2), HUD[1].position.z);
+        //
+        //}
 
         //Recenter all cameras intially
         parrotCamera1.GetComponent<ParrotCam>().Recenter();
@@ -210,10 +208,10 @@ public class SplitScreenCamera : MonoBehaviour
         else
         {
             //set camera
-            captainCamera1.rect = new Rect(0, 0, 1, .5f);
-            captainCamera2.rect = new Rect(0, .5f, 1, .5f);
-            parrotCamera1.rect = new Rect(0, 0, 1, .5f);
-            parrotCamera2.rect = new Rect(0, .5f, 1, .5f);
+            captainCamera1.rect = new Rect(0, .5f, 1, .5f);
+            captainCamera2.rect = new Rect(0, 0, 1, .5f);
+            parrotCamera1.rect = new Rect(0, .5f, 1, .5f);
+            parrotCamera2.rect = new Rect(0, 0, 1, .5f);
 
             //place hud in middle of screen
             //HUD[0].localPosition = new Vector3(HUD[0].position.x, (Screen.height / 2), HUD[0].position.z);

@@ -106,7 +106,7 @@ public class Item : MonoBehaviour
         if (name.Contains("Coconut") && coll.name.Contains("Captain") && active)
         {
             Vector3 desired = new Vector3(coll.transform.position.x, coll.transform.position.y + 1.5f, coll.transform.position.z) - transform.position;
-            desired = desired.normalized * 3;
+            desired = desired.normalized * 4;
             rBody.velocity = desired;
 
             if (previousActive == false)
