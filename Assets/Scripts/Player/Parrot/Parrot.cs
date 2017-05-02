@@ -40,7 +40,7 @@ public class Parrot : MonoBehaviour
     private int numLanterns;
     private GameObject currentUtility; // represents the current utility NOT the one actually held
     private GameObject heldUtility; // is the actual utility the parrot is holding
-    private int currentUtilityID = 1;
+    private int currentUtilityID = 0;
     private bool canDrop = true;
     private bool canSwitch = true;
     private float switchCooldown = 0.5f;
@@ -176,7 +176,7 @@ public class Parrot : MonoBehaviour
             currentUtilityID = currentUtilityID % utilityItems.Count; //wrap utils so we dont go out of bounds
             currentUtility = utilityItems[currentUtilityID];
             dropCooldown = utilityCooldowns[currentUtilityID];
-            Debug.Log("current utility is " + currentUtility.name);
+            Debug.Log("current utility is " + currentUtilityID + "/" + utilityItems.Count + currentUtility.name);
             switchButtonDown = true;
             // destroy old utility
             GameObject.Destroy(heldUtility);
@@ -229,8 +229,10 @@ public class Parrot : MonoBehaviour
         if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown && buttonHeldOnEntry == 2)
         {
             Debug.Log(Input.GetButton(inputManager.PARROT_PICKUP_AXIS) + "\n" + canDrop + "\n" + dropButtonDown + "\n" + buttonHeldOnEntry);
-            heldUtility.GetComponent<Rigidbody>().useGravity = true;
-            heldUtility.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            Rigidbody heldUtilityRBody = heldUtility.GetComponent<Rigidbody>(); //Get the item's rigidbody
+            heldUtilityRBody.useGravity = true;
+            heldUtilityRBody.constraints = RigidbodyConstraints.None;
+            heldUtilityRBody.velocity = new Vector3(rBody.velocity.x, 0, rBody.velocity.z);
             heldUtility.transform.parent = null;
             heldUtility.GetComponent<Item>().Active = true;
             if (heldUtility.name.Contains("Bear_Trap"))
