@@ -65,6 +65,7 @@ public class ParrotCam : MonoBehaviour {
 	void LateUpdate () {
         if (target) //make sure there is a target
         {
+            if (Input.GetButton(pInput.R3_AXIS))
             {
                 Recenter();
             }
