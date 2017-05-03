@@ -77,11 +77,11 @@ public class MenuManager : Singleton<MenuManager>
         //make menu only initally there on main menu
         if (SceneManager.GetActiveScene().name != "MainMenu")
         {
-            menu.enabled = false;
+            MenuEnabled = false;
         }
         else
         {
-            menu.enabled = true;
+            MenuEnabled = true;
         }
 	}
 

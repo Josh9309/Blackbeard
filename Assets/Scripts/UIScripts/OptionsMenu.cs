@@ -54,15 +54,14 @@ public class OptionsMenu: BaseWindow
     //method for new game button
     protected void NewGame()
     {
-        SceneManager.LoadScene("BlackFeather");
+        SceneManager.LoadScene("Posideon");
         //MenuManager.Instance.GoToScreen("GameHUD");
         Debug.Log("New Game Pressed");
     }
 
     protected void ResumeGame()
     {
-        SceneManager.LoadScene("BlackFeather");
-        //MenuManager.Instance.GoToScreen("GameHUD");
+        MenuManager.Instance.MenuEnabled = false; //turn off menu system and return to game
         Debug.Log(" Resume Pressed");
     }
     //method for main menu
