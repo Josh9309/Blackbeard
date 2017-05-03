@@ -37,12 +37,6 @@ public class Item : MonoBehaviour
 
         explosionDamage = -1000;
 
-        if (gameObject.name.Contains("Bear_Trap"))
-        {
-            GetComponentInChildren<ParticleSystem>().Clear();
-            GetComponentInChildren<ParticleSystem>().Pause();
-        }
-
         rBody = GetComponent<Rigidbody>();
         previousActive = false;
         objectCollider = GetComponent<Collider>();
@@ -52,10 +46,9 @@ public class Item : MonoBehaviour
     {
         if (gameObject.name.Contains("Bear_Trap"))
         {
-            Debug.Log(gameObject.name);
             GetComponent<BearTrap>().enabled = true;
             
-            this.enabled = false;
+            enabled = false;
         }
     }
 
@@ -66,8 +59,12 @@ public class Item : MonoBehaviour
         {
             if (gameObject.name.Contains("Lantern") && active == true) // if gameObject is lantern
             {
+                GameObject fire;
                 // TODO: add stuff for spawning fire on the main island
-                GameObject fire = GameObject.Instantiate(firePrefab, transform.position, Quaternion.identity);
+                if (coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform")
+                    fire = GameObject.Instantiate(firePrefab, transform.position, Quaternion.identity, coll.transform);
+                else
+                    fire = GameObject.Instantiate(firePrefab, transform.position, Quaternion.identity);
                 fire.GetComponent<Fire>().Ignite();
                 Destroy(gameObject);
             }
@@ -109,7 +106,7 @@ public class Item : MonoBehaviour
         if (name.Contains("Coconut") && coll.name.Contains("Captain") && active)
         {
             Vector3 desired = new Vector3(coll.transform.position.x, coll.transform.position.y + 1.5f, coll.transform.position.z) - transform.position;
-            desired = desired.normalized * 3;
+            desired = desired.normalized * 4;
             rBody.velocity = desired;
 
             if (previousActive == false)

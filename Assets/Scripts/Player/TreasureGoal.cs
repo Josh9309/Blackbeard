@@ -22,6 +22,7 @@ public class TreasureGoal : MonoBehaviour {
         if(pirate.gameObject.tag == "Pirate")
         {
             CaptainPirate captain = pirate.gameObject.GetComponent<CaptainPirate>();
+            SoundManager.Instance.PlaySfx("chestOpening", 300);
 
             Debug.Log("Player " + captain.PlayerNum + " Wins!!!");
 

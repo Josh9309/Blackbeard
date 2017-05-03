@@ -10,13 +10,20 @@ public class Mudtrap : MonoBehaviour
     private void OnTriggerEnter(Collider coll)
     {
         if (coll.tag == "Pirate")
+        {
             coll.GetComponent<CaptainPirate>().Speed *= slowFactor;
+            coll.GetComponent<CaptainPirate>().CanJump = false;
+        }
     }
+           
 
     //When a pirate leaves the trigger
     private void OnTriggerExit(Collider coll)
     {
         if (coll.tag == "Pirate")
+        {
             coll.GetComponent<CaptainPirate>().Speed /= slowFactor;
+            coll.GetComponent<CaptainPirate>().CanJump = true;
+        }
     }
 }

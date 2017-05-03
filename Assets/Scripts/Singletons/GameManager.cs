@@ -19,22 +19,22 @@ public class PlayerInput
     string r3;
 
     //Parrot Axes
-    string fly_up;
-    string fly_down;
-    string boost;
+    string fly;
+    string boostBrake;
     string possess;
-    string parrot_pickup;
     string utility_switch;
-    string trap_activate;
+    string parrot_pickup;
     string signal;
 
     //Pirate Axes
     string jump;
-    string pirate_pickup;
     string respawn;
 
     //Menu Axes
     string submit;
+    string pause;
+
+
     #endregion
 
     #region Properties
@@ -68,24 +68,24 @@ public class PlayerInput
         get { return r3; }
     }
 
-    public string FLY_UP_AXIS
+    public string FLY_AXIS
     {
-        get { return fly_up; }
+        get { return fly; }
     }
 
-    public string FLY_DOWN_AXIS
+    public string BOOST_BRAKE_AXIS
     {
-        get { return fly_down; }
-    }
-
-    public string BOOST_AXIS
-    {
-        get { return boost; }
+        get { return boostBrake; }
     }
 
     public string POSSESS_AXIS
     {
         get { return possess; }
+    }
+
+    public string UTILITY_SWITCH
+    {
+        get { return utility_switch; }
     }
 
     public string PARROT_PICKUP_AXIS
@@ -103,11 +103,6 @@ public class PlayerInput
         get { return jump; }
     }
 
-    public string PICKUP_MOVE_AXIS
-    {
-        get { return pirate_pickup; }
-    }
-
     public string RESPAWN_AXIS
     {
         get { return respawn; }
@@ -116,22 +111,17 @@ public class PlayerInput
     {
         get { return submit; }
     }
-
-    public string UTILITY_SWITCH
+    public string PAUSE_AXIS
     {
-        get { return utility_switch; }
+        get { return pause; }
     }
 
-    public string PARROT_TRAP_AXIS
-    {
-        get { return trap_activate; }
-    }
     #endregion
 
     /// <summary>
     /// Configure the input based on the player number
     /// </summary>
-    /// <param name="playerNum"></param>
+    /// <param name="playerNum"> the players number (1 index based)</param>
     public void ConfigureInput(int playerNum)
     {
         //set player id
@@ -148,22 +138,20 @@ public class PlayerInput
                 r3 = "R3_P1";
 
                 //SET PARROT AXES
-                fly_up = "FlyUp_P1";
-                fly_down = "FlyDown_P1";
-                boost = "BoostFly_P1";
+                fly = "Fly_P1";
+                boostBrake = "Boost_Brake_P1";
                 possess = "Possess_P1";
                 parrot_pickup = "ParrotPickup_P1";
                 utility_switch = "UtilitySwitch_P1";
-                trap_activate = "TrapActivate_P1";
                 signal = "Signal_P1";
 
                 //SET PIRATE AXES
                 jump = "Jump_P1";
-                pirate_pickup = "Pickup/Move_P1";
                 respawn = "Respawn_P1";
 
                 //SET MENU AXES
                 submit = "Submit_P1";
+                pause = "Pause_P1";
                 break;
 
             case 2:
@@ -175,22 +163,20 @@ public class PlayerInput
                 r3 = "R3_P2";
 
                 //SET PARROT AXES
-                fly_up = "FlyUp_P2";
-                fly_down = "FlyDown_P2";
-                boost = "BoostFly_P2";
+                fly = "Fly_P2";
+                boostBrake = "Boost_Brake_P2";
                 possess = "Possess_P2";
                 parrot_pickup = "ParrotPickup_P2";
                 utility_switch = "UtilitySwitch_P2";
-                trap_activate = "TrapActivate_P2";
                 signal = "Signal_P2";
 
                 //SET PIRATE AXES
                 jump = "Jump_P2";
-                pirate_pickup = "Pickup/Move_P2";
                 respawn = "Respawn_P2";
 
                 //SET MENU AXES
                 submit = "Submit_P2";
+                pause = "Pause_P2";
                 break;
         }
         
@@ -222,6 +208,8 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private Parrot parrotP1;
     [SerializeField] private Parrot parrotP2;
     [SerializeField] private GameObject parrotSpawn;
+    [SerializeField] private GameObject hud;
+
 
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
     private PlayerState currentPlayer2State = PlayerState.PARROT;
@@ -231,6 +219,13 @@ public class GameManager : Singleton<GameManager>
     PirateCam captainCamera2;
     ParrotCam parrotCamera1;
     ParrotCam parrotCamera2;
+
+    // debugging bools
+    [SerializeField]
+    private bool parrotDebug;
+
+    //HUD
+
     #endregion
 
     //Signals
@@ -310,6 +305,15 @@ public class GameManager : Singleton<GameManager>
         get { return signalOn; }
         set { signalOn = value; }
     }
+
+    public GameObject HUD
+    {
+        get { return hud; }
+        set
+        {
+            hud = value;
+        }
+    }
     #endregion
 
     protected GameManager(){}
@@ -344,13 +348,27 @@ public class GameManager : Singleton<GameManager>
         signal2 = pirateP2.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
 
         //set p1 to pirate and p2 to parrot
-        pirateP1.PirateActive = true;
-        parrotP1.active = false;
-        currentPlayer1State = PlayerState.CAPTAIN;
+        if (!parrotDebug)
+        {
+            pirateP1.PirateActive = true;
+            parrotP1.active = false;
+            currentPlayer1State = PlayerState.CAPTAIN;
 
-        pirateP2.PirateActive = false;
-        parrotP2.active = true;
-        currentPlayer2State = PlayerState.PARROT;
+            pirateP2.PirateActive = false;
+            parrotP2.active = true;
+            currentPlayer2State = PlayerState.PARROT;
+        }
+        else
+        {
+            phaseTime = 500;
+            pirateP1.PirateActive = false;
+            parrotP1.active = true;
+            currentPlayer1State = PlayerState.PARROT;
+
+            pirateP2.PirateActive = true;
+            parrotP2.active = false;
+            currentPlayer2State = PlayerState.CAPTAIN;
+        }
 
        phaseTimerRoutine = StartCoroutine(PhaseTimer());
 
@@ -460,6 +478,12 @@ public class GameManager : Singleton<GameManager>
         for (currentPhaseTime = phaseTime; CurrentPhaseTime > 0; currentPhaseTime--)
         {
             yield return new WaitForSeconds(1);
+
+            //counterbalance phase timer if we are in the pasue menu
+            if (MenuManager.Instance.MenuEnabled)
+            {
+                currentPhaseTime++;
+            }
         }
 
         SwitchPhase();
@@ -470,8 +494,11 @@ public class GameManager : Singleton<GameManager>
     {
         //turn on signal beams
         signalOn = true;
-        signal1.Play();
-        signal2.Play();
+
+        if (pirateP1.PirateActive)
+            signal1.Play();
+        else if (pirateP2.PirateActive)
+            signal2.Play();
 
         //treasureSignal.Play(); //The parrot probably shouldn't do this
 
@@ -479,8 +506,11 @@ public class GameManager : Singleton<GameManager>
 
         //turn off signal Beams
         signalOn = false;
-        signal1.Stop();
-        signal2.Stop();
+
+        if (pirateP1.PirateActive)
+            signal1.Stop();
+        else if (pirateP2.PirateActive)
+            signal2.Stop();
 
         //treasureSignal.Stop();
     }

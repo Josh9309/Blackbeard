@@ -36,7 +36,9 @@ public class CaptainPirate: MonoBehaviour
     private float turnAmount;
     private float forwardAmount;
     private bool grounded;
+    public  LayerMask groundMask;
     private bool jumpInput;
+    private bool canJump = true; //this bool is used by outside elements to prevent the player from jumping
     private bool canDoubleJump;
     private bool airControl = true;
     private bool onMoving; //pirate is on a surface that moves
@@ -116,6 +118,11 @@ public class CaptainPirate: MonoBehaviour
     {
         get { return playerNum; }
     }
+
+    public bool CanJump
+    {
+        set { canJump = value; }
+    }
     #endregion
 
     #region InBuiltMethods
@@ -166,7 +173,7 @@ public class CaptainPirate: MonoBehaviour
     {
         if (pirateActive)
         {
-            if (!jumpInput && (canDoubleJump || grounded) && !stunned)
+            if (!jumpInput && (canDoubleJump || grounded) && !stunned && canJump)
             {
                 jumpInput = Input.GetButtonDown(inputManager.JUMP_AXIS);
             }
@@ -176,13 +183,28 @@ public class CaptainPirate: MonoBehaviour
                 Respawn();
             }
         }
-        
+        else //pirate is not active
+        {
+            CheckIfGrounded();
+            if (!grounded || onMoving) //if pirate is in air when not active 
+            {
+                //Respawn Pirate
+                Respawn();
+            }
+        }
         Signal();
+
+        if (Input.GetButtonDown(inputManager.PAUSE_AXIS))
+        {
+            //turn on/off the menu and the HUD
+            MenuManager.Instance.MenuEnabled = !MenuManager.Instance.MenuEnabled;
+            GameManager.Instance.HUD.GetComponent<Canvas>().enabled = (!GameManager.Instance.HUD.GetComponent<Canvas>().enabled);
+        }
     }
 
 	private void FixedUpdate ()
     {
-        if (pirateActive && !stunned)
+        if (pirateActive && !stunned && !MenuManager.Instance.MenuEnabled)
         {
             GetMovementInput();
             PirateMove();
@@ -204,7 +226,10 @@ public class CaptainPirate: MonoBehaviour
         if (itemScript != null && itemScript.Active)
         {
             if (coll.gameObject.name.Contains("Coconut"))
+            {
                 StartCoroutine(Stun(2));
+                SoundManager.Instance.PlaySfx("hurt2", 100);
+            }
 
             //Probably shouldn't do this
             //else //If this is any other object
@@ -292,6 +317,12 @@ public class CaptainPirate: MonoBehaviour
                 rBody.velocity += movingPlatformVel;
             }
 
+            //check we are moving by acessing the anim
+            if(pirateAnim.GetBool("IsMoving"))
+            {
+                SoundManager.Instance.PlayWalkSound(); //play one of our lovely walk sounds
+            }
+
             Jump();
         }
         else
@@ -325,6 +356,15 @@ public class CaptainPirate: MonoBehaviour
             pirateAnim.SetBool("Grounded", false);
             jumpInput = false;
             canDoubleJump = true;
+
+            //play random jump sound
+            string num = UnityEngine.Random.Range(2, 6).ToString(); //staring from 2 bc screw jump1
+            int vol = 80;
+            if (num == "1" || num == "2") //turn down the volume for kevs sounds
+            {
+                vol = 25;
+            }
+            SoundManager.Instance.PlaySfx("jump" + num, vol);
         }
         else if(!grounded && canDoubleJump &&jumpInput)
         {
@@ -333,6 +373,15 @@ public class CaptainPirate: MonoBehaviour
             grounded = false;
             jumpInput = false;
             canDoubleJump = false;
+
+            //play random jump sound
+            string num = UnityEngine.Random.Range(2, 6).ToString();
+            int vol = 80;
+            if (num == "1" || num == "2") //turn down the volume for kevs sounds
+            {
+                vol = 25;
+            }
+            SoundManager.Instance.PlaySfx("jump" + num, vol);
         }
     }
 
@@ -342,6 +391,7 @@ public class CaptainPirate: MonoBehaviour
         pirateAnim.Play("Stun");
         stunned = true;
         pirateAnim.SetBool("isStunned", true);
+        SoundManager.Instance.PlaySfx("chirpping", 50);
         yield return new WaitForSeconds(stunTime);
         Debug.Log("unStunned!");
         pirateAnim.SetBool("isStunned", false);
@@ -372,19 +422,19 @@ public class CaptainPirate: MonoBehaviour
         Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + transform.right) * groundedDist), Color.magenta);
 #endif
         bool groundHit = false;
-        if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist))//if down returns nothing
+        if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist, groundMask))//if down returns nothing
         {
             //check forward raycast
-            if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f),(Vector3.down+transform.forward), out rayHit, groundedDist))
+            if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f),(Vector3.down+transform.forward), out rayHit, groundedDist, groundMask))
             {
                 //check backward raycast
-                if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.forward), out rayHit, groundedDist))
+                if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.forward), out rayHit, groundedDist, groundMask))
                 {
                     //check Left raycast
-                    if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.right), out rayHit, groundedDist))
+                    if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.right), out rayHit, groundedDist, groundMask))
                     {
                         //check Right raycast
-                        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + transform.right), out rayHit, groundedDist))
+                        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + transform.right), out rayHit, groundedDist, groundMask))
                         {
                             groundHit = true;
                         }

@@ -197,24 +197,27 @@ public class SettingManager : Singleton<SettingManager>
 
     public void onMusicVolChange()
     {
-
+        SoundManager.Instance.ChangeMusicVolume((int)musicVolSlider.value);
     }
 
     public void onSoundVolChange()
     {
-
+        SoundManager.Instance.ChangeSfxVolume((int)soundVolSlider.value);
     }
 
     public void splitScreenChange()
     {
         //originally at verticle, if unchecked then horizontal
-        if(splitScreen.isOn)
+        if (splitScreen.isOn)
         {
             vertical = true;
+
+
         }
         else
         {
             vertical = false;
+
         }
     }
 
