@@ -61,7 +61,11 @@ public class CaptainPirate: MonoBehaviour
     //Camera access
     //SplitScreenCamera ssCamera;
 
+    //compass
+    [SerializeField] private GameObject compass;
+
     private Coroutine signalCor; //coroutine that holds the signal 
+    private Coroutine compassCor;
     #endregion
 
     #region Properties
@@ -512,7 +516,11 @@ public class CaptainPirate: MonoBehaviour
     {
         if (pirateActive && !GameManager.Instance.SignalOn && Input.GetButtonDown(inputManager.SIGNAL_AXIS))
         {
+            //fire off treasure partciel effects
             signalCor = StartCoroutine(GameManager.Instance.TreasureSignalBeam());
+
+            //turn on compass
+            compassCor = StartCoroutine(compass.GetComponent<Compass>().FaceTreasure());
         }
         else if (!pirateActive && GameManager.Instance.SignalOn)
         {
@@ -520,6 +528,7 @@ public class CaptainPirate: MonoBehaviour
             if (signalCor != null)
             {
                 StopCoroutine(signalCor);
+                StopCoroutine(compassCor);
             }
             //GameManager.Instance.StopSignalBeam();
         }
