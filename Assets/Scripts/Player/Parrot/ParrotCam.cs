@@ -65,55 +65,46 @@ public class ParrotCam : MonoBehaviour {
 	void LateUpdate () {
         if (target) //make sure there is a target
         {
-
-            if (Mathf.Abs(Input.GetAxis(pInput.HORIZONTAL_AXIS)) > 0.3 || Mathf.Abs(Input.GetAxis(pInput.VERTICAL_AXIS)) > 0.3)
             {
-                Follow();
+                Recenter();
+            }
+            if (invertX)
+            {
+                x += Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
             }
             else
             {
-                if (Input.GetButtonDown(pInput.R3_AXIS))
-                {
-                    Recenter();
-                }
-                if (invertX)
-                {
-                    x += Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
-                }
-                else
-                {
-                    x -= Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
-                }
-
-                if (invertY)
-                {
-                    y += Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
-                }
-                else
-                {
-                    y -= Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
-                }
-                
-
-                y = ClampAngle(y, yMinLimit, yMaxLimit);
-
-                Quaternion rotation = Quaternion.Euler(y, x, 0);
-
-                dist = Mathf.Clamp((dist - 1f) * 5, distanceMin, distanceMax);
-
-                RaycastHit hit;
-                if (Physics.Linecast(target.transform.position, transform.position, out hit))
-                {
-                    dist -= hit.distance;
-                }
-                Vector3 negDistance = new Vector3(0.0f, 0.0f, -dist);
-                Vector3 position = rotation * negDistance + target.transform.position;
-
-                transform.rotation = rotation;
-                transform.position = position;
-
-                target.GetComponent<ParrotLookAtPoint>().Forward = transform.forward.y;
+                x -= Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
             }
+
+            if (invertY)
+            {
+                y += Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
+            }
+            else
+            {
+                y -= Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
+            }
+            
+
+            y = ClampAngle(y, yMinLimit, yMaxLimit);
+
+            Quaternion rotation = Quaternion.Euler(y, x, 0);
+
+            dist = Mathf.Clamp((dist - 1f) * 5, distanceMin, distanceMax);
+
+            RaycastHit hit;
+            if (Physics.Linecast(target.transform.position, transform.position, out hit))
+            {
+                dist -= hit.distance;
+            }
+            Vector3 negDistance = new Vector3(0.0f, 0.0f, -dist);
+            Vector3 position = rotation * negDistance + target.transform.position;
+
+            transform.rotation = rotation;
+            transform.position = position;
+
+            target.GetComponent<ParrotLookAtPoint>().Forward = transform.forward.y;
         }
     }
 
@@ -122,10 +113,12 @@ public class ParrotCam : MonoBehaviour {
     /// </summary>
     public void Recenter()
     {
+        x = target.transform.rotation.eulerAngles.y;
+        y = target.transform.rotation.eulerAngles.z + 30f; //the 30 will add Y angle to the camera
 
         y = ClampAngle(y, yMinLimit, yMaxLimit);
 
-        Quaternion rotation = target.transform.rotation;
+        Quaternion rotation = Quaternion.Euler(y,x, 0);
 
         dist = Mathf.Clamp((dist - 1f) * 5, distanceMin, distanceMax);
 
@@ -140,8 +133,7 @@ public class ParrotCam : MonoBehaviour {
         transform.rotation = rotation;
         transform.position = position;
 
-        x = rotation.eulerAngles.y;
-        y = rotation.eulerAngles.z;
+        
     }
 
     /// <summary>
