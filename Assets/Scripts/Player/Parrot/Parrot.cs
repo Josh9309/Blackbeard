@@ -151,16 +151,25 @@ public class Parrot : MonoBehaviour
     //Physics updates
     void FixedUpdate() 
     {
-        if (active)
+        //check if we shoudl pause if the menu is opened
+        if (MenuManager.Instance.MenuEnabled)
         {
-            ParrotMove();           
+            rBody.velocity = Vector3.zero;// stop the bird
         }
-        else if (!active) //Stop the parrot if it is not active
+        else //not paused do movement methods
         {
-            rBody.velocity = Vector3.zero;
-            ReturnToSpawn(gm.ParrotSpawn.transform.position);
-            //StayWithCaptain();
+            if (active)
+            {
+                ParrotMove();           
+            }
+            else if (!active) //Stop the parrot if it is not active
+            {
+                rBody.velocity = Vector3.zero;
+                ReturnToSpawn(gm.ParrotSpawn.transform.position);
+                //StayWithCaptain();
+            }
         }
+
 	}
     #endregion
 

@@ -204,7 +204,7 @@ public class CaptainPirate: MonoBehaviour
 
 	private void FixedUpdate ()
     {
-        if (pirateActive && !stunned)
+        if (pirateActive && !stunned && !MenuManager.Instance.MenuEnabled)
         {
             GetMovementInput();
             PirateMove();

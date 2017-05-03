@@ -69,8 +69,6 @@ public class StartWindow : BaseWindow
             nav = btns[btns.Length - 1].navigation; //get new nav button again
             nav.selectOnUp = btns[0]; //hook exit up to resume button 
             btns[btns.Length - 1].navigation = nav; //save nav to button
-            Debug.Log(btns.Length);
-
         }
         else
         {
