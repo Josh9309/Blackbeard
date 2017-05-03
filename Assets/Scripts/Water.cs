@@ -28,7 +28,7 @@ public class Water : MonoBehaviour {
             }
             else
             {
-                SoundManager.Instance.PlaySfx("splash", 25);
+                SoundManager.Instance.PlaySfx("splash", 10);
             }
         }
     }

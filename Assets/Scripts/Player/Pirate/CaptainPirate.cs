@@ -395,7 +395,7 @@ public class CaptainPirate: MonoBehaviour
         pirateAnim.Play("Stun");
         stunned = true;
         pirateAnim.SetBool("isStunned", true);
-        SoundManager.Instance.PlaySfx("chirpping", 50);
+        SoundManager.Instance.PlaySfx("chirpping", 10);
         yield return new WaitForSeconds(stunTime);
         Debug.Log("unStunned!");
         pirateAnim.SetBool("isStunned", false);
