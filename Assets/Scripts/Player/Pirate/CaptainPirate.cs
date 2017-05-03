@@ -38,6 +38,7 @@ public class CaptainPirate: MonoBehaviour
     private bool grounded;
     public  LayerMask groundMask;
     private bool jumpInput;
+    private bool canJump = true; //this bool is used by outside elements to prevent the player from jumping
     private bool canDoubleJump;
     private bool airControl = true;
     private bool onMoving; //pirate is on a surface that moves
@@ -117,6 +118,11 @@ public class CaptainPirate: MonoBehaviour
     {
         get { return playerNum; }
     }
+
+    public bool CanJump
+    {
+        set { canJump = value; }
+    }
     #endregion
 
     #region InBuiltMethods
@@ -167,7 +173,7 @@ public class CaptainPirate: MonoBehaviour
     {
         if (pirateActive)
         {
-            if (!jumpInput && (canDoubleJump || grounded) && !stunned)
+            if (!jumpInput && (canDoubleJump || grounded) && !stunned && canJump)
             {
                 jumpInput = Input.GetButtonDown(inputManager.JUMP_AXIS);
             }
