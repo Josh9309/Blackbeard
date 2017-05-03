@@ -478,6 +478,12 @@ public class GameManager : Singleton<GameManager>
         for (currentPhaseTime = phaseTime; CurrentPhaseTime > 0; currentPhaseTime--)
         {
             yield return new WaitForSeconds(1);
+
+            //counterbalance phase timer if we are in the pasue menu
+            if (MenuManager.Instance.MenuEnabled)
+            {
+                currentPhaseTime++;
+            }
         }
 
         SwitchPhase();
