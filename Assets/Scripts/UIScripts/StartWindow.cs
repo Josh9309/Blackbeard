@@ -20,15 +20,16 @@ public class StartWindow : BaseWindow
     #region inBuildMethods
     void Start()
     {
-        //only have start button if we are on mainmenu
+        //select start
+        //firstSelected = startButton.gameObject;
+
+        //turn on resume button if we arent in the main menu
         if (SceneManager.GetActiveScene().name != "MainMenu")
         {
-            startButton.gameObject.SetActive(false);
             pauseButton.gameObject.SetActive(true);
         }
         else
         {
-            startButton.gameObject.SetActive(true);
             pauseButton.gameObject.SetActive(false);
         }
 
@@ -51,33 +52,28 @@ public class StartWindow : BaseWindow
         //set correct first start based on what scene we are in
         if (SceneManager.GetActiveScene().name != "MainMenu")
         {
-            //chnage Start out for Resume
-            startButton.gameObject.SetActive(false);
+            //turn on resume button
             pauseButton.gameObject.SetActive(true);
 
-            firstSelected = pauseButton.gameObject; //make resume first selected
-
-            //change the nav hook ups for Options(2) and Exit(4)
+            //change the nav hook ups for the start menu
             Button[] btns = this.gameObject.GetComponentsInChildren<Button>(); //get all our buttons
 
-            Navigation nav = btns[1].navigation; //make new nav object
+            Navigation nav = btns[0].navigation; //make new nav object
             nav.mode = Navigation.Mode.Explicit; //set its nav mdoe to explicit so we can dicttate it
 
-            nav.selectOnDown = btns[0]; //set nav down to be resume button
-            btns[1].navigation = nav; //save nav to button
+            //start -> resume
+            nav.selectOnUp = btns[1];
+            btns[0].navigation = nav;
 
-            nav = btns[btns.Length - 1].navigation; //get new nav button again
-            nav.selectOnUp = btns[0]; //hook exit up to resume button 
-            btns[btns.Length - 1].navigation = nav; //save nav to button
+            //options -> resume
+            nav = btns[2].navigation;
+            nav.selectOnDown = btns[1];
+            btns[2].navigation = nav;
         }
         else
         {
-            //Use Start instead of Resume
-            startButton.gameObject.SetActive(true);
+            //turn off resume
             pauseButton.gameObject.SetActive(false);
-
-            //select start
-            firstSelected = startButton.gameObject;
         }
 
         base.Open();
