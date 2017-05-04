@@ -171,6 +171,20 @@ public class Parrot : MonoBehaviour
         }
 
 	}
+
+    void LateUpdate()
+    {
+        if(transform.localPosition.y < minHeight) //if parrot is bellow minimum Height
+        {
+            //parrots position is set to minimum Height
+            transform.localPosition = new Vector3(transform.localPosition.x, minHeight, transform.localPosition.z);
+        }
+        else if(transform.localPosition.y > maxHeight) //if parrot is above maximum Height
+        {
+            //parrots position is set to maximum Height
+            transform.localPosition = new Vector3(transform.localPosition.x, maxHeight, transform.localPosition.z);
+        }
+    }
     #endregion
 
     #region HelperMethods
@@ -339,7 +353,7 @@ public class Parrot : MonoBehaviour
         if (Mathf.Abs(verticalInput) > inputDelay) 
         {
             //if vertical input is positive and less than max height
-            if (verticalInput > 0 && transform.position.y < maxHeight) 
+            if (verticalInput > 0 && transform.localPosition.y < maxHeight) 
             {
                 //a upwards velocity is add to parrot's current speed
                 rBody.velocity += new Vector3(0, currentSpeed, 0);
@@ -349,7 +363,7 @@ public class Parrot : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotRate);
             }
             //if vertical input is pointing down and greater than min height
-            else if (verticalInput < 0 && transform.position.y > minHeight)
+            else if (verticalInput < 0 && transform.localPosition.y > minHeight)
             {
                 //a downwards velocity is added to parrot's current velocity
                 rBody.velocity += new Vector3(0, -currentSpeed, 0);
