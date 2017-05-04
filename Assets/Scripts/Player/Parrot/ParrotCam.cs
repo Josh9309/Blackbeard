@@ -24,6 +24,8 @@ public class ParrotCam : MonoBehaviour {
     private float x = 0.0f;
     private float y = 0.0f;
 
+    private bool freeLook; //allows player to look around as the fly
+
     private PlayerInput pInput;
 	// Use this for initialization
 	void Start () {
@@ -42,6 +44,9 @@ public class ParrotCam : MonoBehaviour {
         Vector3 angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
+
+        //set freelook to false to begin with
+        freeLook = false;
     }
 	
 	// Update is called once per frame
@@ -75,24 +80,29 @@ public class ParrotCam : MonoBehaviour {
 	void LateUpdate () {
         if (target) //make sure there is a target
         {
-            if (Input.GetButton(pInput.R3_AXIS))
+            if (!freeLook)
             {
                 Recenter();
             }
-            if (invertX)
+
+            if (Input.GetButtonDown(pInput.R3_AXIS)){
+                freeLook = !freeLook;
+                Recenter();
+            }
+            else if (freeLook && invertX)
             {
                 x += Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
             }
-            else
+            else if(freeLook)
             {
                 x -= Input.GetAxis(pInput.CAM_HORIZONTAL_AXIS) * xSpeed * dist * 0.02f;
             }
 
-            if (invertY)
+            if (freeLook && invertY)
             {
                 y += Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
             }
-            else
+            else if(freeLook)
             {
                 y -= Input.GetAxis(pInput.CAM_VERTICAL_AXIS) * ySpeed * 0.02f;
             }
