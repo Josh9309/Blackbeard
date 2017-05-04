@@ -50,12 +50,14 @@ public abstract class BaseTrap : MonoBehaviour {
         }
         if (!activated && (gm.CurrentPlayer1State == GameManager.PlayerState.PARROT || gm.CurrentPlayer2State == GameManager.PlayerState.PARROT) && !(this is BearTrap))
         {
-            particle.startColor = new Color32(244, 215, 50, 255);
+            ParticleSystem.MainModule main = particle.main;
+            main.startColor = Color.yellow;
             particle.Play();
         }
         else if (activated && (gm.CurrentPlayer1State == GameManager.PlayerState.PARROT || gm.CurrentPlayer2State == GameManager.PlayerState.PARROT) && !(this is BearTrap))
         {
-            particle.startColor = Color.red;
+            ParticleSystem.MainModule main = particle.main;
+            main.startColor = Color.red;
             particle.Play();
         }
         else if (!(this is BearTrap))
