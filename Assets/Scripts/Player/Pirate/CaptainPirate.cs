@@ -15,7 +15,7 @@ public class CaptainPirate: MonoBehaviour
     //pirate Stats
     private bool invincible = false;
     private bool stunned = false;
-    private float speed = 5.0f;
+    [SerializeField] private float speed = 7.0f;
     private bool pirateActive; //The pirate will only recieve input if it is active
 
     private Vector3 respawnLocation;
