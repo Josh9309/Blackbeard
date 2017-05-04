@@ -355,7 +355,7 @@ public class CaptainPirate: MonoBehaviour
         if(grounded && jumpInput)
         {
             pirateAnim.Play("Jump");
-            rBody.velocity = new Vector3(rBody.velocity.x, jumpForce, rBody.velocity.z);
+            rBody.velocity = new Vector3(rBody.velocity.x, jumpForce+ rBody.velocity.y, rBody.velocity.z);
             grounded = false;
             pirateAnim.SetBool("Grounded", false);
             jumpInput = false;
