@@ -25,10 +25,12 @@ public class SettingManager : Singleton<SettingManager>
     GameSettings gameSettings;
     [SerializeField]
     Toggle splitScreen;
-    [SerializeField] private Toggle invert;
+    [SerializeField] Toggle invertRed;
+    [SerializeField] Toggle invertBlue;
 
     private bool vertical; //Camera split type
-    private bool invertCam; //invert cam controls or not 
+    private bool invertRedCam; //invert cam controls or not 
+    private bool invertBlueCam; //invert cam controls or not
     #endregion
 
     #region Properties
@@ -44,9 +46,14 @@ public class SettingManager : Singleton<SettingManager>
         }
     }
 
-    public bool InvertCam
+    public bool InvertRedCam
     {
-        get { return invertCam; }
+        get { return invertRedCam; }
+    }
+
+    public bool InvertBlueCam
+    {
+        get { return invertBlueCam; }
     }
     #endregion
 
@@ -56,7 +63,8 @@ public class SettingManager : Singleton<SettingManager>
     private void Start()
     {
       //  splitScreenChange(); //Call this now so the toggle button works from start
-        invertCam = true;
+        invertRedCam = true;
+        invertBlueCam = true;
     }
 
     void Awake()
@@ -151,13 +159,21 @@ public class SettingManager : Singleton<SettingManager>
 				});
 		}
 
-		if (invert != null)
+		if (invertRed != null)
 		{
-			invert.onValueChanged.AddListener(delegate
+			invertRed.onValueChanged.AddListener(delegate
 				{
-					invertCameraChange();
+					invertRedChange();
 				});
 		}
+
+        if (invertBlue != null)
+        {
+            invertBlue.onValueChanged.AddListener(delegate
+                {
+                    invertBlueChange();
+                });
+        }
     }
     #endregion
 
@@ -221,10 +237,16 @@ public class SettingManager : Singleton<SettingManager>
         }
     }
 
-    private void invertCameraChange()
+    private void invertRedChange()
     {
         //invert if checked
-        invertCam = invert.isOn;
+        invertRedCam = invertRed.isOn;
+    }
+
+    private void invertBlueChange()
+    {
+        //invert if checked
+        invertBlueCam = invertBlue.isOn;
     }
     #endregion
 }

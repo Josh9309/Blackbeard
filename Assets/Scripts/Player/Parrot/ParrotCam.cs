@@ -48,8 +48,18 @@ public class ParrotCam : MonoBehaviour {
     void Update()
     {
         //check for inversion
-        invertX = SettingManager.Instance.InvertCam;
-        invertY = SettingManager.Instance.InvertCam;
+        switch (playerNum)
+        {
+            case 1:
+                invertX = SettingManager.Instance.InvertRedCam;
+                invertY = SettingManager.Instance.InvertRedCam;
+                break;
+            case 2:
+                invertX = SettingManager.Instance.InvertBlueCam;
+                invertY = SettingManager.Instance.InvertBlueCam;
+                break;
+        }
+
 
         //do stick stuff yea
         if (Input.GetAxis(pInput.HORIZONTAL_AXIS) > 0.5f)

@@ -398,7 +398,7 @@ public class CaptainPirate: MonoBehaviour
         pirateAnim.SetBool("isStunned", true);
 
         //play sound only part of the time
-        if (Random.Range(0, 100) > 85)
+        if (UnityEngine.Random.Range(0, 100) > 85)
         {
             SoundManager.Instance.PlaySfx("chirpping", 10);
         }
