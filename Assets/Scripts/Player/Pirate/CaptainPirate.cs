@@ -391,12 +391,22 @@ public class CaptainPirate: MonoBehaviour
 
     public IEnumerator Stun(float stunTime)
     {
+        //do stun actions
         Debug.Log("Stunned!");
         pirateAnim.Play("Stun");
         stunned = true;
         pirateAnim.SetBool("isStunned", true);
-        SoundManager.Instance.PlaySfx("chirpping", 10);
+
+        //play sound only part of the time
+        if (Random.Range(0, 100) > 85)
+        {
+            SoundManager.Instance.PlaySfx("chirpping", 10);
+        }
+
+        //wait for durration of stun
         yield return new WaitForSeconds(stunTime);
+
+        //turn off stun
         Debug.Log("unStunned!");
         pirateAnim.SetBool("isStunned", false);
         stunned = false;
