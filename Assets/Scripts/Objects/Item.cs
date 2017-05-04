@@ -71,6 +71,7 @@ public class Item : MonoBehaviour
             else if (gameObject.name.Contains("Bear_Trap"))
             {
                 GetComponent<BearTrap>().enabled = true;
+                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
                 enabled = false;
             }
             else //If this is any other object

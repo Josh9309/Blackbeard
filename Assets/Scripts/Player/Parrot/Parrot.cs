@@ -269,7 +269,7 @@ public class Parrot : MonoBehaviour
             Rigidbody heldUtilityRBody = heldUtility.GetComponent<Rigidbody>(); //Get the item's rigidbody
             heldUtilityRBody.useGravity = true;
             heldUtilityRBody.constraints = RigidbodyConstraints.None;
-            heldUtilityRBody.velocity = new Vector3(rBody.velocity.x, 0, rBody.velocity.z);
+            //heldUtilityRBody.velocity = new Vector3(rBody.velocity.x*.75f, 0, rBody.velocity.z*.75f); //Commented out because we need a reticle for momentum to be effective.
             heldUtility.transform.parent = null;
             heldUtility.GetComponent<Item>().Active = true;
             if (heldUtility.name.Contains("Bear_Trap"))
