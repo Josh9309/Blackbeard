@@ -21,9 +21,19 @@ public class TreasureGoal : MonoBehaviour {
     {
         if(pirate.gameObject.tag == "Pirate")
         {
+            //get winning pirate
             CaptainPirate captain = pirate.gameObject.GetComponent<CaptainPirate>();
+
+            //open that chest boi
             SoundManager.Instance.PlaySfx("chestOpening", 300);
 
+            //goto win screen of menu
+            MenuManager.Instance.MenuEnabled = true;
+            GameManager.Instance.HUD.GetComponent<Canvas>().enabled = (!GameManager.Instance.HUD.GetComponent<Canvas>().enabled); //turn off hud
+            MenuManager.Instance.GoToScreen("GameOverWindow");
+            MenuManager.Instance.Screens["GameOverWindow"].GetComponent<GameOverWindow>().SetWinner(captain.PlayerNum); //set winner text
+
+            //kev will kill this line and its entire extended family Debug.Loss
             Debug.Log("Player " + captain.PlayerNum + " Wins!!!");
 
             gm.EndGame();
