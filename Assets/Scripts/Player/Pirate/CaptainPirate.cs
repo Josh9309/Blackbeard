@@ -22,6 +22,7 @@ public class CaptainPirate: MonoBehaviour
     private CheckPoint prevCheckPoint;
     private Vector3 respawnLocation;
     private Vector3 backUpRespawn;
+    private Vector3 checkRespawn;
 
     //pirate animation attributes
     private Animator pirateAnim;
@@ -186,7 +187,7 @@ public class CaptainPirate: MonoBehaviour
 
             if (Input.GetButtonDown(inputManager.RESPAWN_AXIS))
             {
-                Respawn();
+                Respawn(false);
             }
         }
         else //pirate is not active
@@ -195,7 +196,7 @@ public class CaptainPirate: MonoBehaviour
             if (!grounded || onMoving) //if pirate is in air when not active 
             {
                 //Respawn Pirate
-                Respawn();
+                Respawn(false);
             }
         }
         Signal();
@@ -414,8 +415,16 @@ public class CaptainPirate: MonoBehaviour
         stunned = false;
     }
 
-    public void Respawn()
+    /// <summary>
+    /// This method will Respawn the player at the last platform they were at
+    /// </summary>
+    /// <param name="useCheckPoint">tells method to use the checkPoint Respawn Point</param>
+    public void Respawn(bool useCheckPoint)
     {
+        if (useCheckPoint)
+        {
+            transform.position = checkRespawn;
+        }
         transform.position = respawnLocation;
     }
 
@@ -504,21 +513,21 @@ public class CaptainPirate: MonoBehaviour
                 {
                     if (prevCheckPoint.CheckPointNum < checkpoint.GetComponent<CheckPoint>().CheckPointNum)
                     {
-                        respawnLocation = checkLoc;
+                        checkRespawn = checkLoc;
                     }
                 }
                 else
                 {
-                    respawnLocation = checkLoc;
+                    checkRespawn = checkLoc;
                     checkPointReached = true;
                     prevCheckPoint = checkpoint.GetComponent<CheckPoint>();
                 }
             }
             else if(checkPointReached && ( rayHit.collider.gameObject.tag == "Terrain"))
             {
-                Respawn();
+                Respawn(true);
             }
-            else if (rayHit.collider.gameObject.tag == "IslandPlatform" && !checkPointReached)
+            else if (rayHit.collider.gameObject.tag == "IslandPlatform")
             {
                 //set the respawn point to be the previous islands center point
                 GameObject prevIsland = rayHit.collider.gameObject;
