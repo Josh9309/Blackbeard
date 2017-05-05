@@ -19,7 +19,7 @@ public class Water : MonoBehaviour {
     {
         if(col.gameObject.tag == "Pirate")
         {
-            col.gameObject.GetComponent<CaptainPirate>().Respawn();
+            col.gameObject.GetComponent<CaptainPirate>().Respawn(false);
 
 
             if (Random.Range(0, 100) > 80)
