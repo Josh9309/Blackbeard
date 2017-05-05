@@ -55,7 +55,7 @@ public class Item : MonoBehaviour
     private void OnCollisionEnter(Collision coll)
     {
         //Dropped items
-        if (active && (coll.gameObject.tag == "Terrain" || coll.gameObject.tag == "IslandPlatform" || coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform")) //Colliding with the ground
+        if (active && (coll.gameObject.tag == "Terrain" || coll.gameObject.tag == "IslandPlatform" || coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform" || coll.gameObject.tag == "CheckPointPlatform")) //Colliding with the ground
         {
             if (gameObject.name.Contains("Lantern") && active == true) // if gameObject is lantern
             {

@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class CheckPoint : MonoBehaviour {
 
-    [SerializeField] CheckpointPlatform checkPlatform;
-    
+    [SerializeField] private int checkPointNum;
 
-	// Use this for initialization
-	void Start () {
+    public int CheckPointNum
+    {
+        get { return checkPointNum; }
+    }
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
@@ -16,22 +20,4 @@ public class CheckPoint : MonoBehaviour {
 	void Update () {
 		
 	}
-
-    void OnTriggerEnter(Collider col)
-    {
-        if(col.tag == "Pirate")
-        {
-            CaptainPirate pirate = col.gameObject.GetComponent<CaptainPirate>();
-
-            if(checkPlatform.P1Checkpoint && pirate.PlayerNum == 1)
-            {
-                checkPlatform.Active = true;
-            }
-            else if(!checkPlatform.P1Checkpoint && pirate.PlayerNum == 2)
-            {
-                checkPlatform.Active = true;
-            }
-        }
-        
-    }
 }

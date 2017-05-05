@@ -18,6 +18,8 @@ public class CaptainPirate: MonoBehaviour
     [SerializeField] private float speed = 7.0f;
     private bool pirateActive; //The pirate will only recieve input if it is active
 
+    private bool checkPointReached = false;
+    private CheckPoint prevCheckPoint;
     private Vector3 respawnLocation;
     private Vector3 backUpRespawn;
 
@@ -494,7 +496,29 @@ public class CaptainPirate: MonoBehaviour
             }
 
             //set respawn point
-            if (rayHit.collider.gameObject.tag == "IslandPlatform")
+            if(rayHit.collider.gameObject.tag == "CheckPointPlatform")
+            {
+                GameObject checkpoint = rayHit.collider.gameObject;
+                Vector3 checkLoc = new Vector3(checkpoint.transform.position.x, (checkpoint.GetComponent<MeshCollider>().bounds.size.y) + checkpoint.transform.position.y, checkpoint.transform.position.z);
+                if (checkPointReached)
+                {
+                    if (prevCheckPoint.CheckPointNum < checkpoint.GetComponent<CheckPoint>().CheckPointNum)
+                    {
+                        respawnLocation = checkLoc;
+                    }
+                }
+                else
+                {
+                    respawnLocation = checkLoc;
+                    checkPointReached = true;
+                    prevCheckPoint = checkpoint.GetComponent<CheckPoint>();
+                }
+            }
+            else if(checkPointReached && ( rayHit.collider.gameObject.tag == "Terrain"))
+            {
+                Respawn();
+            }
+            else if (rayHit.collider.gameObject.tag == "IslandPlatform" && !checkPointReached)
             {
                 //set the respawn point to be the previous islands center point
                 GameObject prevIsland = rayHit.collider.gameObject;
