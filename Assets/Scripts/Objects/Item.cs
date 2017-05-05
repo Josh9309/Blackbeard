@@ -94,7 +94,7 @@ public class Item : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        else if (active && coll.gameObject.name.Contains("Captain")) //Colliding with a pirate
+		else if (active && coll.gameObject.name.Contains("Captain") && !name.Contains("Bear_Trap")) //Colliding with a pirate
             Destroy(gameObject);
     }
 
@@ -127,7 +127,7 @@ public class Item : MonoBehaviour
 
             if (previousActive == false)
             {
-                //StartCoroutine(CoconutDecay(1f)); //Remove this to buff coconuts
+                StartCoroutine(CoconutDecay(3f)); //Remove this to buff coconuts
                 previousActive = true;
             }
         }

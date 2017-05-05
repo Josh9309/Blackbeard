@@ -51,11 +51,14 @@ public class BearTrap : BaseTrap {
 
     public override void Trigger(GameObject pirate)
     {
-        triggered = true;
-        trapAnim.Play("Activate");
-        Debug.Log("Bear trap triggered");
-        StartCoroutine(pirate.GetComponent<CaptainPirate>().Stun(stunTime));
-        StartCoroutine(DestroyAfterStun(stunTime + 1));
+		if (!triggered)
+		{
+			triggered = true;
+			trapAnim.Play ("Activate");
+
+			StartCoroutine (pirate.GetComponent<CaptainPirate> ().Stun (stunTime));
+			StartCoroutine (DestroyAfterStun (stunTime + 1));
+		}
     }
 
     protected override void OnTriggerEnter(Collider coll)
@@ -72,9 +75,7 @@ public class BearTrap : BaseTrap {
     //References are needed for coroutines outside of this object
     public IEnumerator DestroyAfterStun(float destroyTime)
     {
-        transform.position = new Vector3(0, -1000, 0); //Move object off screen
-
-        yield return new WaitForSeconds(stunTime);
+		yield return new WaitForSeconds(destroyTime);
 
         Destroy(gameObject); //Destroy object
     }
