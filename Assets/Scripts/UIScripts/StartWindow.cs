@@ -89,7 +89,12 @@ public class StartWindow : BaseWindow
         MenuManager.Instance.MenuEnabled = !MenuManager.Instance.MenuEnabled;
         SceneManager.LoadScene("Poseidon");
         Debug.Log("New Game Pressed");
-    }   
+    }
+
+    public void Load()
+    {
+        MenuManager.Instance.GoToScreen("Loading");
+    }
 
     protected void ResumeGame()
     {
