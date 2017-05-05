@@ -35,7 +35,7 @@ public class GameOverWindow : BaseWindow
                 winMessage.text = "Redbeard Wins!";
                 break;
             case 2:
-                winMessage.text = "BlueEyes Wins!";
+                winMessage.text = "BlueJay Wins!";
                 break;
             default:
                 winMessage.text = "You Lose, go Home.";

@@ -112,8 +112,14 @@ public class StartWindow : BaseWindow
         Debug.Log("Option Pressed");
     }
 
+    //method for controls button
+    protected void Controls()
+    {
+        MenuManager.Instance.GoToScreen("Controls");
+    }
+
     //method for credits menu
-    protected void Credits()
+    public void Credits()
     {
         MenuManager.Instance.GoToScreen("Credits");
         Debug.Log("Credits Pressed");
