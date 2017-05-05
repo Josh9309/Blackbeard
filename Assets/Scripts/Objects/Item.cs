@@ -14,7 +14,7 @@ public class Item : MonoBehaviour
     private GameObject firePrefab;
     private Rigidbody rBody;
     private Collider objectCollider;
-    private TrailRenderer tRend;
+    //private TrailRenderer tRend;
     #endregion
 
     #region Properties
@@ -42,20 +42,20 @@ public class Item : MonoBehaviour
         previousActive = false;
         objectCollider = GetComponent<Collider>();
 
-        if (name.Contains("Coconut"))
-        {
-            tRend = GetComponentInChildren<TrailRenderer>(); //Get the trail renderer
-            tRend.enabled = false;
-        }
+        //if (name.Contains("Coconut"))
+        //{
+        //    tRend = GetComponentInChildren<TrailRenderer>(); //Get the trail renderer
+        //    tRend.enabled = false;
+        //}
     }
 
-    private void Update()
-    {
-        if (active && tRend)
-            tRend.enabled = true;
-        else if (!active && tRend)
-            tRend.enabled = false;
-    }
+    //private void Update()
+    //{
+        //if (active && tRend)
+        //    tRend.enabled = true;
+        //else if (!active && tRend)
+        //    tRend.enabled = false;
+    //}
 
     private void OnTriggerEnter(Collider coll)
     {

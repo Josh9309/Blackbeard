@@ -277,10 +277,10 @@ public class Parrot : MonoBehaviour
                 //heldUtility.GetComponent<Item>().enabled = false;
                 heldUtility.GetComponent<BearTrap>().Activate();
             }
-            //if (heldUtility.name.Contains("Coconut"))
-            //{
-            //    heldUtility.GetComponentInChildren<ParticleSystem>().Play();
-            //}
+            if (heldUtility.name.Contains("Coconut"))
+            {
+                heldUtility.GetComponentInChildren<ParticleSystem>().Play();
+            }
             heldUtility = null;
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
