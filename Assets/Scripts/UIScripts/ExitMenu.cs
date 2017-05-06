@@ -25,7 +25,7 @@ public class ExitMenu : BaseWindow {
     public void DontExit()
     {
         Debug.Log("No pressed");
-        //MenuManager.Instance.GoToScreen("Start");
+        MenuManager.Instance.GoToScreen("Start");
     }
     #endregion
 }

@@ -24,7 +24,8 @@ public class GameOverWindow : BaseWindow
     //to see if main menu is pressed
     protected void MainMenu()
     {
-        Debug.Log("Main Menu Pressed");
+        //Debug.Log("Main Menu Pressed");
+        MenuManager.Instance.GoToScreen("Start");
     }
 
     public void SetWinner(int playerNum)
