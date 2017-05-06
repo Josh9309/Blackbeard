@@ -425,7 +425,10 @@ public class CaptainPirate: MonoBehaviour
         {
             transform.position = checkRespawn;
         }
-        transform.position = respawnLocation;
+        else
+        {
+            transform.position = respawnLocation;
+        }
     }
 
     private void ApplyExtraTurnRotation()
