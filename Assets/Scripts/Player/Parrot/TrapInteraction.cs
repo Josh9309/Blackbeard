@@ -39,7 +39,7 @@ public class TrapInteraction : MonoBehaviour
     {
         inCooldown = true;
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
 
         inCooldown = false;
     }
