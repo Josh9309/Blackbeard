@@ -19,37 +19,58 @@ public class GuardTowerFlags : MonoBehaviour {
 
 		foreach (GameObject flag in flags)
 		{
-			if (name == "Collider1")
-				if (flag.name.Contains("Red1"))
-				{
-					redFlag = flag;
-					originalYPosition = redFlag.transform.position.y;
-					redMesh = redFlag.GetComponent<SkinnedMeshRenderer>();
-					height = redFlag.GetComponent<Collider>().bounds.size.y - .1f;
-					redMesh.enabled = false;
-				}
-				else if (flag.name.Contains("Blue1"))
-				{
-					blueFlag = flag;
-					blueMesh = blueFlag.GetComponent<SkinnedMeshRenderer>();
-					blueMesh.enabled = false;
-				}
-			else if (name == "Collider2")
-				if (flag.name.Contains("Red2"))
-				{
-					redFlag = flag;
-					originalYPosition = redFlag.transform.position.y;
-					redMesh = redFlag.GetComponent<SkinnedMeshRenderer>();
-					height = redFlag.GetComponent<Collider>().bounds.size.y - .1f;
-					redMesh.enabled = false;
-				}
-				else if (flag.name.Contains("Blue2"))
-				{
-					blueFlag = flag;
-					blueMesh = blueFlag.GetComponent<SkinnedMeshRenderer>();
-					blueMesh.enabled = false;
-				}
-		}
+            if (name == "Collider1")
+            {
+                if (flag.name.Contains("Red1"))
+                {
+                    redFlag = flag;
+                    originalYPosition = redFlag.transform.position.y;
+                    redMesh = redFlag.GetComponent<SkinnedMeshRenderer>();
+                    height = redFlag.GetComponent<Collider>().bounds.size.y - .1f;
+                    redMesh.enabled = false;
+                }
+                else if (flag.name.Contains("Blue1"))
+                {
+                    blueFlag = flag;
+                    blueMesh = blueFlag.GetComponent<SkinnedMeshRenderer>();
+                    blueMesh.enabled = false;
+                }
+            }
+            else if (name == "Collider2")
+            {
+                if (flag.name.Contains("Red2"))
+                {
+                    redFlag = flag;
+                    originalYPosition = redFlag.transform.position.y;
+                    redMesh = redFlag.GetComponent<SkinnedMeshRenderer>();
+                    height = redFlag.GetComponent<Collider>().bounds.size.y - .1f;
+                    redMesh.enabled = false;
+                }
+                else if (flag.name.Contains("Blue2"))
+                {
+                    blueFlag = flag;
+                    blueMesh = blueFlag.GetComponent<SkinnedMeshRenderer>();
+                    blueMesh.enabled = false;
+                }
+            }
+            else if (name == "Collider3")
+            {
+                if (flag.name.Contains("Red3"))
+                {
+                    redFlag = flag;
+                    originalYPosition = redFlag.transform.position.y;
+                    redMesh = redFlag.GetComponent<SkinnedMeshRenderer>();
+                    height = redFlag.GetComponent<Collider>().bounds.size.y - .1f;
+                    redMesh.enabled = false;
+                }
+                else if (flag.name.Contains("Blue3"))
+                {
+                    blueFlag = flag;
+                    blueMesh = blueFlag.GetComponent<SkinnedMeshRenderer>();
+                    blueMesh.enabled = false;
+                }
+            }
+        }
 
 		redEnabled = false;
 		blueEnabled = false;
