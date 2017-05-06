@@ -391,18 +391,26 @@ public class GameManager : Singleton<GameManager>
 		if (flyBy) {
 			// player 1 is about to switch
 			if (currentPlayer1State == PlayerState.CAPTAIN) {
-				parrotFlyover1.active = true;
+				parrotFlyover1.SetActive(true);
+                parrotFlyover1.transform.parent = null;
 				parrotFlyover1.transform.position += new Vector3 (.1f * parrotFlyover1.transform.forward.x, .1f * parrotFlyover1.transform.forward.y, .1f * parrotFlyover1.transform.forward.z);
 			} else if (currentPlayer2State == PlayerState.CAPTAIN) {
-				parrotFlyover2.active = true;
-				parrotFlyover2.transform.position += new Vector3 (.1f * parrotFlyover2.transform.forward.x, .1f * parrotFlyover2.transform.forward.y, .1f * parrotFlyover2.transform.forward.z);
+                parrotFlyover2.SetActive(true);
+                parrotFlyover2.transform.parent = null;
+                parrotFlyover2.transform.position += new Vector3 (.1f * parrotFlyover2.transform.forward.x, .1f * parrotFlyover2.transform.forward.y, .1f * parrotFlyover2.transform.forward.z);
 			}
 		} else {
-			parrotFlyover1.transform.localPosition = new Vector3 (-.05f, 2.34f, -5.6f);
+            parrotFlyover1.transform.parent = pirateP1.transform;
+            parrotFlyover2.transform.parent = pirateP2.transform;
+
+            parrotFlyover1.transform.localPosition = new Vector3 (-.05f, 2.34f, -5.6f);
 			parrotFlyover2.transform.localPosition = new Vector3 (-.05f, 2.34f, -5.6f);
 
-			parrotFlyover1.active = false;
-			parrotFlyover2.active = false;
+            parrotFlyover1.transform.rotation = pirateP1.transform.rotation;
+            parrotFlyover2.transform.rotation = pirateP2.transform.rotation;
+
+            parrotFlyover1.SetActive(false);
+			parrotFlyover2.SetActive(false);
 
 
 		}
