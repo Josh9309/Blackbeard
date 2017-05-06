@@ -225,6 +225,11 @@ public class GameManager : Singleton<GameManager>
     [SerializeField]
     private bool parrotDebug;
 
+	// transitional parrots
+	private GameObject parrotFlyover1;
+	private GameObject parrotFlyover2;
+	private bool flyBy = false;
+
     //HUD
 
     #endregion
@@ -348,6 +353,12 @@ public class GameManager : Singleton<GameManager>
         signal1 = pirateP1.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
         signal2 = pirateP2.gameObject.transform.FindChild("Signal Beam").GetComponent<ParticleSystem>();
 
+		parrotFlyover1 = GameObject.FindGameObjectWithTag ("Parrot1Flyover");
+		parrotFlyover2 = GameObject.FindGameObjectWithTag ("Parrot2Flyover");
+
+		parrotFlyover1.active = false;
+		parrotFlyover2.active = false;
+
         //set p1 to pirate and p2 to parrot
         if (!parrotDebug)
         {
@@ -377,8 +388,41 @@ public class GameManager : Singleton<GameManager>
 
     void Update()
     {
+		if (flyBy) {
+			// player 1 is about to switch
+			if (currentPlayer1State == PlayerState.CAPTAIN) {
+				parrotFlyover1.active = true;
+				parrotFlyover1.transform.position += new Vector3 (.1f * parrotFlyover1.transform.forward.x, .1f * parrotFlyover1.transform.forward.y, .1f * parrotFlyover1.transform.forward.z);
+			} else if (currentPlayer2State == PlayerState.CAPTAIN) {
+				parrotFlyover2.active = true;
+				parrotFlyover2.transform.position += new Vector3 (.1f * parrotFlyover2.transform.forward.x, .1f * parrotFlyover2.transform.forward.y, .1f * parrotFlyover2.transform.forward.z);
+			}
+		} else {
+			parrotFlyover1.transform.localPosition = new Vector3 (-.05f, 2.34f, -5.6f);
+			parrotFlyover2.transform.localPosition = new Vector3 (-.05f, 2.34f, -5.6f);
+
+			parrotFlyover1.active = false;
+			parrotFlyover2.active = false;
+
+
+		}
 
     }
+
+	//private void FlyBy()
+	/*{
+		// player 1 is about to switch
+		if (currentPlayer1State == PlayerState.CAPTAIN)
+		{
+			parrotFlyover1.active = true;
+			parrotFlyover1.transform.position += new Vector3(.5f * parrotFlyover1.transform.forward.x, .5f * parrotFlyover1.transform.forward.y, .5f * parrotFlyover1.transform.forward.z);
+		} 
+		else if (currentPlayer2State == PlayerState.CAPTAIN) 
+		{
+			parrotFlyover2.active = true;
+			parrotFlyover2.transform.position += new Vector3(2 * parrotFlyover2.transform.forward.x, 2 * parrotFlyover2.transform.forward.y, 2 * parrotFlyover2.transform.forward.z);
+		}
+	}*/
 
     /// <summary>
     /// Swaps which state the players are in and resets phase timer
@@ -480,6 +524,10 @@ public class GameManager : Singleton<GameManager>
         {
             yield return new WaitForSeconds(1);
 
+
+			if (currentPhaseTime < 5)
+				flyBy = true;
+
             //counterbalance phase timer if we are in the pasue menu
             if (MenuManager.Instance.MenuEnabled)
             {
@@ -487,9 +535,11 @@ public class GameManager : Singleton<GameManager>
             }
         }
 
+		flyBy = false;
         SwitchPhase();
         phaseTimerRoutine = StartCoroutine(PhaseTimer());
     }
+		
 
     public IEnumerator SignalBeam(string name)
     {
