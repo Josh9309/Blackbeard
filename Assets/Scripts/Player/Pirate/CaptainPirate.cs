@@ -357,7 +357,7 @@ public class CaptainPirate: MonoBehaviour
     {
         if(grounded && jumpInput)
         {
-            pirateAnim.Play("Jump Start");
+            pirateAnim.Play("Jump");
             rBody.velocity = new Vector3(rBody.velocity.x, jumpForce+ rBody.velocity.y, rBody.velocity.z);
             grounded = false;
             pirateAnim.SetBool("Grounded", false);
@@ -375,7 +375,7 @@ public class CaptainPirate: MonoBehaviour
         }
         else if(!grounded && canDoubleJump &&jumpInput)
         {
-            pirateAnim.Play("Double Jump Falling");
+            pirateAnim.Play("Double Jump");
             rBody.velocity = new Vector3(rBody.velocity.x, jumpForce, rBody.velocity.z);
             grounded = false;
             jumpInput = false;
