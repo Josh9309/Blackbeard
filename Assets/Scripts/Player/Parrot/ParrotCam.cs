@@ -24,6 +24,8 @@ public class ParrotCam : MonoBehaviour {
     private float x = 0.0f;
     private float y = 0.0f;
 
+    [SerializeField] private GameObject notif;
+
     private bool freeLook; //allows player to look around as the fly
 
     private PlayerInput pInput;
@@ -88,6 +90,10 @@ public class ParrotCam : MonoBehaviour {
             if (Input.GetButtonDown(pInput.R3_AXIS)){
                 freeLook = !freeLook;
                 Recenter();
+
+                //cam mode notification
+                string txt = "Parrot Freelook: " + freeLook.ToString();
+                notif.GetComponent<CameraMode>().ShowText(txt, 2);
             }
             else if (freeLook && invertX)
             {

@@ -209,6 +209,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private Parrot parrotP2;
     [SerializeField] private GameObject parrotSpawn;
     [SerializeField] private GameObject hud;
+    [SerializeField] private GameObject parrotNotif;
 
 
     private PlayerState currentPlayer1State = PlayerState.CAPTAIN;
