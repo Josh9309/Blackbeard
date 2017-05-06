@@ -96,7 +96,7 @@ public class StartWindow : BaseWindow
         MenuManager.Instance.GoToScreen("Loading");
     }
 
-    protected void ResumeGame()
+    public void ResumeGame()
     {
         MenuManager.Instance.GoToScreen("Start"); //reset start screen
         MenuManager.Instance.MenuEnabled = !MenuManager.Instance.MenuEnabled;
@@ -111,14 +111,14 @@ public class StartWindow : BaseWindow
         Debug.Log("Main Menu");
     }
     //method for options button
-    protected void Options()
+    public void Options()
     {
         MenuManager.Instance.GoToScreen("Options");
         Debug.Log("Option Pressed");
     }
 
     //method for controls button
-    protected void Controls()
+    public void Controls()
     {
         MenuManager.Instance.GoToScreen("Controls");
     }
@@ -131,7 +131,7 @@ public class StartWindow : BaseWindow
     }
 
     //method for exit menu
-    protected void Exit()
+    public void Exit()
     {
         MenuManager.Instance.GoToScreen("Exit");
         Debug.Log("Exit Pressed");

@@ -52,14 +52,14 @@ public class OptionsMenu: BaseWindow
     }
 
     //method for new game button
-    protected void NewGame()
+    public void NewGame()
     {
         SceneManager.LoadScene("Posideon");
         //MenuManager.Instance.GoToScreen("GameHUD");
         Debug.Log("New Game Pressed");
     }
 
-    protected void ResumeGame()
+    public void ResumeGame()
     {
         MenuManager.Instance.MenuEnabled = false; //turn off menu system and return to game
         Debug.Log(" Resume Pressed");
@@ -71,21 +71,21 @@ public class OptionsMenu: BaseWindow
         Debug.Log("Main Menu");
     }
     //method for options button
-    protected void Options()
+    public void Options()
     {
         MenuManager.Instance.GoToScreen("Options");
         Debug.Log("Option Pressed");
     }
 
     //method for credits menu
-    protected void Credits()
+    public void Credits()
     {
         MenuManager.Instance.GoToScreen("Credits");
         Debug.Log("Credits Pressed");
     }
 
     //method for exit menu
-    protected void Exit()
+    public void Exit()
     {
         MenuManager.Instance.GoToScreen("Exit");
         Debug.Log("Exit Pressed");

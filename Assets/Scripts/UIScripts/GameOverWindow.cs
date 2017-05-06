@@ -22,7 +22,7 @@ public class GameOverWindow : BaseWindow
 
     #region HelperMethods
     //to see if main menu is pressed
-    protected void MainMenu()
+    public void MainMenu()
     {
         //Debug.Log("Main Menu Pressed");
         MenuManager.Instance.GoToScreen("Start");
