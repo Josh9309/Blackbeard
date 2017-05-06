@@ -87,7 +87,7 @@ public class ParrotCam : MonoBehaviour {
                 Recenter();
             }
 
-            if (Input.GetButtonDown(pInput.R3_AXIS)){
+            if (Input.GetButtonDown(pInput.R3_AXIS) &&((playerNum == 1 && GameManager.Instance.CurrentPlayer1State == GameManager.PlayerState.PARROT) || (playerNum == 2 && GameManager.Instance.CurrentPlayer2State == GameManager.PlayerState.PARROT))){
                 freeLook = !freeLook;
                 Recenter();
 

@@ -87,6 +87,10 @@ public class Item : MonoBehaviour
             {
                 GetComponent<BearTrap>().enabled = true;
                 GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+                if (coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform")
+                {
+                    transform.parent = coll.gameObject.transform;
+                }
                 enabled = false;
             }
             else //If this is any other object
