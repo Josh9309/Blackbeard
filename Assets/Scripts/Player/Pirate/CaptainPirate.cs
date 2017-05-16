@@ -58,6 +58,10 @@ public class CaptainPirate: MonoBehaviour
     private Transform gameCamera;
     private Rigidbody rBody;
 
+    //collider fields
+    private CapsuleCollider collider;
+    private float raycastOriginOffset;
+
     //Game Manager
     //private GameManager gm;
 
@@ -138,6 +142,9 @@ public class CaptainPirate: MonoBehaviour
     {
         rBody = GetComponent<Rigidbody>();
         pirateAnim = GetComponent<Animator>();
+        collider = GetComponent<CapsuleCollider>();
+
+        raycastOriginOffset = 0;
 
         //set intial respawnLoc
         respawnLocation = transform.position;
@@ -159,7 +166,7 @@ public class CaptainPirate: MonoBehaviour
                 gameCamera = ssCamera.CaptainCamera2.transform; //Get the camera
                 break;
         }
-        
+
         //get input manager based on player num
         switch (playerNum)
         {
@@ -174,8 +181,8 @@ public class CaptainPirate: MonoBehaviour
 
         //pirateActive = true;
     }
-	
-	// Update is called once per frame
+
+    // Update is called once per frame
     private void Update()
     {
         if (pirateActive)
@@ -209,14 +216,14 @@ public class CaptainPirate: MonoBehaviour
         }
     }
 
-	private void FixedUpdate ()
+    private void FixedUpdate ()
     {
         if (pirateActive && !stunned && !MenuManager.Instance.MenuEnabled)
         {
             GetMovementInput();
             PirateMove();
         }
-	}
+    }
 
     private void OnCollisionEnter(Collision coll)
     {
@@ -226,7 +233,7 @@ public class CaptainPirate: MonoBehaviour
         //Get scripts from the object
         Item itemScript = null;
         if (coll.gameObject.tag == "Item")
-             itemScript = coll.gameObject.GetComponent<Item>();
+            itemScript = coll.gameObject.GetComponent<Item>();
 
         //Items colliding with the pirate
         //Fire and BearTrap handle the coroutine in their own respective classes
@@ -257,8 +264,8 @@ public class CaptainPirate: MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(respawnLocation, .5f);
 
-       // Gizmos.color = Color.red;
-       // Gizmos.DrawSphere(backUpRespawn, .5f);
+        // Gizmos.color = Color.red;
+        // Gizmos.DrawSphere(backUpRespawn, .5f);
     }
     #endregion
 
@@ -311,14 +318,14 @@ public class CaptainPirate: MonoBehaviour
         forwardAmount = movement.z;
 
         ApplyExtraTurnRotation();
- 
+
         //determine which movement method to use depending on whether pirate is grounded or not
         if (grounded)
         {
-            
+
             //use grounded movement method
             rBody.velocity = transform.forward * forwardAmount * speed;
-            
+
             if (onMoving)
             {
                 rBody.velocity += movingPlatformVel;
@@ -347,7 +354,7 @@ public class CaptainPirate: MonoBehaviour
 
             //call Jump for double jump
             Jump();
-           
+
         }
 
         //send input and other animation state parameters to the animator
@@ -389,6 +396,10 @@ public class CaptainPirate: MonoBehaviour
                 vol = 25;
             }
             SoundManager.Instance.PlaySfx("jump" + num, vol);
+
+            //change jump collider fix variables
+            collider.center = new Vector3(0, 1.7f, 0);
+            raycastOriginOffset = .8f;
         }
     }
 
@@ -440,29 +451,32 @@ public class CaptainPirate: MonoBehaviour
     private void CheckIfGrounded()
     {
         RaycastHit rayHit;
+        Vector3 raycastOrigin = new Vector3(transform.position.x, (transform.position.y + raycastOriginOffset), transform.position.z);
 
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         //VISUALIZE GROUND CHECK WHEN IN UNITY EDITOR   
-        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * groundedDist),Color.magenta);
-        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + transform.forward) * groundedDist), Color.magenta);
-        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + -transform.forward) * groundedDist), Color.magenta);
-        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + -transform.right) * groundedDist), Color.magenta);
-        Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + ((Vector3.down + transform.right) * groundedDist), Color.magenta);
-#endif
+        Debug.DrawLine(raycastOrigin + (Vector3.up * 0.1f), raycastOrigin + (Vector3.up * 0.1f) + (Vector3.down * groundedDist),Color.magenta);
+        Debug.DrawLine(raycastOrigin + (Vector3.up * 0.1f), raycastOrigin + (Vector3.up * 0.1f) + ((Vector3.down + transform.forward) * groundedDist), Color.magenta);
+        Debug.DrawLine(raycastOrigin + (Vector3.up * 0.1f), raycastOrigin + (Vector3.up * 0.1f) + ((Vector3.down + -transform.forward) * groundedDist), Color.magenta);
+        Debug.DrawLine(raycastOrigin + (Vector3.up * 0.1f), raycastOrigin + (Vector3.up * 0.1f) + ((Vector3.down + -transform.right) * groundedDist), Color.magenta);
+        Debug.DrawLine(raycastOrigin + (Vector3.up * 0.1f), raycastOrigin + (Vector3.up * 0.1f) + ((Vector3.down + transform.right) * groundedDist), Color.magenta);
+        #endif
+        //chnage raycast start pos 
         bool groundHit = false;
-        if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist, groundMask))//if down returns nothing
+
+        if(!Physics.Raycast(raycastOrigin + (Vector3.up * 0.1f), (Vector3.down), out rayHit, groundedDist, groundMask))//if down returns nothing
         {
             //check forward raycast
-            if(!Physics.Raycast(transform.position + (Vector3.up * 0.1f),(Vector3.down+transform.forward), out rayHit, groundedDist, groundMask))
+            if(!Physics.Raycast(raycastOrigin + (Vector3.up * 0.1f),(Vector3.down+transform.forward), out rayHit, groundedDist, groundMask))
             {
                 //check backward raycast
-                if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.forward), out rayHit, groundedDist, groundMask))
+                if (!Physics.Raycast(raycastOrigin + (Vector3.up * 0.1f), (Vector3.down + -transform.forward), out rayHit, groundedDist, groundMask))
                 {
                     //check Left raycast
-                    if (!Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + -transform.right), out rayHit, groundedDist, groundMask))
+                    if (!Physics.Raycast(raycastOrigin + (Vector3.up * 0.1f), (Vector3.down + -transform.right), out rayHit, groundedDist, groundMask))
                     {
                         //check Right raycast
-                        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), (Vector3.down + transform.right), out rayHit, groundedDist, groundMask))
+                        if (Physics.Raycast(raycastOrigin + (Vector3.up * 0.1f), (Vector3.down + transform.right), out rayHit, groundedDist, groundMask))
                         {
                             groundHit = true;
                         }
@@ -483,7 +497,16 @@ public class CaptainPirate: MonoBehaviour
             pirateAnim.SetBool("Grounded", true);
             canDoubleJump = false;
 
-            
+            //check if we need to update collider fix fields
+            if (raycastOriginOffset != 0)
+            {
+                //reset jump collider fix
+                transform.position = raycastOrigin;
+                collider.center = new Vector3(0, 0.9f, 0);
+                raycastOriginOffset = 0;
+            }
+
+
             if(rayHit.collider.gameObject.tag == "MovingPlatform")
             {
                 onMoving = true;
@@ -536,7 +559,7 @@ public class CaptainPirate: MonoBehaviour
                 GameObject prevIsland = rayHit.collider.gameObject;
                 Vector3 islandLoc = new Vector3(prevIsland.transform.position.x, (prevIsland.GetComponent<MeshCollider>().bounds.size.y / 2) + prevIsland.transform.position.y, prevIsland.transform.position.z);
                 //check to make sure backup respawn is not current respawn
-                
+
                 respawnLocation = islandLoc;
             }
             else if (rayHit.collider.gameObject.tag == "Terrain")
