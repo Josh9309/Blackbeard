@@ -287,6 +287,24 @@ public class Parrot : MonoBehaviour
                 else
                     gm.P2BearTrapCount++;
             }
+
+            heldUtility = null;
+            dropButtonDown = true;
+            StartCoroutine(UtilityCooldown());
+            //numLanterns--; //added for UI test, just changes num lantern no actual functionality
+        }
+        else if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown && buttonHeldOnEntry == 2)
+        {
+            Collider[] heldItemColliders = heldUtility.GetComponents<Collider>(); //Get the item's colliders
+            foreach (Collider c in heldItemColliders)
+                c.enabled = true; //Reenable the item's colliders
+
+            Rigidbody heldUtilityRBody = heldUtility.GetComponent<Rigidbody>(); //Get the item's rigidbody
+            heldUtilityRBody.useGravity = true;
+            heldUtilityRBody.constraints = RigidbodyConstraints.None;
+            //heldUtilityRBody.velocity = new Vector3(rBody.velocity.x*.75f, 0, rBody.velocity.z*.75f); //Commented out because we need a reticle for momentum to be effective.
+            heldUtility.transform.parent = null;
+            heldUtility.GetComponent<Item>().Active = true;
             if (heldUtility.name.Contains("Coconut"))
             {
                 heldUtility.GetComponentInChildren<ParticleSystem>().Play();
@@ -294,7 +312,6 @@ public class Parrot : MonoBehaviour
             heldUtility = null;
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
-            //numLanterns--; //added for UI test, just changes num lantern no actual functionality
         }
         else if (Input.GetButtonUp(inputManager.PARROT_PICKUP_AXIS))
         {
