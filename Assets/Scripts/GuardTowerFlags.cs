@@ -80,9 +80,22 @@ public class GuardTowerFlags : MonoBehaviour {
 	{
 		if (redEnabled)
 			redFlag.transform.position = Vector3.Slerp(redFlag.transform.position, new Vector3(redFlag.transform.position.x, originalYPosition + height, redFlag.transform.position.z), Time.deltaTime * 2);
-		else if (blueEnabled)
+		if (blueEnabled)
 			blueFlag.transform.position = Vector3.Slerp(blueFlag.transform.position, new Vector3(blueFlag.transform.position.x, originalYPosition + height, blueFlag.transform.position.z), Time.deltaTime * 2);
 	}
+
+    void OnTriggerEnter(Collider coll){
+        if (coll.name == "CaptainPlayer1")
+        {
+            if(!redEnabled)
+            redFlag.GetComponentInChildren<ParticleSystem>().Play();
+        }
+        else if (coll.name == "CaptainPlayer2")
+        {
+            if(!blueEnabled)
+            blueFlag.GetComponentInChildren<ParticleSystem>().Play();
+        }
+    }
 
 	void OnTriggerStay(Collider coll)
 	{
