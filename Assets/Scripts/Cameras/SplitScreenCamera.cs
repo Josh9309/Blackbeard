@@ -223,6 +223,18 @@ public class SplitScreenCamera : MonoBehaviour
             //HUD[0].localPosition = new Vector3(HUD[0].localPosition.x, (Screen.height / 2) - HUD[0].position.x, HUD[0].localPosition.z);
             //HUD[1].localPosition = new Vector3(HUD[1].localPosition.x, (Screen.height / 2) - HUD[1].position.x, HUD[1].localPosition.z);
         }
+        if (debug)
+        {
+            //Resize viewports
+            captainCamera1.rect = new Rect(0, 0, 1, 1);
+            captainCamera2.rect = new Rect(0, 0, 0, 0);
+            parrotCamera1.rect = new Rect(0, 0, 1, 1);
+            parrotCamera2.rect = new Rect(0, 0, 0, 0);
+
+            //Deactivate other pirate camera
+            captainCamera2.enabled = false;
+            parrotCamera2.enabled = false;
+        }
     }
 
 }
