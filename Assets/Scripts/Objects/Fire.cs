@@ -48,7 +48,7 @@ public class Fire : MonoBehaviour
     {
         if (coll.tag == "Pirate")
         {
-            Debug.Log("Pirate hits fire");
+            //Debug.Log("Pirate hits fire");
             coll.GetComponent<CaptainPirate>().StartCoroutine(coll.GetComponent<CaptainPirate>().Stun(stunTime));
 
             //if (coll.GetComponent<CaptainPirate>().Grounded)

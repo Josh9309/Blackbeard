@@ -88,7 +88,7 @@ public class StartWindow : BaseWindow
     {
         MenuManager.Instance.MenuEnabled = !MenuManager.Instance.MenuEnabled;
         SceneManager.LoadScene("Poseidon");
-        Debug.Log("New Game Pressed");
+        //Debug.Log("New Game Pressed");
     }
 
     public void Load()
@@ -102,19 +102,19 @@ public class StartWindow : BaseWindow
         MenuManager.Instance.MenuEnabled = !MenuManager.Instance.MenuEnabled;
         GameManager.Instance.HUD.GetComponent<Canvas>().enabled = (!GameManager.Instance.HUD.GetComponent<Canvas>().enabled);
         //turn on HUD
-        Debug.Log(" Resume Pressed");
+        //Debug.Log(" Resume Pressed");
     }
     //method for main menu
     public void MainMenu()
     {
         MenuManager.Instance.GoToScreen("Start");
-        Debug.Log("Main Menu");
+        //Debug.Log("Main Menu");
     }
     //method for options button
     public void Options()
     {
         MenuManager.Instance.GoToScreen("Options");
-        Debug.Log("Option Pressed");
+        //Debug.Log("Option Pressed");
     }
 
     //method for controls button
@@ -127,14 +127,14 @@ public class StartWindow : BaseWindow
     public void Credits()
     {
         MenuManager.Instance.GoToScreen("Credits");
-        Debug.Log("Credits Pressed");
+        //Debug.Log("Credits Pressed");
     }
 
     //method for exit menu
     public void Exit()
     {
         MenuManager.Instance.GoToScreen("Exit");
-        Debug.Log("Exit Pressed");
+        //Debug.Log("Exit Pressed");
     }
     #endregion
 }

@@ -83,7 +83,6 @@ public abstract class BaseTrap : MonoBehaviour {
             //play hurt sound
             SoundManager.Instance.PlaySfx("hurt3", 100);
         }
-        
     }
 
     /// <summary>

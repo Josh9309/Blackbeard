@@ -203,7 +203,7 @@ public class Parrot : MonoBehaviour
             currentUtilityID = currentUtilityID % utilityItems.Count; //wrap utils so we dont go out of bounds
             currentUtility = utilityItems[currentUtilityID];
             dropCooldown = utilityCooldowns[currentUtilityID];
-            Debug.Log("current utility is " + currentUtilityID + "/" + utilityItems.Count + currentUtility.name);
+            //Debug.Log("current utility is " + currentUtilityID + "/" + utilityItems.Count + currentUtility.name);
             switchButtonDown = true;
             // destroy old utility
             GameObject.Destroy(heldUtility);
@@ -264,7 +264,7 @@ public class Parrot : MonoBehaviour
 
         if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown && buttonHeldOnEntry == 2 && (heldUtility.name.Contains("Bear_Trap") && numBearTrap < 5)) //Drop item if possible
         {
-            Debug.Log(Input.GetButton(inputManager.PARROT_PICKUP_AXIS) + "\n" + canDrop + "\n" + dropButtonDown + "\n" + buttonHeldOnEntry);
+            //Debug.Log(Input.GetButton(inputManager.PARROT_PICKUP_AXIS) + "\n" + canDrop + "\n" + dropButtonDown + "\n" + buttonHeldOnEntry);
 
             Collider[] heldItemColliders = heldUtility.GetComponents<Collider>(); //Get the item's colliders
             foreach (Collider c in heldItemColliders)

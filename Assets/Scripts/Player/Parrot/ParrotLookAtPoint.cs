@@ -24,7 +24,7 @@ public class ParrotLookAtPoint : MonoBehaviour {
         transform.position = new Vector3(parrot.transform.position.x, parrot.transform.position.y + heightOffset, parrot.transform.position.z);
         transform.forward = new Vector3(parrot.transform.forward.x, forward, parrot.transform.forward.z);
 
-        Debug.DrawLine(transform.position, transform.forward.normalized + transform.position, Color.blue);
+        //Debug.DrawLine(transform.position, transform.forward.normalized + transform.position, Color.blue);
        // Debug.Log(parrot.name + " Forward: " + parrot.transform.forward);
 	}
 }

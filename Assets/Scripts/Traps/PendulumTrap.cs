@@ -23,7 +23,7 @@ public class PendulumTrap : BaseTrap {
 
     public void Pause()
     {
-        Debug.Log("Paused");
+        //Debug.Log("Paused");
         if (pause)
         {
             trapAnim.SetBool("pause", true);
@@ -69,7 +69,7 @@ public class PendulumTrap : BaseTrap {
 
     public IEnumerator PauseTime()
     {
-        Debug.Log("pause");
+        //Debug.Log("pause");
         yield return new WaitForSeconds(resetTime);
         trapAnim.SetBool("pause", false);
     }

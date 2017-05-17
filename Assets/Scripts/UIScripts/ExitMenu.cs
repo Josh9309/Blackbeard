@@ -18,13 +18,13 @@ public class ExitMenu : BaseWindow {
     
     public void Exit()
     {
-        Debug.Log("Exit");
+        //Debug.Log("Exit");
         Application.Quit();
     }
     
     public void DontExit()
     {
-        Debug.Log("No pressed");
+        //Debug.Log("No pressed");
         MenuManager.Instance.GoToScreen("Start");
     }
     #endregion

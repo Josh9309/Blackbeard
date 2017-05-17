@@ -131,7 +131,7 @@ public class ItemPickup : MonoBehaviour
             }
             else if (carriedItem != null) //When trying to pick something up, make sure nothing is currently held
             {
-                Debug.Log(-carriedItemHalfHeight);
+                //Debug.Log(-carriedItemHalfHeight);
                 carriedItemRB.useGravity = false;
 
                 //Set the item for when it is picked up

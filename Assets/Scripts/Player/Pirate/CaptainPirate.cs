@@ -406,7 +406,7 @@ public class CaptainPirate: MonoBehaviour
     public IEnumerator Stun(float stunTime)
     {
         //do stun actions
-        Debug.Log("Stunned!");
+        //Debug.Log("Stunned!");
         pirateAnim.Play("Stun");
         stunned = true;
         pirateAnim.SetBool("isStunned", true);
@@ -421,7 +421,7 @@ public class CaptainPirate: MonoBehaviour
         yield return new WaitForSeconds(stunTime);
 
         //turn off stun
-        Debug.Log("unStunned!");
+        //Debug.Log("unStunned!");
         pirateAnim.SetBool("isStunned", false);
         stunned = false;
     }
@@ -511,7 +511,7 @@ public class CaptainPirate: MonoBehaviour
             {
                 onMoving = true;
                 movingPlatformVel = rayHit.collider.gameObject.GetComponent<Rigidbody>().velocity;
-                Debug.Log("Grounded on moving");
+                //Debug.Log("Grounded on moving");
             }
             else
             {

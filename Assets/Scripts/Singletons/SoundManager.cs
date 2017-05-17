@@ -60,6 +60,7 @@ public class SoundManager : Singleton<SoundManager>
         sfxLibrary.Add("step7", Resources.Load("sfx/step7") as AudioClip);
         sfxLibrary.Add("stride", Resources.Load("sfx/stride") as AudioClip); //a full slow stride
 
+        //Apparently nobody knows how to spell "squawk"
         sfxLibrary.Add("squack1", Resources.Load("sfx/squack1") as AudioClip);
         sfxLibrary.Add("squack2", Resources.Load("sfx/squack2") as AudioClip);
         sfxLibrary.Add("squack3", Resources.Load("sfx/squack3") as AudioClip);

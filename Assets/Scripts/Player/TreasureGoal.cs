@@ -34,7 +34,7 @@ public class TreasureGoal : MonoBehaviour {
             MenuManager.Instance.Screens["GameOverWindow"].GetComponent<GameOverWindow>().SetWinner(captain.PlayerNum); //set winner text
 
             //kev will kill this line and its entire extended family Debug.Loss
-            Debug.Log("Player " + captain.PlayerNum + " Wins!!!");
+            //Debug.Log("Player " + captain.PlayerNum + " Wins!!!");
 
             gm.EndGame();
         }

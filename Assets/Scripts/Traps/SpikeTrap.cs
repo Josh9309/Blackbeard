@@ -53,5 +53,4 @@ public class SpikeTrap : BaseTrap {
         triggered = false;
         trapAnim.Play("Deactivate");
     }
-
 }

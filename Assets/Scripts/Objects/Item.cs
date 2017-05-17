@@ -86,11 +86,31 @@ public class Item : MonoBehaviour
             else if (gameObject.name.Contains("Bear_Trap"))
             {
                 GetComponent<BearTrap>().enabled = true;
-                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
-                if (coll.gameObject.tag == "MovingPlatform" || coll.gameObject.tag == "RotatingPlatform")
+                //GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+                Destroy(GetComponent<Rigidbody>()); //Destroy the rigidbody
+
+                if (coll.gameObject.tag == "MovingPlatform")
                 {
                     transform.parent = coll.gameObject.transform;
+                    transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0); //Stop bad rotation
+                    transform.localScale = new Vector3(transform.localScale.x * transform.parent.lossyScale.x, transform.localScale.y * transform.parent.lossyScale.y, transform.localScale.z * transform.parent.lossyScale.z); //Rescale the trap
                 }
+                else if (coll.gameObject.tag == "RotatingPlatform") //Really hacky rescale
+                {
+                    transform.parent = coll.gameObject.transform;
+                    transform.rotation = transform.parent.parent.rotation; //Alright, I'm real cheesed off about this one
+
+                    //if (transform.parent.localScale.z > 1)
+                    //    transform.localScale = new Vector3((transform.localScale.x * transform.parent.lossyScale.x) / 2, transform.localScale.y, (transform.localScale.z / transform.parent.lossyScale.z) * 2); //Rescale the trap
+                    //else
+                    //    transform.localScale = new Vector3((transform.localScale.x * transform.parent.lossyScale.x) / 2, transform.localScale.y, (transform.localScale.z * transform.parent.lossyScale.z) / 2); //Rescale the trap
+
+                    if (transform.parent.localScale.z < 1)
+                        transform.localScale = new Vector3(4.5f / transform.parent.lossyScale.x, 4.5f, 4.5f * transform.parent.lossyScale.z); //Rescale the trap
+                    else
+                        transform.localScale = new Vector3(4.5f / transform.parent.lossyScale.x, 4.5f, 4.5f / transform.parent.lossyScale.z); //Rescale the trap
+                }
+
                 enabled = false;
             }
             else //If this is any other object
