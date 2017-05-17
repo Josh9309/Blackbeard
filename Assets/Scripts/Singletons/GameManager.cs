@@ -230,8 +230,9 @@ public class GameManager : Singleton<GameManager>
 	private GameObject parrotFlyover2;
 	private bool flyBy = false;
 
-    //HUD
-
+    //Bear trap limiter
+    private byte p1BearTrapCount = 0;
+    private byte p2BearTrapCount = 0;
     #endregion
 
     //Signals
@@ -318,6 +319,30 @@ public class GameManager : Singleton<GameManager>
         set
         {
             hud = value;
+        }
+    }
+
+    public byte P1BearTrapCount
+    {
+        get
+        {
+            return p1BearTrapCount;
+        }
+        set
+        {
+            p1BearTrapCount = value;
+        }
+    }
+
+    public byte P2BearTrapCount
+    {
+        get
+        {
+            return p2BearTrapCount;
+        }
+        set
+        {
+            p2BearTrapCount = value;
         }
     }
     #endregion

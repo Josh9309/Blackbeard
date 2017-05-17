@@ -142,7 +142,11 @@ public class Parrot : MonoBehaviour
             //pickupScript.Pickup(active); //Let the parrot pickup treasure
             trapScript.Interact(active); //Let the parrot interact with traps
             SwitchUtility(); // allow parrot to switch current utility
-            DropUtility(); // allows parrot to drop utility
+
+            if (name.Contains("1"))
+                DropUtility(gm.P1BearTrapCount); // allows parrot to drop utility
+            else
+                DropUtility(gm.P2BearTrapCount); // allows parrot to drop utility
         }
         else
             buttonHeldOnEntry = 0; //Reset to check held buttons again
@@ -247,18 +251,18 @@ public class Parrot : MonoBehaviour
     /// <summary>
     /// drops the currently selected utility
     /// </summary>
-    private void DropUtility()
+    private void DropUtility(short numBearTrap)
     {
+        //Check if the jump button from the pirate was pressed
         if (buttonHeldOnEntry == 0)
         {
-            //Check if the jump button from the pirate was pressed
             if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS))
                 buttonHeldOnEntry = 1;
             else
                 buttonHeldOnEntry = 2;
         }
 
-        if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown && buttonHeldOnEntry == 2)
+        if (Input.GetButton(inputManager.PARROT_PICKUP_AXIS) && canDrop && !dropButtonDown && buttonHeldOnEntry == 2 && (heldUtility.name.Contains("Bear_Trap") && numBearTrap < 5)) //Drop item if possible
         {
             Debug.Log(Input.GetButton(inputManager.PARROT_PICKUP_AXIS) + "\n" + canDrop + "\n" + dropButtonDown + "\n" + buttonHeldOnEntry);
 
@@ -276,6 +280,12 @@ public class Parrot : MonoBehaviour
             {
                 //heldUtility.GetComponent<Item>().enabled = false;
                 heldUtility.GetComponent<BearTrap>().Activate();
+
+                //Increment number of bear traps dropped
+                if (name.Contains("1"))
+                    gm.P1BearTrapCount++;
+                else
+                    gm.P2BearTrapCount++;
             }
             if (heldUtility.name.Contains("Coconut"))
             {
@@ -284,7 +294,7 @@ public class Parrot : MonoBehaviour
             heldUtility = null;
             dropButtonDown = true;
             StartCoroutine(UtilityCooldown());
-            numLanterns--; //added for UI test, just changes num lantern no actual functionality
+            //numLanterns--; //added for UI test, just changes num lantern no actual functionality
         }
         else if (Input.GetButtonUp(inputManager.PARROT_PICKUP_AXIS))
         {

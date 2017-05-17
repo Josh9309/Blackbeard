@@ -8,6 +8,7 @@ public class BearTrap : BaseTrap {
     #region Attributes
     [SerializeField]
     private float stunTime;
+    private byte activeParrotNum;
     #endregion
 
     // Use this for initialization
@@ -22,6 +23,11 @@ public class BearTrap : BaseTrap {
         triggered = false;
 
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+
+        if (gm.CurrentPlayer1State == GameManager.PlayerState.PARROT)
+            activeParrotNum = 1;
+        else if (gm.CurrentPlayer2State == GameManager.PlayerState.PARROT)
+            activeParrotNum = 2;
     }
 	
 	// Update is called once per frame
@@ -58,6 +64,12 @@ public class BearTrap : BaseTrap {
 
 			StartCoroutine (pirate.GetComponent<CaptainPirate> ().Stun (stunTime));
 			StartCoroutine (DestroyAfterStun (stunTime + 1));
+
+            //Decrement the bear trap count
+            if (activeParrotNum == 1)
+                gm.P1BearTrapCount--;
+            else
+                gm.P2BearTrapCount--;
 		}
     }
 
